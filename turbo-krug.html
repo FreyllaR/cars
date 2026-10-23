@@ -170,6 +170,29 @@ tr.me td{color:var(--accent)}
 .item-slot{position:relative;width:58px;height:58px;border-radius:12px;display:grid;place-items:center;background:rgba(12,14,19,.78);border:1px solid rgba(255,255,255,.14)}
 .item-slot[data-item=""]{opacity:.4}
 .item-slot svg{width:32px;height:32px;display:block}
+.modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:8px}
+.modes button{display:grid;gap:2px;padding:9px 12px;text-align:left;background:var(--panel-2);border:1px solid var(--line);border-radius:10px}
+.modes button:hover{border-color:#4a5161}
+.modes button[aria-pressed="true"]{border-color:var(--accent);background:#25231b}
+.modes b{font-family:var(--display);font-weight:400;font-size:15px}
+.modes span{font-size:12px;color:var(--muted)}
+.track-note{margin:-4px 0 10px}
+.maps.locked .map{opacity:.75}
+.maps.locked .map[aria-pressed="true"]{opacity:1}
+.cup-box table{margin-top:4px}
+.podium{display:grid;grid-template-columns:1fr 1fr 1fr;align-items:end;gap:8px;text-align:center}
+.podium div{display:grid;gap:6px;justify-items:center}
+.podium i{display:block;width:100%;border-radius:8px 8px 0 0;background:var(--panel-2);border:1px solid var(--line);border-bottom:0;font-family:var(--display);font-style:normal;font-size:22px;padding-top:6px}
+.podium .p1 i{height:96px;background:#3b3214;border-color:var(--accent);color:var(--accent)}
+.podium .p2 i{height:70px}
+.podium .p3 i{height:52px}
+.podium b{font-weight:600;font-size:14px}
+.podium .sw{margin:0}
+.hint{position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 22px);transform:translateX(-50%);width:min(460px,calc(100% - 32px));padding:10px 14px;background:rgba(12,14,19,.88);border:1px solid var(--accent);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.45)}
+.hint .label{margin:0 0 2px;color:var(--accent)}
+.hint p{margin:0;font-size:14px}
+.hint kbd{height:22px;min-width:22px;font-size:11px;vertical-align:1px}
+body.touchmode .hint{bottom:calc(env(safe-area-inset-bottom,0px) + 190px)}
 .item-slot kbd{position:absolute;right:-7px;bottom:-7px;height:20px;min-width:20px;font-size:10px}
 .mini{position:absolute;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 16px);width:210px;height:140px;background:rgba(12,14,19,.72);border:1px solid rgba(255,255,255,.08);border-radius:10px}
 .lights{position:absolute;left:50%;top:calc(env(safe-area-inset-top,0px) + 90px);transform:translateX(-50%);display:flex;gap:12px;padding:12px 16px;background:#0b0c10;border:1px solid #2a2e37;border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,.5)}
@@ -215,7 +238,7 @@ body.touchmode .hud-bl,body.touchmode .mini{bottom:calc(env(safe-area-inset-bott
   .res-title{font-size:30px}
 }
 @media (max-height:660px){
-  .lede,.m-note,.c-tag{display:none}
+  .lede,.m-note,.c-tag,.modes span{display:none}
   .map{grid-template-columns:64px minmax(0,1fr) auto}
   .map canvas{width:64px;height:38px}
   .keys ul{display:none}
@@ -253,6 +276,7 @@ body.touchmode .hud-bl,body.touchmode .mini{bottom:calc(env(safe-area-inset-bott
 }
 
 @media (max-width:720px){
+  .hint{bottom:calc(env(safe-area-inset-bottom,0px) + 150px)}
   .board{display:none}
   .mini{width:140px;height:96px}
   .box b{font-size:16px}
@@ -308,6 +332,7 @@ body.touchmode .hud-bl,body.touchmode .mini{bottom:calc(env(safe-area-inset-bott
   <canvas id="mini" class="mini" aria-label="Мини-карта" data-ta="aMini"></canvas>
   <div id="lights" class="lights" hidden><i></i><i></i><i></i></div>
   <div id="toast" class="toast" hidden><b></b><span></span></div>
+  <div id="hint" class="hint" hidden><span class="label" data-t="tutLabel">Подсказка</span><p id="hintText"></p></div>
 </div>
 
 <div id="touch" class="touch" hidden>
@@ -325,10 +350,19 @@ body.touchmode .hud-bl,body.touchmode .mini{bottom:calc(env(safe-area-inset-bott
     </header>
     <section>
       <h2 class="label" data-t="track">Трасса</h2>
+      <p id="trackNote" class="seg-note track-note" data-t="cupNote" hidden>В чемпионате трассы идут по очереди</p>
       <div id="maps" class="maps"></div>
     </section>
     </div>
     <div class="col col-side">
+    <section>
+      <h2 class="label" data-t="mode">Режим</h2>
+      <div id="modeSeg" class="modes">
+        <button data-mode="race" aria-pressed="true"><b data-t="mRace">Гонка</b><span data-t="mRaceSub">Одна трасса с ботами</span></button>
+        <button data-mode="cup" aria-pressed="false"><b data-t="mCup">Чемпионат</b><span data-t="mCupSub">Все трассы подряд</span></button>
+        <button data-mode="trial" aria-pressed="false"><b data-t="mTrial">На время</b><span data-t="mTrialSub">Вы и ваш призрак</span></button>
+      </div>
+    </section>
     <div class="row">
       <section>
         <h2 class="label" data-t="laps">Круги</h2>
@@ -338,7 +372,7 @@ body.touchmode .hud-bl,body.touchmode .mini{bottom:calc(env(safe-area-inset-bott
           <button data-l="5" aria-pressed="false">5</button>
         </div>
       </section>
-      <section>
+      <section id="rivalsSec">
         <h2 class="label" data-t="rivals">Соперники</h2>
         <div id="diff" class="seg words">
           <button data-d="0" aria-pressed="false" data-t="diff0">Лёгкие</button>
@@ -410,6 +444,14 @@ body.touchmode .hud-bl,body.touchmode .mini{bottom:calc(env(safe-area-inset-bott
           <button data-haz="off" aria-pressed="false" data-t="off">Выкл</button>
         </div>
       </div>
+      <div class="set">
+        <h3 class="label" data-t="ghostSet">Призрак лучшего круга</h3>
+        <div id="ghostSeg" class="seg words">
+          <button data-ghost="on" aria-pressed="true" data-t="on">Вкл</button>
+          <button data-ghost="off" aria-pressed="false" data-t="off">Выкл</button>
+        </div>
+      </div>
+      <button id="tutReset" class="btn" data-t="tutReset">Показать подсказки заново</button>
     </div>
     <button id="setDone" class="btn primary" data-t="done">Готово</button>
   </div>
@@ -425,11 +467,21 @@ body.touchmode .hud-bl,body.touchmode .mini{bottom:calc(env(safe-area-inset-bott
       <p id="resPts" class="res-pts"></p>
       <p id="resHint" class="res-hint"></p>
     </div>
-    <table>
-      <thead><tr><th>#</th><th data-t="driver">Пилот</th><th class="t" data-t="time">Время</th><th class="t" data-t="best">Лучший</th></tr></thead>
+    <div id="podium" class="podium" hidden></div>
+    <table id="resTable">
+      <thead id="resHead"></thead>
       <tbody id="resBody"></tbody>
     </table>
+    <div id="cupBox" class="cup-box" hidden>
+      <h3 id="cupTitle" class="label"></h3>
+      <table>
+        <thead><tr><th>#</th><th data-t="driver">Пилот</th><th class="t" data-t="ptsCol">Очки</th></tr></thead>
+        <tbody id="cupBody"></tbody>
+      </table>
+    </div>
     <div class="btns">
+      <button id="cupNextBtn" class="btn primary" data-t="nextStage" hidden>Следующий этап</button>
+      <button id="newCupBtn" class="btn primary" data-t="newCup" hidden>Новый чемпионат</button>
       <button id="againBtn" class="btn primary" data-t="again">Ещё раз</button>
       <button id="nextBtn" class="btn" data-t="next">Следующая трасса</button>
       <button id="resMenuBtn" class="btn" data-t="trackSelect">Выбор трассы</button>
@@ -468,6 +520,21 @@ const STR = {
     track: 'Трасса', laps: 'Круги', rivals: 'Соперники', controls: 'Управление',
     k1: '<b>W / S</b> газ и тормоз', k2: '<b>A / D</b> руль, <b>Пробел</b> ручник', k3: '<b>Shift</b> нитро, <b>E</b> предмет', k4: '<b>R</b> на трассу, <b>Esc</b> пауза, <b>M</b> звук',
     nitro: 'Нитро', hull: 'Корпус', repair: 'Ремонт', item: 'Предмет',
+    mode: 'Режим', mRace: 'Гонка', mRaceSub: 'Одна трасса с ботами', mCup: 'Чемпионат', mCupSub: 'Все трассы подряд', mTrial: 'На время', mTrialSub: 'Вы и ваш призрак',
+    cupNote: 'В чемпионате трассы идут по очереди', cupStage: 'Чемпионат · этап {a} из {b}', nextStage: 'Следующий этап', newCup: 'Новый чемпионат',
+    cupFinal: 'Итоги чемпионата', cupWin: 'Кубок ваш!', cupPlace: '{o} место в чемпионате', cupBonus: 'Бонус за чемпионат: +{n} очков', ptsCol: 'Очки',
+    trialDone: 'Заезд окончен', lapCol: 'Круг', trialSub: '{map} · {laps} · лучший круг {t}', trialPts: '+{n} очков за заезд',
+    ghost: 'ПРИЗРАК', ghostSet: 'Призрак лучшего круга', tutReset: 'Показать подсказки заново', tutLabel: 'Подсказка', tutResetDone: 'Подсказки появятся в следующей гонке',
+    'tut.drive': '<b>W</b> — газ, <b>A</b> и <b>D</b> — руль. Нажмите газ ровно на зелёный — будет рывок.',
+    'tut.drift': '<kbd>Пробел</kbd> — ручник. В заносах копится нитро.',
+    'tut.nitro': 'Нитро набралось. Держите <kbd>Shift</kbd> на прямой.',
+    'tut.item': 'У вас предмет. Нажмите <kbd>E</kbd>, чтобы его использовать.',
+    'tut.pit': 'Машина повреждена. Медленно проедьте зону <b>PIT</b> сразу после старта — починитесь.',
+    'tut.reset': 'Застряли? <kbd>R</kbd> вернёт на трассу.',
+    'tut.drive.t': 'Справа — газ и тормоз, слева — руль. Газ ровно на зелёный даёт рывок.',
+    'tut.drift.t': 'В заносах копится нитро.',
+    'tut.nitro.t': 'Нитро набралось. Жмите «Нитро» на прямой.',
+    'tut.item.t': 'У вас предмет. Нажмите «Предмет».',
     perfectStart: 'Идеальный старт!', perfectStartSub: 'Газ точно на зелёный', goodStart: 'Хороший старт',
     wheelspin: 'Пробуксовка!', wheelspinSub: 'Газ нажат слишком рано', oilHit: 'Масло!', oilHitSub: 'Машину закрутило',
     diff0: 'Лёгкие', diff1: 'Средние', diff2: 'Сложные', diffNote: 'Очки ×{k}',
@@ -516,6 +583,21 @@ const STR = {
     track: 'Track', laps: 'Laps', rivals: 'Rivals', controls: 'Controls',
     k1: '<b>W / S</b> throttle and brake', k2: '<b>A / D</b> steer, <b>Space</b> handbrake', k3: '<b>Shift</b> nitro, <b>E</b> use item', k4: '<b>R</b> back on track, <b>Esc</b> pause, <b>M</b> mute',
     nitro: 'Nitro', hull: 'Hull', repair: 'Repair', item: 'Item',
+    mode: 'Mode', mRace: 'Race', mRaceSub: 'One track against bots', mCup: 'Championship', mCupSub: 'Every track in a row', mTrial: 'Time trial', mTrialSub: 'You and your ghost',
+    cupNote: 'The championship runs every track in order', cupStage: 'Championship · round {a} of {b}', nextStage: 'Next round', newCup: 'New championship',
+    cupFinal: 'Championship results', cupWin: 'The cup is yours!', cupPlace: '{o} in the championship', cupBonus: 'Championship bonus: +{n} points', ptsCol: 'Pts',
+    trialDone: 'Run complete', lapCol: 'Lap', trialSub: '{map} · {laps} · best lap {t}', trialPts: '+{n} points for the run',
+    ghost: 'GHOST', ghostSet: 'Best-lap ghost', tutReset: 'Show tips again', tutLabel: 'Tip', tutResetDone: 'Tips will show in your next race',
+    'tut.drive': '<b>W</b> is throttle, <b>A</b> and <b>D</b> steer. Hit the throttle right on green for a launch boost.',
+    'tut.drift': '<kbd>Space</kbd> is the handbrake. Drifting fills your nitro.',
+    'tut.nitro': 'Nitro is ready. Hold <kbd>Shift</kbd> on a straight.',
+    'tut.item': 'You picked up an item. Press <kbd>E</kbd> to use it.',
+    'tut.pit': 'Your car is damaged. Drive slowly through the <b>PIT</b> zone after the start line to repair.',
+    'tut.reset': 'Stuck? <kbd>R</kbd> puts you back on track.',
+    'tut.drive.t': 'Gas and brake on the right, steering on the left. Gas right on green gives a launch boost.',
+    'tut.drift.t': 'Drifting fills your nitro.',
+    'tut.nitro.t': 'Nitro is ready. Press Nitro on a straight.',
+    'tut.item.t': 'You picked up an item. Press Item to use it.',
     perfectStart: 'Perfect start!', perfectStartSub: 'Throttle right on green', goodStart: 'Good start',
     wheelspin: 'Wheelspin!', wheelspinSub: 'Throttle pressed too early', oilHit: 'Oil slick!', oilHitSub: 'You spun out',
     diff0: 'Easy', diff1: 'Medium', diff2: 'Hard', diffNote: 'Points ×{k}',
@@ -806,6 +888,7 @@ const S = {
   finishCount: 0, parts: [], cam: { x: 0, y: 0, z: 1 }, shake: 0, followIdx: 0, followT: 0,
   resultsT: -1, prevMode: null, lit: -1, newRecord: false, flakes: [], diff: 1, simDiff: null, earned: 0,
   volume: 60, prevVolume: 60, haz: [], hazT: 5, hazOn: true, slicks: [], boxes: [], placeT: 0, pressAt: null,
+  gameMode: 'race', cup: null, ghostOn: true, ghost: null, tut: {}, hintQ: [], hintT: 0, stuckT: 0,
 };
 // wallet and settings live in this browser only
 const wallet = { coins: 0, owned: ['start'], car: 'start' };
@@ -844,12 +927,12 @@ function newCar(di, slot) {
     stuck: 0, stuckCount: 0, reverseT: 0, respawnT: 0, ghostT: 0, band: 1, surface: 'track',
     inThrottle: 0, inSteer: 0, inBrake: false, wrongT: 0, skid: null, dustT: 0, spin: 0,
     nitro: 0, nitroOn: false, boostT: 0, wheelspinT: 0, item: null, itemT: 0, shieldT: 0,
-    damage: 0, repairing: false, smokeT: 0, lastPlace: 0, startDone: false,
+    damage: 0, repairing: false, smokeT: 0, lastPlace: 0, startDone: false, rec: [], recT: 0,
   };
 }
 function resetRace(mode) {
   S.mode = mode;
-  S.cars = GRID.map((di, slot) => newCar(di, slot));
+  S.cars = S.gameMode === 'trial' && mode !== 'menu' ? [newCar(0, 0)] : GRID.map((di, slot) => newCar(di, slot));
   S.haz = []; S.hazT = mode === 'menu' ? 3 : 6; S.slicks = []; S.boxes = buildBoxes(); S.placeT = 0; S.pressAt = null;
   S.time = 0; S.finishCount = 0; S.parts = []; markHead = 0; markCount = 0; S.resultsT = -1; S.newRecord = false;
   const f = followCar(); S.cam.x = f.x; S.cam.y = f.y;
@@ -932,6 +1015,7 @@ function lapCheck(c) {
   const tm = S.time - c.lapStart; c.lapStart = S.time; c.lapTimes.push(tm);
   const wasBest = tm < c.best; if (wasBest) c.best = tm;
   if (S.mode === 'menu') return;
+  if (c.isPlayer && !c.auto) { saveGhost(c, tm); c.rec = []; c.recT = 0; }
   if (c.lapsDone >= S.laps && !c.finished) {
     c.finished = true; c.finishTime = S.time; c.place = ++S.finishCount;
     if (c.isPlayer) onPlayerFinish(c);
@@ -1070,6 +1154,7 @@ function popShield(c) {
 }
 function launch(c) { // reaction to the green light
   c.startDone = true;
+  if (c.isPlayer && !c.auto) hint('drive');
   if (c.auto) { const r = Math.random(); if (r < .25) c.boostT = 1.1; else if (r < .33) c.wheelspinT = .7; return; }
   if (!(K.KeyW || K.ArrowUp)) { c.startDone = false; return; }
   if (S.pressAt != null && S.pressAt <= .4) { c.boostT = 1.3; toast(t('perfectStart'), t('perfectStartSub'), 'good'); tone('sawtooth', 300, 900, .35, .06); }
@@ -1084,7 +1169,7 @@ function onThrottlePress() {
 }
 function buildBoxes() {
   const tr = S.track, map = S.map, out = [];
-  if (!tr) return out;
+  if (!tr || S.gameMode === 'trial' && S.mode !== 'menu') return out;
   for (const f of [.24, .52, .79]) {
     const p = tr.pts[Math.round(f * tr.N) % tr.N];
     for (const k of [-.55, 0, .55]) out.push({ x: p.x + p.nx * k * map.width / 2, y: p.y + p.ny * k * map.width / 2, wait: 0, ph: Math.random() * 6 });
@@ -1215,7 +1300,7 @@ function spawnHazard(kind) {
   if (S.mode === 'race' && !f.finished) toast(t('hz.' + kind), t('hz.' + kind + '.sub'), 'warn');
 }
 function updHazards(dt) {
-  if (S.hazOn && S.mode !== 'countdown') {
+  if (S.hazOn && S.mode !== 'countdown' && !(S.gameMode === 'trial' && S.mode !== 'menu')) {
     S.hazT -= dt;
     if (S.hazT <= 0) {
       S.hazT = 6 + Math.random() * 5;
@@ -1459,12 +1544,25 @@ function step(dt) {
   band();
   for (const c of S.cars) {
     if (S.mode === 'countdown') { if (c.isPlayer) readPlayer(c); c.inThrottle = 0; c.inSteer = 0; c.inBrake = true; }
-    else if (c.auto) ai(c, dt);
+    else if (c.auto || S.testDrive && c.isPlayer) ai(c, dt); // testDrive: the autopilot drives the player in automated tests
     else readPlayer(c);
   }
   for (const c of S.cars) physCar(c, dt);
   updHazards(dt);
   for (const c of S.cars) { carHazards(c); carPickups(c); }
+  if (S.mode === 'race') {
+    const p = player();
+    if (p && !p.auto && !p.finished) {
+      p.recT += dt;
+      if (p.recT >= 1 / 30) { p.recT -= 1 / 30; p.rec.push(Math.round(p.x), Math.round(p.y), Math.round(p.angle * 100)); }
+      if (S.time > 7) hint('drift');
+      if (p.nitro >= .5) hint('nitro');
+      if (p.item) hint('item');
+      if (p.damage > .3) hint('pit');
+      S.stuckT = p.speed < 25 ? S.stuckT + dt : 0;
+      if (S.stuckT > 3) hint('reset');
+    }
+  }
   updSlicks(dt);
   if (S.mode === 'race' || S.mode === 'results') {
     S.placeT -= dt;
@@ -1478,14 +1576,103 @@ function step(dt) {
   if (S.resultsT > 0) { S.resultsT -= dt; if (S.resultsT <= 0) showResults(); }
 }
 
+// ---------- best-lap ghost ----------
+const ghostKey = m => 'turbo-krug-ghost-' + m.id;
+function loadGhost(m) {
+  try { const g = JSON.parse(store.get(ghostKey(m)) || 'null'); if (g && Array.isArray(g.d) && g.d.length >= 9) return g; } catch (e) {}
+  return null;
+}
+function saveGhost(c, tm) {
+  if (c.rec.length < 30 || tm < 5) return;
+  const old = loadGhost(S.map);
+  if (old && old.t <= tm) return;
+  const g = { t: tm, car: c.model.id || 'start', color: c.color, d: c.rec.slice() };
+  store.set(ghostKey(S.map), JSON.stringify(g));
+  S.ghost = g;
+}
+function drawGhost(tm) {
+  const g = S.ghost, p = player();
+  if (!g || !S.ghostOn || !p || p.auto || S.mode !== 'race') return;
+  const n = g.d.length / 3, f = (S.time - p.lapStart) * 30, i = Math.floor(f);
+  if (i < 0 || i >= n - 1) return;
+  const k = f - i, a = i * 3, b = a + 3;
+  const x = g.d[a] + (g.d[b] - g.d[a]) * k, y = g.d[a + 1] + (g.d[b + 1] - g.d[a + 1]) * k;
+  const an = (g.d[a + 2] + wrapAng((g.d[b + 2] - g.d[a + 2]) / 100) * 100 * k) / 100;
+  const m = CARS.find(cm => cm.id === g.car) || CARS[0];
+  ctx.save(); ctx.globalAlpha = .38; ctx.translate(x, y); ctx.rotate(an);
+  carShape(ctx, m, g.color || m.color, 0, false);
+  ctx.restore();
+  ctx.save(); ctx.globalAlpha = .7; ctx.fillStyle = '#e8f6ff'; ctx.font = '800 11px "Exo 2", sans-serif'; ctx.textAlign = 'center';
+  ctx.fillText(t('ghost'), x, y - 26); ctx.restore();
+}
+
+// ---------- tips for new players ----------
+function hint(key) {
+  if (S.tut[key] || S.hintQ.includes(key)) return;
+  if (touchMode && key === 'reset') return;
+  S.hintQ.push(key);
+}
+function updHint(dt) {
+  const el = $('#hint');
+  if (S.hintT > 0) { S.hintT -= dt; if (S.hintT <= 0) el.hidden = true; return; }
+  if (!S.hintQ.length || S.mode !== 'race') return;
+  const key = S.hintQ.shift();
+  S.tut[key] = 1; store.set('turbo-krug-tut', JSON.stringify(S.tut));
+  const tk = 'tut.' + key + (touchMode && STR.ru['tut.' + key + '.t'] ? '.t' : '');
+  $('#hintText').innerHTML = t(tk); el.hidden = false; S.hintT = 6;
+}
+
+// ---------- championship ----------
+const CUP_PTS = [10, 7, 5, 3, 1], CUP_BONUS = [600, 300, 150];
+function startCup() {
+  S.cup = { round: 0, order: MAPS.map((m, i) => i), pts: {}, done: false };
+  for (const d of DRIVERS) S.cup.pts[d.id] = 0;
+  S.mapIndex = S.cup.order[0];
+  startRace();
+}
+function cupStandings(withRace) {
+  const pts = Object.assign({}, S.cup.pts);
+  if (withRace) standings().forEach((c, i) => { pts[c.id] += CUP_PTS[i] || 0; });
+  return DRIVERS.map(d => ({ id: d.id, pts: pts[d.id], color: d.player ? curModel().color : d.color, me: !!d.player })).sort((a, b) => b.pts - a.pts);
+}
+function cupNext() {
+  standings().forEach((c, i) => { S.cup.pts[c.id] += CUP_PTS[i] || 0; });
+  S.cup.round++;
+  if (S.cup.round < S.cup.order.length) { S.mapIndex = S.cup.order[S.cup.round]; startRace(); }
+  else showCupFinal();
+}
+function showCupFinal() {
+  const st = cupStandings(false), place = st.findIndex(r => r.me) + 1;
+  const bonus = place <= 3 ? Math.round(CUP_BONUS[place - 1] * DIFFS[S.diff].pts * LAP_K[S.laps]) : 0;
+  wallet.coins += bonus; saveWallet(); S.cup.done = true;
+  if (place === 1) S.stats && (S.stats.cups = (S.stats.cups || 0) + 1);
+  $('#resTitle').textContent = place === 1 ? t('cupWin') : t('cupPlace', { o: ord(place) });
+  $('#resSub').textContent = t('cupFinal');
+  $('#resRec').hidden = true;
+  $('#resPts').textContent = bonus ? t('cupBonus', { n: bonus }) : '';
+  $('#resHint').textContent = t('total', { n: wallet.coins });
+  const pod = $('#podium'); pod.hidden = false;
+  pod.innerHTML = [1, 0, 2].map(i => st[i] ? `<div class="p${i + 1}"><b><span class="sw" style="background:${st[i].color}"></span> ${t('drv.' + st[i].id)}</b><i>${i + 1}</i></div>` : '<div></div>').join('');
+  $('#resTable').hidden = true;
+  $('#cupBox').hidden = false; $('#cupTitle').textContent = t('cupFinal'); fillCup(false);
+  for (const id of ['#cupNextBtn', '#againBtn', '#nextBtn']) $(id).hidden = true;
+  $('#newCupBtn').hidden = false; $('#results').hidden = false; $('#newCupBtn').focus({ preventScroll: true });
+}
+function fillCup(withRace) {
+  $('#cupBody').innerHTML = cupStandings(withRace).map((r, i) => `<tr class="${r.me ? 'me' : ''}"><td>${i + 1}</td><td><span class="sw" style="background:${r.color}"></span>${t('drv.' + r.id)}</td><td class="t">${r.pts}</td></tr>`).join('');
+}
+
 // ---------- race flow ----------
 function startRace() {
   initAudio();
   if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
   for (const k in K) K[k] = false;
+  if (S.gameMode === 'cup' && (!S.cup || S.cup.done)) { startCup(); return; }
+  if (S.gameMode !== 'cup') S.cup = null;
   setupMap(S.mapIndex);
   resetRace('countdown');
   S.cd = 3.8; S.lit = -1;
+  S.ghost = loadGhost(S.map); S.hintQ = []; S.hintT = 0; $('#hint').hidden = true; S.stuckT = 0;
   for (const id of ['#menu', '#pause', '#results', '#garage', '#settings', '#toast']) $(id).hidden = true;
   $('#hud').hidden = false; $('#lights').hidden = false; $('#lights').classList.remove('go');
   $('#touch').hidden = !touchMode;
@@ -1494,9 +1681,10 @@ function startRace() {
 function toMenu() {
   setupMap(S.mapIndex);
   resetRace('menu');
-  for (const id of ['#hud', '#touch', '#pause', '#results', '#garage', '#settings']) $(id).hidden = true;
+  for (const id of ['#hud', '#touch', '#pause', '#results', '#garage', '#settings', '#hint']) $(id).hidden = true;
   $('#menu').hidden = false;
-  renderMapList(); renderMenuStrip();
+  if (S.cup && !S.cup.done) S.cup = null;
+  renderMapList(); renderMenuStrip(); syncMode();
 }
 function togglePause(force) {
   if (S.mode === 'race' || S.mode === 'countdown') { if (force === false) return; S.prevMode = S.mode; S.mode = 'paused'; $('#pause').hidden = false; $('#resumeBtn').focus(); }
@@ -1507,25 +1695,41 @@ function onPlayerFinish(c) {
   S.mode = 'results'; S.resultsT = 1.4;
   const rec = getRecord(S.map);
   if (c.best < rec) { store.set(recKey(S.map), String(c.best)); S.newRecord = true; }
-  S.earned = Math.round(PLACE_PTS[c.place - 1] * LAP_K[S.laps] * DIFFS[S.diff].pts) + (S.newRecord ? 25 : 0);
+  S.earned = S.gameMode === 'trial' ? Math.round(20 * LAP_K[S.laps]) + (S.newRecord ? 40 : 0)
+    : Math.round(PLACE_PTS[c.place - 1] * LAP_K[S.laps] * DIFFS[S.diff].pts) + (S.newRecord ? 25 : 0);
   wallet.coins += S.earned; saveWallet();
-  toast(c.place === 1 ? t('victory') : t('finish'), t('placeSub', { o: ord(c.place), t: fmt(c.finishTime) }), c.place === 1 ? 'good' : '');
+  if (S.gameMode === 'trial') toast(t('finish'), fmt(c.finishTime), S.newRecord ? 'good' : '');
+  else toast(c.place === 1 ? t('victory') : t('finish'), t('placeSub', { o: ord(c.place), t: fmt(c.finishTime) }), c.place === 1 ? 'good' : '');
   beep(660, .15); setTimeout(() => beep(990, .3), 160);
 }
 function showResults(keepFocus) {
-  const p = player();
-  $('#resTitle').textContent = p.place === 1 ? t('victory') : t('place', { o: ord(p.place) });
-  $('#resSub').textContent = t('resSub', { map: t('map.' + S.map.id), laps: lapsWord(S.laps), diff: t('diff' + S.diff).toLowerCase(), t: fmt(p.finishTime) });
+  const p = player(), trial = S.gameMode === 'trial', cup = S.gameMode === 'cup' && S.cup;
+  if (cup && S.cup.done) { showCupFinal(); return; }
+  $('#resTitle').textContent = trial ? t('trialDone') : p.place === 1 ? t('victory') : t('place', { o: ord(p.place) });
+  $('#resSub').textContent = trial ? t('trialSub', { map: t('map.' + S.map.id), laps: lapsWord(S.laps), t: fmt(p.best) })
+    : t('resSub', { map: t('map.' + S.map.id), laps: lapsWord(S.laps), diff: t('diff' + S.diff).toLowerCase(), t: fmt(p.finishTime) });
+  $('#podium').hidden = true; $('#resTable').hidden = false;
+  $('#cupBox').hidden = !cup;
+  if (cup) $('#cupTitle').textContent = t('cupStage', { a: S.cup.round + 1, b: S.cup.order.length });
+  $('#cupNextBtn').hidden = !cup; $('#newCupBtn').hidden = true;
+  $('#againBtn').hidden = !!cup; $('#nextBtn').hidden = !!cup;
   const rr2 = $('#resRec'); rr2.hidden = !S.newRecord; rr2.textContent = t('record', { t: fmt(p.best) });
-  $('#resPts').textContent = t('earned', { n: S.earned });
+  $('#resPts').textContent = trial ? t('trialPts', { n: S.earned }) : t('earned', { n: S.earned });
   const nxt = CARS.find((m, i) => i > CARS.indexOf(curModel()) && !wallet.owned.includes(m.id));
   $('#resHint').textContent = t('total', { n: wallet.coins }) + (!nxt ? t('topCar')
     : wallet.coins >= nxt.price ? t('canBuy', { car: carName(nxt) }) : t('needFor', { car: carName(nxt), n: nxt.price - wallet.coins }));
-  $('#results').hidden = false; if (!keepFocus) $('#againBtn').focus({ preventScroll: true });
+  $('#results').hidden = false; if (!keepFocus) (cup ? $('#cupNextBtn') : $('#againBtn')).focus({ preventScroll: true });
   fillResults();
 }
 function fillResults() {
-  const st = standings();
+  const st = standings(), p = player();
+  if (S.gameMode === 'trial') {
+    $('#resHead').innerHTML = `<tr><th>#</th><th>${t('lapCol')}</th><th class="t">${t('time')}</th></tr>`;
+    $('#resBody').innerHTML = p.lapTimes.slice(0, S.laps).map((lt, i) => `<tr class="${lt === p.best ? 'me' : ''}"><td>${i + 1}</td><td>${t('lapCol')} ${i + 1}</td><td class="t">${fmt(lt)}</td></tr>`).join('');
+    return;
+  }
+  $('#resHead').innerHTML = `<tr><th>#</th><th>${t('driver')}</th><th class="t">${t('time')}</th><th class="t">${t('best')}</th></tr>`;
+  if (S.gameMode === 'cup' && S.cup && !S.cup.done) fillCup(true);
   $('#resBody').innerHTML = st.map((c, i) => {
     const time = c.finished ? fmt(c.finishTime) : `<span class="dim">${t('lapOf', { a: Math.min(S.laps, Math.max(1, c.lapsDone + 1)), b: S.laps })}</span>`;
     return `<tr class="${c.isPlayer ? 'me' : ''}"><td>${i + 1}</td><td><span class="sw" style="background:${c.color}"></span>${drvName(c)}</td><td class="t">${time}</td><td class="t">${fmt(c.best)}</td></tr>`;
@@ -1813,6 +2017,7 @@ function render(dt) {
     const r = 700 / z;
     S.parts.push({ x: S.cam.x - r + Math.random() * 2 * r, y: S.cam.y - r + Math.random() * 2 * r, vx: (Math.random() - .5) * 20, vy: -30 - Math.random() * 40, life: 1.4, max: 1.4, r: 1.6, col: '255,200,90' });
   }
+  drawGhost(tm);
   for (const c of S.cars) drawCar(c, tm);
   drawHazards(tm, true);
   if (map.night) drawNight();
@@ -1988,6 +2193,17 @@ function closeSettings() {
 }
 
 // ---------- menu ----------
+function syncMode() {
+  $('#modeSeg').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode === S.gameMode)));
+  $('#rivalsSec').hidden = S.gameMode === 'trial';
+  $('#trackNote').hidden = S.gameMode !== 'cup';
+  $('#maps').classList.toggle('locked', S.gameMode === 'cup');
+}
+function setGhost(on) {
+  S.ghostOn = !!on;
+  $('#ghostSeg').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String((b.dataset.ghost === 'on') === S.ghostOn)));
+  store.set('turbo-krug-ghost', S.ghostOn ? 'on' : 'off');
+}
 function renderMapList() {
   const box = $('#maps');
   if (!box.children.length) {
@@ -2113,6 +2329,15 @@ $('#setDone').addEventListener('click', closeSettings);
 $('#vol').addEventListener('input', e => setVolume(+e.target.value));
 $('#langSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (b) setLang(b.dataset.lang); });
 $('#hazSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (b) setHaz(b.dataset.haz === 'on'); });
+$('#ghostSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (b) setGhost(b.dataset.ghost === 'on'); });
+$('#tutReset').addEventListener('click', () => { S.tut = {}; store.set('turbo-krug-tut', '{}'); $('#tutReset').textContent = t('tutResetDone'); });
+$('#modeSeg').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  S.gameMode = b.dataset.mode; store.set('turbo-krug-mode', S.gameMode); S.cup = null; syncMode();
+  if (S.gameMode === 'cup' && S.mapIndex !== 0) { setupMap(0); resetRace('menu'); renderMapList(); }
+});
+$('#cupNextBtn').addEventListener('click', cupNext);
+$('#newCupBtn').addEventListener('click', startCup);
 $('#pauseBtn').addEventListener('click', () => togglePause());
 $('#resumeBtn').addEventListener('click', () => togglePause());
 $('#restartBtn').addEventListener('click', startRace);
@@ -2131,7 +2356,7 @@ function frame(now) {
     while (accT >= DT) { step(DT); accT -= DT; }
   }
   render(S.mode === 'paused' ? 0 : dt);
-  if (S.mode !== 'menu') updHud(dt);
+  if (S.mode !== 'menu') { updHud(dt); updHint(dt); }
   updAudio();
   requestAnimationFrame(frame);
 }
@@ -2160,6 +2385,9 @@ function start(data) {
   if ([0, 1, 2].includes(sd)) S.diff = sd;
   const v = parseInt(store.get('turbo-krug-vol'), 10); setVolume(v >= 0 && v <= 100 ? v : 60);
   setHaz(store.get('turbo-krug-haz') !== 'off');
+  setGhost(store.get('turbo-krug-ghost') !== 'off');
+  try { S.tut = JSON.parse(store.get('turbo-krug-tut') || '{}') || {}; } catch (e) { S.tut = {}; }
+  const gm = store.get('turbo-krug-mode'); if (['race', 'cup', 'trial'].includes(gm)) S.gameMode = gm;
   loadWallet();
   resize();
   const sl = store.get('turbo-krug-lang');
