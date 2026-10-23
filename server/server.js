@@ -8,7 +8,8 @@ const path = require('path');
 
 const PORT = +process.env.PORT || 4100;
 const DATA = process.env.DATA || path.join(__dirname, 'data');
-const MAPS = ['valley', 'canyon', 'pass', 'city', 'volcano', 'beach', 'jungle', 'space', 'meadow', 'autumn', 'farm', 'dunes', 'mesa', 'oasis', 'glacier', 'alpine', 'polar', 'neon', 'harbor', 'raincity', 'ashlands', 'inferno', 'tropic', 'lagoon', 'swamp', 'temple', 'moon', 'mars', 'station', 'haunted']; // keep in sync with MAPS in the game
+const MAPS = ['valley', 'canyon', 'pass', 'city', 'volcano', 'beach', 'jungle', 'space', 'meadow', 'autumn', 'farm', 'dunes', 'mesa', 'oasis', 'glacier', 'alpine', 'polar', 'neon', 'harbor', 'raincity', 'ashlands', 'inferno', 'tropic', 'lagoon', 'swamp', 'temple', 'moon', 'mars', 'station', 'haunted', 'kitchen', 'room', 'street', 'billiard']; // keep in sync with MAPS in the game
+const QUICK_MAPS = MAPS.slice(0, 30); // quick matches use the main tracks, not the mini ones
 const VEHICLES = /^[a-z0-9]{2,16}$/;
 const MAX_PLAYERS = 5;
 const RELAYED = new Set(['s', 'b', 'hz', 'oil', 'fin', 'fx', 'trap']);
@@ -250,7 +251,7 @@ function onMessage(c, m) {
       let room = [...rooms.values()].find(x => x.quick && !x.started && x.clients.size < MAX_PLAYERS && x !== r);
       if (r) leave(c);
       setProfile(c, m);
-      if (!room) { room = { code: newCode(), host: c, clients: new Set(), started: false, quick: true, cfg: { map: MAPS[crypto.randomInt(MAPS.length)], laps: 3, bots: true } }; rooms.set(room.code, room); armQuick(room, QUICK_WAIT); }
+      if (!room) { room = { code: newCode(), host: c, clients: new Set(), started: false, quick: true, cfg: { map: QUICK_MAPS[crypto.randomInt(QUICK_MAPS.length)], laps: 3, bots: true } }; rooms.set(room.code, room); armQuick(room, QUICK_WAIT); }
       room.clients.add(c); c.room = room;
       if (room.clients.size >= MAX_PLAYERS) armQuick(room, 2500); // full: go almost at once
       broadcast(room, roomState(room)); return;
@@ -262,7 +263,7 @@ function onMessage(c, m) {
       r.cfg = { map: MAPS.includes(m.map) ? m.map : r.cfg.map, laps: [1, 3, 5].includes(m.laps) ? m.laps : r.cfg.laps, bots: !!m.bots };
       broadcast(r, roomState(r)); return;
     case 'start': if (r && r.host === c && !r.quick) startRoom(r); return;
-    case 'lobby': if (r && r.host === c) { r.started = false; if (r.quick) { r.cfg.map = MAPS[crypto.randomInt(MAPS.length)]; armQuick(r, QUICK_WAIT); } broadcast(r, roomState(r)); } return;
+    case 'lobby': if (r && r.host === c) { r.started = false; if (r.quick) { r.cfg.map = QUICK_MAPS[crypto.randomInt(QUICK_MAPS.length)]; armQuick(r, QUICK_WAIT); } broadcast(r, roomState(r)); } return;
     case 'b': case 'hz': // bots and hazards are simulated by the host only
       if (r && r.started && r.host === c) { m.id = c.id; broadcast(r, m, c); }
       return;

@@ -592,6 +592,7 @@ body.touchmode.steer-btn .hud-bl{bottom:calc(env(safe-area-inset-bottom,0px) + 1
       <div class="mp-head"><button class="back" data-back="home" data-t-aria="back" aria-label="Назад">←</button><div><p class="label" data-t="step1">Шаг 1 из 2</p><h2 data-t="chooseMode">Выберите режим</h2></div></div>
       <div id="modeSeg" class="modes">
         <button data-mode="career" aria-pressed="false"><i aria-hidden="true">🏅</i><b data-t="mCareer">Карьера</b><span data-t="mCareerSub">4 лиги с заданиями и наградами</span></button>
+        <button data-mode="mini" aria-pressed="false"><i aria-hidden="true">🧸</i><b data-t="mMini">Мини-гонки</b><span data-t="mMiniSub">Маленькие машинки в огромном мире</span></button>
         <button data-mode="race" aria-pressed="true"><i aria-hidden="true">🏁</i><b data-t="mRace">Гонка</b><span data-t="mRaceSub">Одна трасса с ботами</span></button>
         <button data-mode="cup" aria-pressed="false"><i aria-hidden="true">🏆</i><b data-t="mCup">Чемпионат</b><span data-t="mCupSub">5 трасс подряд, очки за места</span></button>
         <button data-mode="trial" aria-pressed="false"><i aria-hidden="true">⏱</i><b data-t="mTrial">На время</b><span data-t="mTrialSub">Только вы и секундомер</span></button>
@@ -885,6 +886,11 @@ const STR = {
   ru: {
     title: 'Турбо <span>Круг</span>', lede: 'Тридцать трасс, четыре соперника и сюрпризы на дороге. Держи газ в пол и финишируй первым.',
     story: 'Сюжет', storySub: 'новые главы открываются по ходу карьеры', chapter: 'Глава {n} из {m}', comicNext: 'Далее', comicDone: 'Готово', comicSkip: 'Пропустить',
+    mMini: 'Мини-гонки', mMiniSub: 'Маленькие машинки в огромном мире',
+    'map.kitchen': 'Кухня', 'map.kitchen.note': 'Между ножками стульев и кружками размером с дом', 'map.kitchen.chip': 'Лужа воды',
+    'map.room': 'Детская', 'map.room.note': 'Ковёр, кубики, книги и плюшевый медведь-великан', 'map.room.chip': 'Трамплин',
+    'map.street': 'Улица', 'map.street.note': 'Тротуар, где каждый камешек — валун, а банка — небоскрёб', 'map.street.chip': 'Лужи',
+    'map.billiard': 'Бильярд', 'map.billiard.note': 'Гонка по сукну между шарами и кием', 'map.billiard.chip': 'Шары',
     mCareer: 'Карьера', mCareerSub: '4 лиги с заданиями и наградами', lgLocked: 'откроется после 3 заданий прошлой лиги',
     'lg.rookie': 'Новичок', 'lg.amateur': 'Любитель', 'lg.pro': 'Профи', 'lg.legend': 'Легенда',
     'goal.top3': 'Финишируйте в тройке', 'goal.win': 'Победите', 'goal.clean': 'В тройке, корпус целее 80%',
@@ -1072,6 +1078,11 @@ const STR = {
   en: {
     title: 'Turbo <span>Lap</span>', lede: 'Thirty tracks, four rivals and surprises on the road. Keep it floored and finish first.',
     story: 'Story', storySub: 'new chapters unlock as your career goes on', chapter: 'Chapter {n} of {m}', comicNext: 'Next', comicDone: 'Done', comicSkip: 'Skip',
+    mMini: 'Mini races', mMiniSub: 'Tiny cars in a giant world',
+    'map.kitchen': 'Kitchen', 'map.kitchen.note': 'Between chair legs and mugs the size of houses', 'map.kitchen.chip': 'Spilt water',
+    'map.room': 'Playroom', 'map.room.note': 'Carpet, toy blocks, books and a giant teddy bear', 'map.room.chip': 'Ramp',
+    'map.street': 'Pavement', 'map.street.note': 'Where every pebble is a boulder and a can a skyscraper', 'map.street.chip': 'Puddles',
+    'map.billiard': 'Pool table', 'map.billiard.note': 'Racing on the cloth between the balls and the cue', 'map.billiard.chip': 'Balls',
     mCareer: 'Career', mCareerSub: '4 leagues with goals and rewards', lgLocked: 'opens after 3 races of the previous league',
     'lg.rookie': 'Rookie', 'lg.amateur': 'Amateur', 'lg.pro': 'Pro', 'lg.legend': 'Legend',
     'goal.top3': 'Finish in the top three', 'goal.win': 'Win', 'goal.clean': 'Top three, hull above 80%',
@@ -1378,8 +1389,15 @@ const MAPS = [
   {id: 'mars', th: 'space', deco: 'mars', grip: 10, offMul: 0.55, offDrag: 1.3, width: 175, margin: 60, aLat: 820, gravity: 560, seed: 233, hz: ['tornado','meteor'], feats: ['wind'], rock: ['#8a3e1e','#c46a3a'], sky3: {sky: ['#c4703a','#f0c49a'], fog: 14195306, sun: 16769216, sunI: 1, hs: 16765088, hg: 6958614}, hzc: {c: '#8a3e1e', top: '#c46a3a'}, c: {ground: '#a8502a', speck: '#c06a38', speck2: '#8a3e1e', barrier: '#c9ced8', barrier2: '#ff6a1f', asphalt: '#4a3430', curbA: '#ffb02a', curbB: '#e8ecf4', line: 'rgba(140,200,255,.65)', skid: 'rgba(0,0,0,.4)', dust: '170,190,230', shoulder: '#6a2e16'}, pts: [[1886,333],[1552,593],[1523,640],[1346,857],[979,888],[626,831],[303,1037],[356,1255],[496,1388],[677,1427],[921,1634],[1005,1711],[1141,1962],[1532,1926],[1999,1918],[2287,1697],[2224,1464],[2249,1082],[2539,905],[2613,846],[2790,662],[2810,571],[2570,265],[2233,273]], ramps: [0.35,0.72]},
   {id: 'station', th: 'space', deco: 'space', grip: 10, offMul: 0.55, offDrag: 1.3, width: 175, margin: 60, aLat: 820, gravity: 520, seed: 240, hz: ['drone','ufo'], feats: ['portal', 'lowg'], c: {ground: '#1e2232', speck: '#323849', speck2: '#22263a', barrier: '#c9ced8', barrier2: '#ff6a1f', asphalt: '#3a3f52', curbA: '#16d6ff', curbB: '#e8ecf4', line: 'rgba(22,214,255,.7)', skid: 'rgba(0,0,0,.4)', dust: '170,190,230', shoulder: '#1c2030'}, pts: [[1900,1980],[560,1980],[300,1756],[300,1644],[560,1420],[1260,1420],[1960,1420],[2220,1196],[2220,1084],[1964,860],[1836,860],[1580,636],[1580,524],[1840,300],[2540,300],[3240,300],[3500,560],[3500,1140],[3500,1720],[3240,1980]]},
   {id: 'haunted', th: 'valley', deco: 'haunted', grip: 10, offMul: 0.5, offDrag: 1.4, width: 170, margin: 95, aLat: 820, seed: 247, hz: ['lightning','boar'], feats: ['portal', 'bumps'], dark: true, wx: 'fog', leaf: ['#2a2a22','#3a3020','#1e2418'], hzc: {c: '#1e2a22', top: '#2a3a2e'}, c: {ground: '#2a3a26', speck: '#3a4a2a', speck2: '#1e2a1c', barrier: '#5a5a62', barrier2: '#ff7a1a', asphalt: '#2e2e34', curbA: '#ff7a1a', curbB: '#1e1e24', line: 'rgba(255,255,255,.5)', skid: 'rgba(18,18,20,.32)', dust: '120,90,50'}, pts: [[2208,2041],[3209,1949],[3474,1690],[3509,1108],[3541,607],[3257,363],[2876,289],[2468,320],[2205,592],[2170,917],[2192,1114],[1964,1380],[1863,1389],[1599,1189],[1554,925],[1546,553],[1345,355],[1172,322],[885,563],[875,1072],[965,1746],[1259,2000]]},
+  // mini races: toy cars in a giant world (their own section in the menu)
+  {id: 'kitchen',mini: true,th: 'valley',deco: 'mini',grip: 9.5,offMul: 0.6,offDrag: 1.2,width: 150,margin: 70,aLat: 840,floor: 'tiles',indoor: true,wall: '#f1e3c4',seed: 401,hz: ['boulder'],feats: ['water'],look: {ball: '#ff8a1f'},c: {ground: '#ece8df',speck: '#d4cec3',speck2: '#f6f3ec',barrier: '#c49553',barrier2: '#b07d43',asphalt: '#ece8df',curbA: '#2e7cf6',curbB: '#2e7cf6',line: 'rgba(0,0,0,0)',skid: 'rgba(40,30,20,.22)',dust: '210,200,180'},sky3: {sky: ['#f1e3c4','#f1e3c4'],fog: 15852484,near: 3000,far: 9000,sun: 16773852,sunI: 0.55,hs: 16774368,hg: 10127984,hI: 0.62},pts: [[1260,300],[1960,300],[2220,524],[2220,636],[1964,860],[1836,860],[1580,1084],[1580,1196],[1836,1420],[1964,1420],[2220,1644],[2220,1756],[1960,1980],[1260,1980],[560,1980],[300,1720],[300,1140],[300,560],[560,300]]},
+  {id: 'room',mini: true,th: 'valley',deco: 'mini',grip: 9.5,offMul: 0.6,offDrag: 1.2,width: 150,margin: 70,aLat: 840,floor: 'carpet',indoor: true,wall: '#cfe0ee',seed: 409,hz: ['tumble'],feats: ['jump'],c: {ground: '#8a5a9a',speck: '#7a4a8a',speck2: '#9a6aaa',barrier: '#e5372b',barrier2: '#2e7cf6',asphalt: '#a06cae',curbA: '#ffc629',curbB: '#ffc629',line: 'rgba(0,0,0,0)',skid: 'rgba(30,10,40,.25)',dust: '200,180,210'},sky3: {sky: ['#cfe0ee','#cfe0ee'],fog: 13623534,near: 3000,far: 9000,sun: 16774888,sunI: 0.55,hs: 16052479,hg: 6965882,hI: 0.62},pts: [[1248,2043],[2017,1978],[2194,1805],[2274,1586],[2407,1397],[2535,1363],[2893,1118],[2879,925],[2853,527],[2634,280],[2435,343],[2241,454],[2170,701],[1911,892],[1791,852],[1624,701],[1547,557],[1291,304],[958,313],[586,310],[319,589],[339,1079],[247,1784],[626,1934]]},
+  {id: 'street',mini: true,th: 'valley',deco: 'mini',grip: 9.5,offMul: 0.6,offDrag: 1.2,width: 150,margin: 70,aLat: 840,floor: 'asphalt',seed: 419,hz: ['tumble'],feats: ['water','bumps'],c: {ground: '#55585e',speck: '#6a6d73',speck2: '#45484e',barrier: '#b8b8b8',barrier2: '#a2a2a2',asphalt: '#b9bbbd',curbA: '#f4f1ea',curbB: '#f4f1ea',line: 'rgba(0,0,0,0)',skid: 'rgba(20,20,20,.3)',dust: '170,170,170'},sky3: {near: 3500,far: 9000},pts: [[2238,2005],[3294,1952],[3519,1822],[3545,1600],[3310,1431],[3142,1432],[2808,1218],[2863,906],[2795,501],[2555,244],[2261,320],[1784,232],[1557,461],[1563,633],[1323,924],[901,902],[534,795],[316,1021],[332,1237],[546,1436],[705,1464],[872,1634],[984,1774],[1174,2030]]},
+  {id: 'billiard',mini: true,th: 'valley',deco: 'mini',grip: 9.5,offMul: 0.6,offDrag: 1.2,width: 150,margin: 70,aLat: 840,floor: 'felt',indoor: true,wall: '#3a2a22',seed: 431,hz: ['boulder'],feats: ['boost'],look: {ball: '#f4f1ea'},c: {ground: '#1f7a45',speck: '#1c7040',speck2: '#22844b',barrier: '#1a6a3a',barrier2: '#176034',asphalt: '#24894f',curbA: '#f4f1ea',curbB: '#f4f1ea',line: 'rgba(0,0,0,0)',skid: 'rgba(0,30,10,.25)',dust: '40,130,80'},sky3: {sky: ['#2a1e18','#2a1e18'],fog: 2760216,near: 3000,far: 9000,sun: 16770736,sunI: 1,hs: 16770752,hg: 3153946,hI: 0.6},pts: [[700,500],[1600,450],[2500,500],[3000,700],[3050,1100],[2850,1450],[2400,1500],[2000,1300],[1600,1450],[1150,1550],[700,1500],[450,1150],[450,750]]},
 ];
 const TH = m => m.th || m.id; // the look a track is built from
+const inGroup = (m, mini) => !!m.mini === !!mini; // the main tracks and the mini tracks are two separate lists
+const groupIdx = mini => MAPS.map((m, i) => i).filter(i => inGroup(MAPS[i], mini));
 
 // ---------- helpers ----------
 const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
@@ -1546,6 +1564,7 @@ function makeDeco(kind, r, x, y, map) {
 }
 function poly(r, n) { const out = []; for (let i = 0; i < n; i++) { const a = i / n * Math.PI * 2 + r() * .4; const k = .7 + r() * .4; out.push(Math.cos(a) * k, Math.sin(a) * k); } return out; }
 function genDecor(map, tr) {
+  if (map.mini) return { decor: [], lamps: [] }; // giant props are built in 3D only
   const r = rng(map.seed), out = [], lamps = [];
   const pad = 420, x0 = tr.minX - pad, y0 = tr.minY - pad, x1 = tr.maxX + pad, y1 = tr.maxY + pad;
   const area = (x1 - x0) * (y1 - y0);
@@ -1575,6 +1594,7 @@ function makeGround(map) {
   const g = document.createElement('canvas'); g.width = g.height = 256;
   const x = g.getContext('2d'), r = rng(map.seed * 7);
   x.fillStyle = map.c.ground; x.fillRect(0, 0, 256, 256);
+  if (map.floor) { drawFloor(x, map, 256, 256); map._groundCanvas = g; return ctx.createPattern(g, 'repeat'); }
   const tiled = fn => { for (const ox of [-256, 0, 256]) for (const oy of [-256, 0, 256]) { x.save(); x.translate(ox, oy); fn(); x.restore(); } };
   if (map.lava) {
     for (let i = 0; i < 34; i++) {
@@ -1654,6 +1674,7 @@ const isSnowy = map => !!map && map.deco === 'snow';
 // and your last land vehicle goes out instead.
 function rideFor(id, map) {
   const own = x => wallet.owned.includes(x.id), pick = CARS.find(x => x.id === id && own(x)) || CARS[0];
+  if (map && map.mini) return pick.type === 'car' ? pick : CARS.find(x => x.id === wallet.land && own(x) && x.type === 'car') || CARS[0]; // mini races are for toy cars
   if (isSnowy(map)) return pick.type === 'sled' ? pick : CARS.find(x => x.type === 'sled' && own(x)) || pick;
   if (pick.type !== 'sled') return pick;
   return CARS.find(x => x.id === wallet.land && own(x) && x.type !== 'sled') || CARS[0];
@@ -2060,6 +2081,7 @@ const isNight = () => !!(S.map && (S.map.night || S.map.dark || S.nightNow));
 function rollConditions() {
   const ws = S.weatherSel, ns = S.nightSel;
   S.weatherNow = ws === 'random' ? (Math.random() < .55 ? 'clear' : Math.random() < .6 ? 'rain' : 'fog') : ws;
+  if (S.map && S.map.mini) { S.weatherNow = 'clear'; S.nightNow = false; return; } // indoors (and the pavement) there is no weather
   if (S.gameMode === 'daily' && S.daily) { S.weatherNow = S.daily.weather; S.nightNow = S.daily.night; return; } // the same for everyone today
   if (S.gameMode === 'career') { S.weatherNow = (S.map && S.map.wx) || 'clear'; S.nightNow = false; return; }
   if (ws === 'clear' && S.map && S.map.wx) S.weatherNow = S.map.wx; // some tracks have their own weather unless you pick one
@@ -2314,6 +2336,115 @@ function drawPit(map, tr) {
   ctx.fillStyle = 'rgba(255,198,41,.85)'; ctx.font = '400 30px "Russo One", sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('PIT', 0, 0);
   ctx.restore();
   ctx.lineCap = 'round';
+}
+
+// ---------- mini races: toy cars on a kitchen floor, a carpet, a pavement and a pool table ----------
+// The cars keep their size; everything around is built huge (a cup is ten cars tall), so the world feels giant.
+function drawFloor(x, map, w, h) { // the floor pattern, 256 px = a few car lengths
+  const r = rng(map.seed * 11), C = map.c;
+  x.fillStyle = C.ground; x.fillRect(0, 0, w, h);
+  if (map.floor === 'tiles') { // big ceramic tiles with grout
+    x.fillStyle = '#8a8478'; x.fillRect(0, 0, w, h); // grout
+    for (let i = 0; i < 2; i++) for (let j = 0; j < 2; j++) { x.fillStyle = (i + j) % 2 ? '#ecebe6' : '#b9bcc4'; x.fillRect(i * 128 + 3, j * 128 + 3, 122, 122); }
+    for (let i = 0; i < 400; i++) { x.fillStyle = 'rgba(0,0,0,.03)'; x.fillRect(r() * w, r() * h, 2, 2); }
+  } else if (map.floor === 'carpet') { // soft pile with a diamond pattern
+    for (let i = 0; i < 5000; i++) { x.fillStyle = r() < .5 ? C.speck : C.speck2; x.fillRect(r() * w, r() * h, 2, 2); }
+    x.strokeStyle = 'rgba(255,220,120,.35)'; x.lineWidth = 3; x.beginPath(); x.moveTo(128, 8); x.lineTo(248, 128); x.lineTo(128, 248); x.lineTo(8, 128); x.closePath(); x.stroke();
+  } else if (map.floor === 'asphalt') { // coarse asphalt: at toy scale every stone is a boulder
+    for (let i = 0; i < 260; i++) { const g = 70 + r() * 60 | 0; x.fillStyle = `rgb(${g},${g},${g + 4})`; x.beginPath(); x.ellipse(r() * w, r() * h, 3 + r() * 8, 2 + r() * 6, r() * 3, 0, 7); x.fill(); }
+  } else if (map.floor === 'felt') { // pool-table cloth
+    for (let i = 0; i < 6000; i++) { x.fillStyle = r() < .5 ? C.speck : C.speck2; x.fillRect(r() * w, r() * h, 1.5, 1.5); }
+  }
+}
+function miniRoadTex(map) { // the track surface: the same floor, cleaner, plus a pale chalk lane
+  return cTex(256, 256, (x, w, h) => {
+    if (map.floor === 'asphalt') { // a pavement of concrete slabs
+      x.fillStyle = '#c3c5c7'; x.fillRect(0, 0, w, h); x.fillStyle = 'rgba(0,0,0,.18)'; x.fillRect(0, 0, w, 3); x.fillRect(0, 0, 3, h); x.fillRect(0, 127, w, 2); x.fillRect(127, 0, 2, h);
+      const r = rng(5); for (let i = 0; i < 900; i++) { x.fillStyle = r() < .5 ? 'rgba(255,255,255,.12)' : 'rgba(0,0,0,.08)'; x.fillRect(r() * w, r() * h, 2, 2); }
+    } else { drawFloor(x, map, w, h); x.fillStyle = 'rgba(255,255,255,.12)'; x.fillRect(0, 0, w, h); }
+  });
+}
+// ---- giant props, each a small group of primitives; sizes in track pixels (a car is 38 long)
+function prop(kind, r) {
+  const g = new THREE.Group(), M = c => facet(c), add = (geo, mat, sx, sy, sz, x, y, z) => part(geo, mat, sx, sy, sz, x, y, z, g);
+  const pick = a => a[(r() * a.length) | 0];
+  switch (kind) {
+    case 'fridge': add('box', M('#f4f6f8'), 520, 1500, 460, 0, 750, 0); add('box', M('#d8dde2'), 524, 8, 464, 0, 1000, 0); add('box', M('#9aa0aa'), 16, 260, 30, 262, 1180, 140); add('box', M('#9aa0aa'), 16, 160, 30, 262, 820, 140); break;
+    case 'counter': add('box', M('#b07d43'), 1100, 560, 520, 0, 280, 0); add('box', M('#e8e4dc'), 1140, 30, 560, 0, 575, 0); for (const z of [-275, 275]) for (const xx of [-270, 270]) add('box', M('#8a5a30'), 500, 4, 4, xx, 300, z * .99 + Math.sign(z) * 2); add('box', M('#9aa0aa'), 60, 10, 14, -60, 470, 270); add('box', M('#9aa0aa'), 60, 10, 14, 60, 470, 270); break;
+    case 'chair': for (const a of [-1, 1]) for (const b of [-1, 1]) add('cyl', M('#8a5a30'), 22, 640, 22, a * 170, 320, b * 170); add('box', M('#a06a3a'), 420, 40, 420, 0, 660, 0); for (const a of [-1, 1]) add('cyl', M('#8a5a30'), 18, 700, 18, a * 170, 1010, -190); add('box', M('#a06a3a'), 420, 160, 30, 0, 1300, -190); break;
+    case 'cup': { const c = pick(['#e5372b', '#2e7cf6', '#f4f1ea', '#1fb36b', '#ffc629']); add('cyl', M(c), 80, 190, 80, 0, 95, 0); add('cyl', M('#3a2010'), 72, 2, 72, 0, 186, 0); const h = new THREE.Mesh(GEO.ring3 || (GEO.ring3 = new THREE.TorusGeometry(1, .22, 6, 14)), M(c)); h.scale.setScalar(45); h.position.set(95, 100, 0); g.add(h); break; }
+    case 'plate': add('cyl', M('#f4f6f8'), 230, 10, 230, 0, 5, 0); add('cyl', M('#e2e6ea'), 160, 2, 160, 0, 11, 0); if (r() < .6) add('sph', M(pick(['#ffc629', '#e5372b', '#7cc04a'])), 60, 40, 60, 30, 40, -20); break;
+    case 'apple': add('sph', M('#d62b2b'), 95, 88, 95, 0, 85, 0); add('cyl', M('#5a3a1e'), 6, 40, 6, 0, 190, 0); add('sph', M('#3f8a35'), 30, 8, 18, 22, 180, 0); break;
+    case 'orange': add('sph', M('#ff8a1f'), 90, 86, 90, 0, 86, 0); add('sph', M('#3f8a35'), 10, 6, 10, 0, 172, 0); break;
+    case 'cereal': add('box', M(pick(['#ffc629', '#e5372b', '#2e7cf6'])), 360, 520, 120, 0, 260, 0); add('sph', M('#f4f1ea'), 90, 90, 6, 0, 330, 62); break;
+    case 'spoon': add('box', M('#c9ced8'), 520, 10, 40, 0, 6, 0); add('sph', M('#c9ced8'), 90, 22, 60, 300, 12, 0); break;
+    case 'bed': add('box', M('#8a5a30'), 1500, 260, 1000, 0, 130, 0); add('box', M('#f4f1ea'), 1460, 140, 960, 0, 330, 0); add('box', M(pick(['#2e7cf6', '#e5372b', '#1fb36b'])), 1000, 60, 1000, 240, 420, 0); add('box', M('#f4f6f8'), 320, 100, 600, -560, 450, 0); add('box', M('#6a4020'), 60, 900, 1020, -760, 450, 0); break;
+    case 'block': { const s = 110 + r() * 70; add('box', M(pick(['#e5372b', '#2e7cf6', '#ffc629', '#1fb36b', '#ff5fa8'])), s, s, s, 0, s / 2, 0); add('box', M('#f4f1ea'), s * .5, s * .5, 4, 0, s / 2, s / 2 + 1); break; }
+    case 'books': { let y = 0; const n = 2 + (r() * 3 | 0); for (let i = 0; i < n; i++) { const h = 50 + r() * 40; add('box', M(pick(['#c8342b', '#2e5ea0', '#3f8a35', '#7a3fd1', '#d9822b'])), 420 - i * 20, h, 300 - i * 10, (r() - .5) * 40, y + h / 2, (r() - .5) * 40).rotation.y = (r() - .5) * .4; y += h; } break; }
+    case 'ball': { const c1 = pick(['#e5372b', '#2e7cf6', '#ffc629']); add('sph', M(c1), 210, 210, 210, 0, 210, 0); add('cyl', M('#f4f1ea'), 214, 60, 214, 0, 210, 0); break; }
+    case 'bear': add('sph', M('#a0683a'), 170, 190, 150, 0, 190, 0); add('sph', M('#a0683a'), 120, 110, 110, 0, 450, 0); for (const s of [-1, 1]) { add('sph', M('#a0683a'), 45, 45, 25, 0, 560, s * 80); add('sph', M('#a0683a'), 60, 110, 60, 40, 120, s * 150); add('sph', M('#111'), 12, 12, 12, 100, 470, s * 40); } add('sph', M('#e2b48a'), 50, 40, 50, 105, 430, 0); break;
+    case 'pencil': { const L = 900; const p1 = add('cyl6', M('#ffc629'), 26, L, 26, 0, 26, 0); p1.rotation.z = Math.PI / 2; const tip = add('cone', M('#e2b48a'), 26, 90, 26, L / 2 + 45, 26, 0); tip.rotation.z = -Math.PI / 2; const pin = add('cone', M('#222'), 9, 30, 9, L / 2 + 80, 26, 0); pin.rotation.z = -Math.PI / 2; const er = add('cyl', M('#ff7a8a'), 26, 60, 26, -L / 2 - 30, 26, 0); er.rotation.z = Math.PI / 2; break; }
+    case 'lamp': add('cyl', M('#3a3a40'), 120, 20, 120, 0, 10, 0); add('cyl', M('#9aa0aa'), 14, 900, 14, 0, 460, 0); add('cone', M('#ffe6a0'), 260, 260, 260, 0, 980, 0); break;
+    case 'can': { const c = pick(['#e5372b', '#2e7cf6', '#1fb36b']); add('cyl', M(c), 70, 250, 70, 0, 125, 0); add('cyl', M('#c9ced8'), 66, 14, 66, 0, 256, 0); add('box', M('#f4f1ea'), 6, 120, 80, 72, 130, 0); break; }
+    case 'leaf': { const l = add('sph', M(pick(['#7cc04a', '#d9822b', '#c0461f', '#e2b23a'])), 220, 8, 120, 0, 6, 0); l.rotation.y = r() * 6; break; }
+    case 'pebble': { const s = 40 + r() * 90; add('dode', M(pick(['#8a8c94', '#a0a2a8', '#7a7c84'])), s, s * .7, s * .85, 0, s * .35, 0).rotation.set(r(), r() * 6, r()); break; }
+    case 'tcone': add('cone', M('#ff6a1a'), 240, 760, 240, 0, 380, 0); add('cyl', M('#f4f1ea'), 150, 80, 150, 0, 470, 0); add('box', M('#ff6a1a'), 520, 30, 520, 0, 15, 0); break;
+    case 'tire': { const t = new THREE.Mesh(GEO.ring3 || (GEO.ring3 = new THREE.TorusGeometry(1, .22, 6, 14)), M('#1e1e22')); t.scale.set(420, 420, 650); t.position.y = 512; g.add(t); break; }
+    case 'grass': for (let i = 0; i < 5; i++) add('cone', M(pick(['#4f8f3a', '#3c7a2e', '#6aa44a'])), 18, 160 + r() * 200, 8, (r() - .5) * 120, 90, (r() - .5) * 120).rotation.z = (r() - .5) * .5; break;
+    case 'bottle': add('cyl', new THREE.MeshPhongMaterial({ color: 0x3a9a5a, transparent: true, opacity: .65, shininess: 120 }), 70, 420, 70, 0, 210, 0); add('cyl', M('#2a7a4a'), 26, 120, 26, 0, 480, 0); break;
+    case 'pball': { const n = 1 + (r() * 15 | 0), c = ['#ffc629', '#2e5ea0', '#e5372b', '#7a3fd1', '#ff7a1a', '#1f7a45', '#8a2a20', '#111111'][n % 8]; add('sph', M(c), 120, 120, 120, 0, 120, 0); add('sph', M('#f4f1ea'), 46, 46, 46, 70, 180, 50); break; }
+    case 'chalk': add('box', M('#2e7cf6'), 110, 110, 110, 0, 55, 0); add('box', M('#1a5aa0'), 80, 4, 80, 0, 111, 0); break;
+    case 'cue': { const c = add('cyl', M('#c49553'), 22, 3200, 22, 0, 24, 0); c.rotation.z = Math.PI / 2; const t = add('cyl', M('#3a2010'), 30, 900, 30, -1500, 30, 0); t.rotation.z = Math.PI / 2; break; }
+  }
+  g.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
+  return g;
+}
+const MINI_PROPS = {
+  kitchen: [['fridge', 1, 900], ['counter', 2, 760], ['chair', 3, 360], ['cup', 6, 140], ['plate', 4, 240], ['apple', 4, 110], ['orange', 4, 110], ['cereal', 3, 220], ['spoon', 3, 320]],
+  room: [['bed', 1, 1000], ['block', 9, 120], ['books', 5, 260], ['ball', 2, 230], ['bear', 2, 240], ['pencil', 4, 500], ['lamp', 1, 200]],
+  street: [['can', 4, 120], ['leaf', 12, 170], ['pebble', 14, 90], ['tcone', 2, 300], ['tire', 1, 500], ['grass', 14, 90], ['bottle', 2, 120]],
+  billiard: [['pball', 12, 130], ['chalk', 3, 90], ['cue', 1, 1700]],
+};
+function buildMini3D(map, g) {
+  const tr = map._track, hw = map.width / 2, r = rng(map.seed * 97), lim = hw + map.margin + 20;
+  const x0 = tr.minX - 700, x1 = tr.maxX + 700, z0 = tr.minY - 700, z1 = tr.maxY + 700;
+  // props: rejection sampling around the track, never on it
+  const placed = [];
+  for (const [kind, n, rad] of MINI_PROPS[map.id] || []) for (let i = 0; i < n; i++) for (let tries = 0; tries < 40; tries++) {
+    const x = x0 + r() * (x1 - x0), z = z0 + r() * (z1 - z0);
+    if (nearDist(tr, x, z) < lim + rad) continue;
+    if (placed.some(q => Math.hypot(q[0] - x, q[1] - z) < q[2] + rad)) continue;
+    const m = prop(kind, r); m.position.set(x, 0, z); m.rotation.y = r() * 6.28; g.add(m); placed.push([x, z, rad]); break;
+  }
+  if (map.id === 'billiard') { // the table: a wooden rail all round, pockets in the corners and the middles
+    const W = x1 - x0, D = z1 - z0, wood = facet('#6a3a1e'), cush = facet('#176034');
+    for (const [cx, cz, sx, sz] of [[(x0 + x1) / 2, z0, W + 200, 120], [(x0 + x1) / 2, z1, W + 200, 120], [x0, (z0 + z1) / 2, 120, D], [x1, (z0 + z1) / 2, 120, D]]) { part('box', wood, sx, 140, sz, cx, 70, cz, g); part('box', cush, sx > sz ? sx - 240 : 40, 60, sx > sz ? 40 : sz - 240, cx + (sx > sz ? 0 : (cx < (x0 + x1) / 2 ? 80 : -80)), 60, cz + (sx > sz ? (cz < (z0 + z1) / 2 ? 80 : -80) : 0), g); }
+    for (const [px, pz] of [[x0 + 90, z0 + 90], [x1 - 90, z0 + 90], [x0 + 90, z1 - 90], [x1 - 90, z1 - 90], [(x0 + x1) / 2, z0 + 70], [(x0 + x1) / 2, z1 - 70]]) part('circle', basic('#050505'), 110, 1, 110, px, 1.2, pz, g);
+    const lamp = new THREE.Group(); part('cyl', facet('#1f5a3a'), 700, 120, 260, 0, 0, 0, lamp); part('box', basic('#fff6d8'), 1300, 4, 440, 0, -62, 0, lamp); lamp.position.set((x0 + x1) / 2, 1700, (z0 + z1) / 2); g.add(lamp);
+  }
+  if (map.indoor) { // the room itself: walls with skirting, a ceiling with a lamp, a window on the kitchen wall
+    const X0 = x0 - 900, X1 = x1 + 900, Z0 = z0 - 900, Z1 = z1 + 900, H = 2800, wallM = new THREE.MeshLambertMaterial({ map: wallTex(map), side: THREE.DoubleSide });
+    for (const [cx, cz, w, ry] of [[(X0 + X1) / 2, Z0, X1 - X0, 0], [(X0 + X1) / 2, Z1, X1 - X0, Math.PI], [X0, (Z0 + Z1) / 2, Z1 - Z0, Math.PI / 2], [X1, (Z0 + Z1) / 2, Z1 - Z0, -Math.PI / 2]]) {
+      const m = new THREE.Mesh(new THREE.PlaneGeometry(w, H), wallM); m.position.set(cx, H / 2, cz); m.rotation.y = ry; g.add(m);
+      const sk = part('box', facet('#f4f1ea'), w, 120, 30, cx, 60, cz, g); sk.rotation.y = ry;
+    }
+    const ceil = new THREE.Mesh(new THREE.PlaneGeometry(X1 - X0, Z1 - Z0).rotateX(Math.PI / 2), lam('#f6f3ec')); ceil.position.set((X0 + X1) / 2, H, (Z0 + Z1) / 2); g.add(ceil);
+    if (map.id === 'kitchen') { const win = part('box', basic('#bfe4ff'), 1200, 900, 6, (X0 + X1) / 2, 1500, Z0 + 4, g); part('box', facet('#f4f1ea'), 1260, 40, 20, (X0 + X1) / 2, 1040, Z0 + 10, g); win.receiveShadow = false; }
+  }
+}
+function wallTex(map) {
+  return cTex(256, 256, (x, w, h) => {
+    x.fillStyle = map.wall || '#e8e4dc'; x.fillRect(0, 0, w, h);
+    if (map.id === 'room') { x.fillStyle = 'rgba(255,255,255,.45)'; for (let i = 0; i < 12; i++) { x.beginPath(); x.arc((i * 53) % w, (i * 97) % h, 10, 0, 7); x.fill(); } } // polka-dot wallpaper
+    else if (map.id === 'kitchen') { x.fillStyle = 'rgba(0,0,0,.05)'; for (let i = 0; i < 8; i++) x.fillRect(0, i * 32, w, 2); } // tiled splashback
+    else { x.fillStyle = 'rgba(0,0,0,.18)'; for (let i = 0; i < 4; i++) x.fillRect(i * 64, 0, 3, h); } // wood panels
+  });
+}
+// RC cars: a whip antenna on the back
+function addAntenna(c) {
+  if (!c.m3 || c.m3.userData.antenna || c.model.type !== 'car' && c.model.type) return;
+  const a = new THREE.Group(); part('cyl', lam('#1e1e22'), .35, 22, .35, 0, 11, 0, a); part('sph', basic('#e5372b'), 1.4, 1.4, 1.4, 0, 22, 0, a);
+  a.position.set(-c.model.L * .32, 10, c.model.W * .32); a.rotation.z = .25; c.m3.add(a); c.m3.userData.antenna = a;
 }
 
 // ---------- track features: pads, patches, jumps, portals, coins, bales and level crossings ----------
@@ -2865,7 +2996,8 @@ function updHint(dt) {
 // ---------- championship ----------
 const CUP_PTS = [10, 7, 5, 3, 1], CUP_BONUS = [600, 300, 150];
 function startCup() {
-  S.cup = { round: 0, order: [0, 1, 2, 3, 4].map(k => (S.mapIndex + k) % MAPS.length), pts: {}, done: false }; // five tracks starting from the chosen one
+  const pool = groupIdx(false), at = Math.max(0, pool.indexOf(S.mapIndex));
+  S.cup = { round: 0, order: [0, 1, 2, 3, 4].map(k => pool[(at + k) % pool.length]), pts: {}, done: false }; // five main tracks starting from the chosen one
   for (const d of DRIVERS) if (!d.player2) S.cup.pts[d.id] = 0;
   S.mapIndex = S.cup.order[0];
   startRace();
@@ -3901,7 +4033,10 @@ function buildMap3D(map) {
     g.add(ribbon(tr, hw + map.margin, hw + map.margin + 26, .2, heat, 256), ribbon(tr, -hw - map.margin - 26, -hw - map.margin, .2, heat, 256));
   }
   const snowy = isSnowy(map);
-  if (snowy) { // a groomed snowmobile trail: soft snow berms instead of kerbs
+  if (map.mini) { // painter's tape marks the edges of a toy track
+    const tape = lam(C.curbA);
+    for (const sg of [-1, 1]) { const a = sg * (hw - 2), b = sg * (hw + 12); g.add(ribbon(tr, Math.min(a, b), Math.max(a, b), .9, tape, 48)); }
+  } else if (snowy) { // a groomed snowmobile trail: soft snow berms instead of kerbs
     const berm = facet('#f2f7fb');
     for (const sg of [-1, 1]) { const a = sg * (hw - 4), b = sg * (hw + 20); g.add(ribbon(tr, Math.min(a, b), Math.max(a, b), 3.2, berm, 48), wallStrip(tr, a, 3.2, berm, 48), wallStrip(tr, b, 3.2, berm, 48)); }
   } else {
@@ -3910,7 +4045,7 @@ function buildMap3D(map) {
     g.add(ribbon(tr, -hw - 18, -hw + 2, 1.6, curbM, 48), ribbon(tr, hw - 2, hw + 18, 1.6, curbM, 48));
     g.add(wallStrip(tr, hw + 18, 1.6, curbM, 48), wallStrip(tr, -hw - 18, 1.6, curbM, 48)); // raised kerbs
   }
-  const asph = snowy ? snowTrailTex(map) : cTex(512, 256, (x, w, h) => {
+  const asph = map.mini ? miniRoadTex(map) : snowy ? snowTrailTex(map) : cTex(512, 256, (x, w, h) => {
     x.fillStyle = C.asphalt; x.fillRect(0, 0, w, h);
     const r = rng(map.seed * 3);
     for (let i = 0; i < 26; i++) { x.fillStyle = r() < .5 ? 'rgba(255,255,255,.025)' : 'rgba(0,0,0,.06)'; x.beginPath(); x.ellipse(r() * w, r() * h, 20 + r() * 60, 8 + r() * 24, r() * 3, 0, 7); x.fill(); } // patches
@@ -3926,7 +4061,7 @@ function buildMap3D(map) {
   g.add(ribbon(tr, -hw, hw, .45, map._asphM, 256));
   // walls
   if (!map.lava) {
-    const wallH = map.night ? 22 : snowy ? 10 : 7, lim = hw + map.margin + 8;
+    const wallH = map.night ? 22 : snowy ? 10 : map.mini ? 16 : 7, lim = hw + map.margin + 8;
     const wt = cTex(64, 32, (x, w, h) => { x.fillStyle = C.barrier; x.fillRect(0, 0, w, h); x.fillStyle = C.barrier2; x.fillRect(0, 0, 32, h); x.fillStyle = 'rgba(0,0,0,.25)'; x.fillRect(0, h - 5, w, 5); });
     const wm = snowy ? facet('#eef4f9', { side: THREE.DoubleSide }) : new THREE.MeshLambertMaterial({ map: wt, side: THREE.DoubleSide });
     g.add(wallStrip(tr, lim, wallH, wm, 44), wallStrip(tr, -lim, wallH, wm, 44));
@@ -3937,7 +4072,7 @@ function buildMap3D(map) {
       const stick = new THREE.InstancedMesh(GEO.cyl6, facet('#2a2f38'), poles.length), tip = new THREE.InstancedMesh(GEO.cyl6, facet('#ff6a1a'), poles.length), dm = new THREE.Object3D();
       poles.forEach((q, i) => { dm.position.set(q.x, 14, q.y); dm.scale.set(1.1, 28, 1.1); dm.updateMatrix(); stick.setMatrixAt(i, dm.matrix); dm.position.y = 30; dm.scale.set(1.3, 8, 1.3); dm.updateMatrix(); tip.setMatrixAt(i, dm.matrix); });
       stick.castShadow = true; g.add(stick, tip);
-    } else if (!map.night) { // steel guard rail on posts above the low wall
+    } else if (!map.night && !map.mini) { // steel guard rail on posts above the low wall
       const steel = new THREE.MeshPhongMaterial({ color: 0xc8ccd2, shininess: 90, specular: 0x888888, side: THREE.DoubleSide });
       for (const sgn of [-1, 1]) { const rail = railStrip(tr, sgn * (lim - 1.5), 9, 14, steel); g.add(rail); }
       const posts = [], step = Math.max(3, Math.round(40 / tr.SP));
@@ -3999,6 +4134,7 @@ function buildMap3D(map) {
   return g;
 }
 function buildDecor3D(map, g) {
+  if (map.mini) { buildMini3D(map, g); return; }
   const by = {}, dummy = new THREE.Object3D();
   for (const d of map._decor) (by[d.k] = by[d.k] || []).push(d);
   const inst = (geo, mat, list, set, color, shadow = true) => {
@@ -4436,11 +4572,13 @@ function makeHaz3(h) {
     const c = h.mom ? '#8b6b3d' : '#ffd84a', s = h.mom ? 1 : .65;
     part('sph', lam(c), 7 * s, 5 * s, 5 * s, 0, 5 * s, 0, g); part('sph', lam(h.mom ? '#2f7d4a' : '#ffe57a'), 3.4 * s, 3.4 * s, 3.4 * s, 6 * s, 10 * s, 0, g);
     part('cone', lam('#ff9a1f'), 1.4 * s, 4 * s, 1.4 * s, 10 * s, 10 * s, 0, g).rotation.z = -Math.PI / 2;
-  } else if (k === 'tumble') {
-    const m = part('ico', new THREE.MeshBasicMaterial({ color: 0x9c7a4a, wireframe: true }), h.r, h.r, h.r, 0, h.r, 0, g);
-    part('ico', new THREE.MeshBasicMaterial({ color: 0xc49a62, wireframe: true }), h.r * .7, h.r * .7, h.r * .7, 0, h.r, 0, g); g.userData.spinner = m;
-  } else if (k === 'boulder') {
-    const m = part('dode', lam('#8a6b4c'), h.r, h.r * .85, h.r, 0, h.r * .8, 0, g); m.castShadow = true; g.userData.spinner = m;
+  } else if (k === 'tumble') { // a tumbleweed; on mini tracks a grey dust bunny
+    const dust = S.map && S.map.mini;
+    const m = part('ico', new THREE.MeshBasicMaterial({ color: dust ? 0x9a9690 : 0x9c7a4a, wireframe: true }), h.r, h.r, h.r, 0, h.r, 0, g);
+    part('ico', new THREE.MeshBasicMaterial({ color: dust ? 0xc8c4be : 0xc49a62, wireframe: true }), h.r * .7, h.r * .7, h.r * .7, 0, h.r, 0, g); g.userData.spinner = m;
+  } else if (k === 'boulder') { // a rock; on mini tracks a rolling orange or a cue ball
+    const ball = S.map && S.map.look && S.map.look.ball;
+    const m = ball ? part('sph', facet(ball), h.r, h.r, h.r, 0, h.r, 0, g) : part('dode', lam('#8a6b4c'), h.r, h.r * .85, h.r, 0, h.r * .8, 0, g); m.castShadow = true; g.userData.spinner = m;
   } else if (k === 'yeti') {
     const fur = lam('#eef3f8');
     part('sph', fur, h.r * .95, h.r * 1.35, h.r * .9, 0, h.r * 1.3, 0, g); part('sph', fur, h.r * .6, h.r * .6, h.r * .6, 0, h.r * 2.75, 0, g);
@@ -4652,7 +4790,7 @@ function sync3DObjects(dt, tm) {
   // cars
   if (G3.carsRef !== S.cars) {
     for (const m of G3.carMeshes || []) { G3.dyn.remove(m); disposeCar3D(m); }
-    G3.carMeshes = S.cars.map(c => { c.m3 = makeCar3D(c.model, c.color); G3.dyn.add(c.m3); return c.m3; });
+    G3.carMeshes = S.cars.map(c => { c.m3 = makeCar3D(c.model, c.color); if (S.map && S.map.mini) addAntenna(c); G3.dyn.add(c.m3); return c.m3; });
     G3.carsRef = S.cars;
   }
   for (const c of S.cars) updCar3D(c, dt, tm);
@@ -5155,6 +5293,7 @@ function engPop(t, big) { // exhaust crackle when lifting off at high revs
 }
 // Drive one engine voice from a vehicle: gears (or a CVT for the snowmobile), shift dips, crackles, air time.
 function engDrive(v, c, th, vol, now, dt, pan, rate) {
+  if (S.map && S.map.mini) rate *= 1.8; // a tiny electric motor whines high
   const sp = v.sp, r = clamp(c.speed / (c.top || BASE), 0, 1.15);
   let tgt;
   if (S.mode === 'countdown') tgt = th > 0 ? sp.idle + (sp.red - sp.idle) * (.42 + .12 * Math.sin(now * 8)) : sp.idle;
@@ -5332,14 +5471,20 @@ function setMenuPage(pg) {
   const f = { home: '#playBtn', mode: '#modeSeg button[aria-pressed="true"]', track: '#startBtn' }[pg];
   if (!touchMode) { const el = $(f); if (el) el.focus({ preventScroll: true }); }
 }
-function modeName(m) { return t({ race: 'mRace', cup: 'mCup', trial: 'mTrial', duo: 'mDuo', online: 'mOnline', career: 'mCareer', daily: 'mRace' }[m] || 'mRace'); }
+function modeName(m) { return t({ race: 'mRace', cup: 'mCup', trial: 'mTrial', duo: 'mDuo', online: 'mOnline', career: 'mCareer', daily: 'mRace', mini: 'mMini' }[m] || 'mRace'); }
 function updQuick() {
   const qm = S.gameMode === 'career' || S.gameMode === 'daily' ? 'race' : S.gameMode;
   $('#quickSub').textContent = t('quickSub', { m: modeName(qm), map: t('map.' + MAPS[S.mapIndex].id), l: S.laps });
   updDailyBtn();
 }
+function ensureGroup() { // switching between the main and the mini section moves to a track of that section
+  const mini = S.gameMode === 'mini';
+  if (S.map && !inGroup(S.map, mini)) { setupMap(groupIdx(mini)[0]); if (S.mode === 'menu') { resetRace('menu'); renderMapList(); } }
+}
 function syncMode() {
+  ensureGroup();
   if ($('#trackHead')) $('#trackHead').textContent = modeName(S.gameMode);
+  if ($('#condSec')) $('#condSec').hidden = S.gameMode === 'mini';
   updQuick();
   $('#modeSeg').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode === S.gameMode)));
   $('#duoModeBtn').hidden = touchMode;
@@ -5385,7 +5530,7 @@ function renderMapList() {
   }
   [...box.children].forEach((b, i) => {
     const m = MAPS[i], r = getRecord(m);
-    b.setAttribute('aria-pressed', String(i === S.mapIndex));
+    b.setAttribute('aria-pressed', String(i === S.mapIndex)); b.hidden = !inGroup(m, S.gameMode === 'mini');
     b.querySelector('.m-name').textContent = t('map.' + m.id);
     b.querySelector('.m-note').textContent = t('map.' + m.id + '.note');
     b.querySelector('.chip').textContent = t('map.' + m.id + '.chip');
@@ -5588,7 +5733,7 @@ function pendingChapter() { return STORY.findIndex((c, i) => c.open() && !career
 // ---------- track of the day: the same track and weather for everyone today ----------
 function dailyInfo() {
   const date = new Date().toISOString().slice(0, 10); let h = 7; for (const ch of date) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
-  const r = rng(h), mi = Math.floor(r() * MAPS.length);
+  const r = rng(h), main = groupIdx(false), mi = main[Math.floor(r() * main.length)];
   return { date, mi, map: MAPS[mi], weather: ['clear', 'clear', 'rain', 'fog'][Math.floor(r() * 4)], night: r() < .3 };
 }
 function dailyBest() { try { const d = JSON.parse(store.get('turbo-krug-daily') || 'null'), i = dailyInfo(); return d && d.date === i.date && d.map === i.map.id ? d.best : Infinity; } catch (e) { return Infinity; } }
@@ -5777,7 +5922,7 @@ const ACH = [
   { id: 'wins_10', stat: 'wins', goal: 10, reward: 300 },
   { id: 'hard_win', stat: 'hardWins', goal: 1, reward: 250 },
   { id: 'cup', stat: 'cups', goal: 1, reward: 400 },
-  { id: 'all_tracks', stat: 'tracksWon', goal: () => MAPS.length, reward: 500 },
+  { id: 'all_tracks', stat: 'tracksWon', goal: () => MAPS.filter(m => !m.mini).length, reward: 500 },
   { id: 'perfect_5', stat: 'perfectStarts', goal: 5, reward: 150 },
   { id: 'nitro_60', stat: 'nitroTime', goal: 60, reward: 150 },
   { id: 'drift_120', stat: 'driftTime', goal: 120, reward: 200 },
@@ -5904,10 +6049,10 @@ $('#modeSeg').addEventListener('click', e => {
 });
 $('#playBtn').addEventListener('click', () => setMenuPage('mode'));
 $('#randMap').addEventListener('click', () => { // pick another track at random and scroll it into view
-  let i = S.mapIndex; while (i === S.mapIndex && MAPS.length > 1) i = Math.floor(Math.random() * MAPS.length);
+  const pool = groupIdx(S.gameMode === 'mini'); let i = S.mapIndex; while (i === S.mapIndex && pool.length > 1) i = pool[Math.floor(Math.random() * pool.length)];
   setupMap(i); resetRace('menu'); renderMapList(); syncMode(); const b = $('#map-' + MAPS[i].id); if (b) b.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
 });
-$('#quickBtn').addEventListener('click', () => { if (['online', 'career', 'daily'].includes(S.gameMode)) { S.gameMode = 'race'; syncMode(); } startRace(); });
+$('#quickBtn').addEventListener('click', () => { if (['online', 'career', 'daily'].includes(S.gameMode)) { S.gameMode = S.map && S.map.mini ? 'mini' : 'race'; syncMode(); } startRace(); });
 $('#dailyBtn').addEventListener('click', startDaily);
 $('#comicNext').addEventListener('click', comicNext);
 $('#comicSkip').addEventListener('click', closeComic);
@@ -5929,7 +6074,7 @@ $('#menuBtn').addEventListener('click', toMenu);
 $('#againBtn').addEventListener('click', startRace);
 $('#nextBtn').addEventListener('click', () => {
   if (S.gameMode === 'career' && S.career) { const { l, e } = S.career; if (e + 1 < 4) startCareer(l, e + 1); else if (CAREER[l + 1]) startCareer(l + 1, 0); return; }
-  S.mapIndex = (S.mapIndex + 1) % MAPS.length; startRace();
+  const pool = groupIdx(!!S.map.mini); S.mapIndex = pool[(pool.indexOf(S.mapIndex) + 1) % pool.length]; startRace();
 });
 $('#resMenuBtn').addEventListener('click', () => { S.menuPage = S.gameMode === 'career' ? 'career' : S.gameMode === 'daily' ? 'home' : S.menuPage; toMenu(); });
 addEventListener('resize', resize);
@@ -6036,7 +6181,7 @@ function start(data) {
   init3D();
   setCam3(store.get('turbo-krug-cam3') || 'near'); setGfx(S.gfx);
   try { S.tut = JSON.parse(store.get('turbo-krug-tut') || '{}') || {}; } catch (e) { S.tut = {}; }
-  const gm = store.get('turbo-krug-mode'); if (['race', 'cup', 'trial', 'duo'].includes(gm) && !(gm === 'duo' && touchMode)) S.gameMode = gm; // online always starts from its own screen
+  const gm = store.get('turbo-krug-mode'); if (['race', 'cup', 'trial', 'duo', 'mini'].includes(gm) && !(gm === 'duo' && touchMode)) S.gameMode = gm; // online always starts from its own screen
   S.pname = store.get('turbo-krug-name') || ((LANG === 'en' ? 'Driver' : 'Пилот') + (100 + Math.floor(Math.random() * 900)));
   store.set('turbo-krug-name', S.pname); $('#pname').value = S.pname;
   netProbe();
