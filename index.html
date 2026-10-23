@@ -361,22 +361,31 @@ body.touchmode .hint{bottom:calc(env(safe-area-inset-bottom,0px) + 190px)}
 .steer-pads .pad{width:var(--pad,88px);height:var(--pad,88px);display:grid;place-items:center;border-radius:24px;border:1px solid rgba(255,255,255,.22);background:rgba(12,14,19,.45);font-size:30px;color:rgba(255,255,255,.85);transition:background .08s,transform .08s}
 .steer-pads .pad.on{background:rgba(255,198,41,.4);transform:scale(.94)}
 body:not(.steer-btn) .steer-pads{display:none}
-.tbtns{position:absolute;right:max(14px,env(safe-area-inset-right,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 14px);display:grid;grid-template-columns:var(--bw1,74px) var(--bw2,96px);grid-template-rows:repeat(3,var(--bh,60px));gap:10px}
-.touch button{pointer-events:auto;border-radius:18px;border:1px solid rgba(255,255,255,.2);background:rgba(12,14,19,.6);font-family:var(--display);font-size:12px;text-transform:uppercase;touch-action:none;color:var(--fg);-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
-.touch .nitro{grid-column:1;grid-row:1}.touch .item{grid-column:1;grid-row:2}.touch .brake{grid-column:1;grid-row:3}
-.touch button.gas{grid-column:2;grid-row:1 / span 3;border-radius:24px;background:rgba(43,212,107,.28);font-size:15px}
+.tbtns{position:absolute;right:max(14px,env(safe-area-inset-right,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 14px);--big:94px;--sm:68px;width:calc(var(--big) + var(--sm) + 14px);height:calc(var(--big) + var(--sm) + 12px);pointer-events:none}
+.touch button{pointer-events:auto;font-family:var(--display);text-transform:uppercase;touch-action:none;color:var(--fg);-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.touch .tbtns button{position:absolute;display:grid;place-items:center;padding:0;border-radius:50%;border:2px solid rgba(255,255,255,.3);background:rgba(12,14,19,.38);font-size:11px;line-height:1.05;letter-spacing:.02em;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.touch .tbtns button.held{background:rgba(255,198,41,.42);transform:scale(.94)}
+.touch .gas{right:0;bottom:0;width:var(--big);height:var(--big);border-color:rgba(43,212,107,.7)!important;font-size:13px!important}
+.touch .brake{right:calc(var(--big) + 14px);bottom:4px;width:var(--sm);height:var(--sm);border-color:rgba(255,90,90,.7)!important}
+.touch .item{right:calc((var(--big) - var(--sm)) / 2);bottom:calc(var(--big) + 12px);width:var(--sm);height:var(--sm)}
+.touch .nitro{right:calc(var(--big) + 14px);bottom:calc(var(--sm) + 18px);width:var(--sm);height:var(--sm);border-color:rgba(90,170,255,.75)!important;
+  background:conic-gradient(rgba(80,170,255,.55) calc(var(--n,0) * 1turn),rgba(12,14,19,.38) 0)!important}
+.touch .nitro.full{box-shadow:0 0 14px rgba(90,170,255,.8)}
 body.autogas .touch .gas{display:none}
-body.autogas .touch .brake{grid-column:2;grid-row:1 / span 3;border-radius:24px;background:rgba(255,77,77,.26);font-size:15px}
-body.autogas .touch .nitro{grid-row:1 / span 2;background:rgba(80,160,255,.26)}
-body.autogas .touch .item{grid-row:3}
-.touch button.held{background:rgba(255,198,41,.38)}
-.touch .item.has{background:rgba(255,198,41,.3);border-color:rgba(255,214,90,.8);position:relative}.touch .item .emo{font-size:26px}.touch .item svg{width:28px;height:28px}.touch .item .ic-n{position:absolute;right:4px;top:4px;font-size:10px;background:var(--accent);color:var(--accent-ink);border-radius:8px;padding:0 4px;font-style:normal}
+body.autogas .touch .brake{right:0;bottom:0;width:var(--big);height:var(--big);font-size:13px}
+body.autogas .touch .nitro{bottom:4px}
+.touch .item.has{background:rgba(255,198,41,.3);border-color:rgba(255,214,90,.9)}.touch .item .emo{font-size:28px}.touch .item svg{width:30px;height:30px}.touch .item .ic-n{position:absolute;right:2px;top:2px;font-size:10px;background:var(--accent);color:var(--accent-ink);border-radius:8px;padding:0 4px;font-style:normal}
+/* phones: no keyboard hints or desktop item slot; speed and hull sit above the steering pads */
+body.touchmode .hud kbd,body.touchmode .item-slot,body.touchmode #gNitro{display:none}
+body.touchmode .hud-bl{display:grid;grid-template-columns:auto;grid-template-areas:"spd" "gauges";gap:2px;align-items:start}
+body.touchmode .gauges{width:150px;padding:5px 8px;gap:4px}
+body.touchmode .joy-hint{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 74px);transform:translateX(-50%);text-align:center;max-width:80vw}
 body.touchmode .mini{bottom:calc(env(safe-area-inset-bottom,0px) + 230px)}
 body.touchmode .hud-bl{bottom:calc(env(safe-area-inset-bottom,0px) + 44px)}
 body.touchmode.steer-btn .hud-bl{bottom:calc(env(safe-area-inset-bottom,0px) + 122px)}
 @media (max-width:520px){ /* narrow portrait phones: both clusters must fit side by side */
-  .tbtns{--bw1:58px;--bw2:72px;--bh:56px;gap:8px}
-  .steer-pads{--pad:66px;gap:8px}
+  .tbtns{--big:84px;--sm:60px}
+  .steer-pads{--pad:68px;gap:10px}
   body.touchmode.steer-btn .hud-bl{bottom:calc(env(safe-area-inset-bottom,0px) + 96px)}
 }
 
@@ -442,8 +451,8 @@ body.touchmode.steer-btn .hud-bl{bottom:calc(env(safe-area-inset-bottom,0px) + 1
   .box b{font-size:15px}
   .lights{top:calc(env(safe-area-inset-top,0px) + 58px);padding:8px 12px;gap:8px}
   .lights i{width:26px;height:26px}
-  .tbtns{--bw1:62px;--bw2:80px;--bh:50px;gap:8px}
-  .steer-pads{--pad:74px;gap:10px}
+  .tbtns{--big:84px;--sm:60px}
+  .steer-pads{--pad:74px;gap:12px}
   body.touchmode.steer-btn .hud-bl{bottom:calc(env(safe-area-inset-bottom,0px) + 100px)}
   body.touchmode .mini{display:none}
 }
@@ -3244,6 +3253,7 @@ function updHud(dt) {
   $('#hSpeed').textContent = Math.round(p.speed * KMH);
   $('#hNitro').style.width = (p.nitro * 100).toFixed(1) + '%';
   $('#gNitro').classList.toggle('full', p.nitro > .99); $('#gNitro').classList.toggle('on', p.nitroOn);
+  if (touchMode) { const nb = $('#touch .nitro'); nb.style.setProperty('--n', p.nitro.toFixed(3)); nb.classList.toggle('full', p.nitro > .99); }
   const hull = 1 - p.damage, gh = $('#gHull');
   $('#hHull').style.width = (hull * 100).toFixed(1) + '%';
   gh.classList.toggle('warn', hull < .6 && hull >= .3); gh.classList.toggle('bad', hull < .3); gh.classList.toggle('fix', p.repairing);
@@ -3286,7 +3296,7 @@ function resize() {
   stage.style.perspective = P + 'px'; stage.style.perspectiveOrigin = `50% ${oy}px`;
   cvs.style.left = (W - cw) / 2 + 'px'; cvs.style.top = (H - ch) + 'px';
   cvs.style.transform = `rotateX(${TILT}rad)`;
-  DPR = Math.min(1.5, window.devicePixelRatio || 1);
+  DPR = Math.min(2, window.devicePixelRatio || 1);
   DPR = Math.min(DPR, Math.sqrt(9e6 / (VIEW.cw * VIEW.ch)));
   cvs.width = Math.round(VIEW.cw * DPR); cvs.height = Math.round(VIEW.ch * DPR);
   cvs.style.width = VIEW.cw + 'px'; cvs.style.height = VIEW.ch + 'px';
@@ -3738,11 +3748,11 @@ function init3D() {
   } catch (e) { console.warn('3D unavailable', e); G3.ok = false; return false; }
 }
 // Quality levels: 0 detailed, 1 balanced, 2 fast, 3 minimal. "Auto" starts high and steps down while frames are slow.
-function gfxLevel() { return S.gfx === 'high' ? 0 : S.gfx === 'low' ? 2 : G3.autoLevel != null ? G3.autoLevel : (touchMode ? 1 : 0); }
+function gfxLevel() { return S.gfx === 'high' ? 0 : S.gfx === 'low' ? 2 : G3.autoLevel != null ? G3.autoLevel : 0; }
 function applyGfx() {
   if (!G3.ok) return;
   const lv = gfxLevel(), dpr = window.devicePixelRatio || 1;
-  G3.r.setPixelRatio([Math.min(dpr, 1.75), Math.min(dpr, 1.25), Math.min(dpr, 1), .75][lv]);
+  G3.r.setPixelRatio([Math.min(dpr, 2), Math.min(dpr, 1.6), Math.min(dpr, 1.3), 1][lv]); // phone screens are 2-3x: anything under 1x looks smeared
   const sh = lv <= 1;
   G3.r.shadowMap.enabled = sh; G3.sun.castShadow = sh;
   const ms = lv === 0 ? 2048 : 1024;
