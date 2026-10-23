@@ -1698,6 +1698,20 @@ function updAudio() {
   audio.f.frequency.setTargetAtTime(380 + (r + rev) * 1100, now, .08);
   audio.g.gain.setTargetAtTime(engineOn ? .05 + (p.inThrottle > 0 || rev ? .035 : 0) : 0, now, .1);
 }
+// Browsers stop animation frames in hidden tabs and panes, so updAudio stops running there.
+// A timer and page events silence the audio directly; updAudio turns it back on once frames resume.
+let lastFrameAt = performance.now();
+function silence() {
+  if (!audio) return;
+  try {
+    const ac = audio.ac; audio.m.gain.cancelScheduledValues(ac.currentTime); audio.m.gain.setValueAtTime(0, ac.currentTime);
+    if (audio.sus) { clearTimeout(audio.sus); audio.sus = 0; }
+    if (ac.state === 'running') ac.suspend().catch(() => {});
+  } catch (e) {}
+}
+setInterval(() => { if (performance.now() - lastFrameAt > 300) silence(); }, 250);
+addEventListener('pagehide', silence);
+document.addEventListener('visibilitychange', () => { if (document.hidden) silence(); });
 function beep(freq, dur) {
   if (!audio || !audioWanted()) return;
   try {
@@ -1906,7 +1920,7 @@ addEventListener('resize', resize);
 // ---------- loop ----------
 let last = performance.now(), accT = 0;
 function frame(now) {
-  const dt = Math.min(.05, (now - last) / 1000); last = now;
+  const dt = Math.min(.05, (now - last) / 1000); last = now; lastFrameAt = performance.now();
   if (S.mode !== 'paused') {
     accT += dt;
     while (accT >= DT) { step(DT); accT -= DT; }
