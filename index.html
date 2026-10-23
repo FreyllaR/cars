@@ -5475,9 +5475,18 @@ function enterPhoto() {
   $('#photoBar').hidden = false;
 }
 function exitPhoto() { S.mode = 'paused'; $('#photoBar').hidden = true; $('#hud').hidden = false; $('#pause').hidden = false; $('#resumeBtn').focus(); }
+// Inside claude.ai the page cannot download by itself: saving goes through the viewer's downloads capability.
+const inClaude = !!(window.claude && window.claude.use);
+let DL = null;
+if (inClaude) window.claude.use('downloads').then(d => { DL = d; if (!d) $('#shotBtn').hidden = true; }).catch(() => { $('#shotBtn').hidden = true; });
 function takeShot() {
   render3D(0); // draw now, then read the picture before the browser clears it
-  G3.r.domElement.toBlob(b => { if (!b) return; const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'turbo-krug-' + Date.now() + '.png'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 3000); });
+  const name = 'turbo-krug-' + Date.now() + '.png';
+  G3.r.domElement.toBlob(b => {
+    if (!b) return;
+    if (inClaude) { if (DL) DL.save({ filename: name, data: b }).catch(() => {}); return; } // the viewer confirms; a "no" is fine
+    const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 3000);
+  });
   S.flashT = .15;
 }
 function photoCam(f) {
