@@ -261,6 +261,24 @@ tr.me td{color:var(--accent)}
 .modes span{font-size:13px;color:var(--muted);min-width:0}
 /* menu pages: home -> mode -> track */
 .mpage{display:grid;gap:var(--gap);min-width:0;align-content:start}
+.mpage:not([hidden]){animation:pageIn .22s ease-out}
+.overlay.center:not([hidden])>.panel,.overlay.results:not([hidden])>.panel{animation:panelIn .2s ease-out}
+@keyframes pageIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes panelIn{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.mpage:not([hidden]),.overlay:not([hidden])>.panel{animation:none}}
+.daily{border-color:#4a3f8a;background:linear-gradient(90deg,#221d3a,#1a1d27)}
+.career{display:grid;gap:14px}
+.lg header{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.lg header b{font-family:var(--display);font-weight:400;font-size:18px}.lg header span{font-size:12px;color:var(--muted)}
+.lg.locked{opacity:.5}
+.evs{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,220px),1fr));gap:8px}
+.ev{display:grid;grid-template-columns:60px minmax(0,1fr) auto;gap:10px;align-items:center;padding:6px 10px 6px 6px;text-align:left;background:var(--panel-2);border:1px solid var(--line);border-radius:10px}
+.ev:hover:not(:disabled){border-color:#4a5161}.ev:disabled{cursor:default}
+.ev canvas{width:60px;height:36px;border-radius:6px;display:block}
+.ev-t{display:grid;gap:1px;min-width:0}.ev-t b{font-family:var(--display);font-weight:400;font-size:14px}.ev-t small{font-size:11.5px;color:var(--muted)}
+.ev-r{font-weight:800;font-size:13px;color:var(--accent)}.ev.done{border-color:#4d5a2a;background:#1f2416}.ev.done .ev-r{color:var(--go)}
+.photo-bar{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 16px);transform:translateX(-50%);z-index:12;display:grid;gap:8px;justify-items:center;width:min(520px,calc(100% - 32px));padding:10px 14px;background:rgba(12,14,19,.82);border:1px solid var(--line);border-radius:12px;text-align:center;font-size:12.5px;color:var(--muted)}
+.photo-bar .btns{width:100%}
 .mp-head{display:flex;gap:14px;align-items:center}
 .mp-head h2{margin:0;font-family:var(--display);font-weight:400;font-size:clamp(22px,3.4vw,30px);line-height:1.05;text-transform:uppercase}
 .mp-head .label{margin:0 0 4px}
@@ -502,6 +520,7 @@ body.touchmode.steer-btn .hud-bl{bottom:calc(env(safe-area-inset-bottom,0px) + 1
 </div>
 
 <div id="flash" aria-hidden="true"></div>
+<div id="photoBar" class="photo-bar" hidden><span data-t="photoHint">Тяните, чтобы вращать камеру; колёсико или два пальца — ближе и дальше</span><div class="btns"><button id="shotBtn" class="btn primary" data-t="shot">📸 Снимок</button><button id="photoBack" class="btn" data-t="back">Назад</button></div></div>
 <div id="touch" class="touch" hidden>
   <div id="joy" class="joy-zone">
     <div id="joyBase" class="joy-base" hidden><i id="joyKnob"></i></div>
@@ -522,7 +541,7 @@ body.touchmode.steer-btn .hud-bl{bottom:calc(env(safe-area-inset-bottom,0px) + 1
       <header>
         <div class="checker" aria-hidden="true"></div>
         <h1 data-th="title">Турбо <span>Круг</span></h1>
-        <p class="lede" data-t="lede">Восемь трасс, четыре соперника и сюрпризы на дороге.</p>
+        <p class="lede" data-t="lede">Тридцать трасс, четыре соперника и сюрпризы на дороге.</p>
       </header>
       <div class="garage-strip">
         <canvas id="curCarCv" width="192" height="112"></canvas>
@@ -533,6 +552,7 @@ body.touchmode.steer-btn .hud-bl{bottom:calc(env(safe-area-inset-bottom,0px) + 1
       <div class="home-btns">
         <button id="playBtn" class="cta"><span data-t="play">Играть</span> <kbd>Enter</kbd></button>
         <button id="quickBtn" class="btn quick"><b data-t="quick">Быстрый старт</b><span id="quickSub"></span></button>
+        <button id="dailyBtn" class="btn quick daily"><b data-t="daily">🗓 Трасса дня</b><span id="dailySub"></span></button>
       </div>
       <div class="menu-links">
         <button id="recBtn" class="btn" data-t="recTitle">Рекорды</button>
@@ -545,12 +565,18 @@ body.touchmode.steer-btn .hud-bl{bottom:calc(env(safe-area-inset-bottom,0px) + 1
     <section class="mpage mp-mode" data-page="mode" hidden>
       <div class="mp-head"><button class="back" data-back="home" data-t-aria="back" aria-label="Назад">←</button><div><p class="label" data-t="step1">Шаг 1 из 2</p><h2 data-t="chooseMode">Выберите режим</h2></div></div>
       <div id="modeSeg" class="modes">
+        <button data-mode="career" aria-pressed="false"><i aria-hidden="true">🏅</i><b data-t="mCareer">Карьера</b><span data-t="mCareerSub">4 лиги с заданиями и наградами</span></button>
         <button data-mode="race" aria-pressed="true"><i aria-hidden="true">🏁</i><b data-t="mRace">Гонка</b><span data-t="mRaceSub">Одна трасса с ботами</span></button>
         <button data-mode="cup" aria-pressed="false"><i aria-hidden="true">🏆</i><b data-t="mCup">Чемпионат</b><span data-t="mCupSub">5 трасс подряд, очки за места</span></button>
         <button data-mode="trial" aria-pressed="false"><i aria-hidden="true">⏱</i><b data-t="mTrial">На время</b><span data-t="mTrialSub">Только вы и секундомер</span></button>
         <button data-mode="online" aria-pressed="false"><i aria-hidden="true">🌐</i><b data-t="mOnline">Онлайн</b><span data-t="mOnlineSub">С друзьями по коду комнаты</span></button>
         <button data-mode="duo" aria-pressed="false" id="duoModeBtn"><i aria-hidden="true">👥</i><b data-t="mDuo">Вдвоём</b><span data-t="mDuoSub">Два игрока, один экран</span></button>
       </div>
+    </section>
+
+    <section class="mpage mp-career" data-page="career" hidden>
+      <div class="mp-head"><button class="back" data-back="mode" data-t-aria="back" aria-label="Назад">←</button><div><p class="label" data-t="mCareerSub">4 лиги с заданиями и наградами</p><h2 data-t="mCareer">Карьера</h2></div></div>
+      <div id="careerList" class="career"></div>
     </section>
 
     <section class="mpage mp-track" data-page="track" hidden>
@@ -618,6 +644,7 @@ body.touchmode.steer-btn .hud-bl{bottom:calc(env(safe-area-inset-bottom,0px) + 1
       <button id="resumeBtn" class="btn primary" data-t="resume">Продолжить</button>
       <button id="restartBtn" class="btn" data-t="restart">Заново</button>
       <button id="pauseSetBtn" class="btn" data-t="settings">Настройки</button>
+      <button id="photoBtn" class="btn" data-t="photo">📷 Фото</button>
       <button id="menuBtn" class="btn" data-t="trackSelect">Выбор трассы</button>
     </div>
   </div>
@@ -821,7 +848,14 @@ const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 // ---------- text ----------
 const STR = {
   ru: {
-    title: 'Турбо <span>Круг</span>', lede: 'Восемь трасс, четыре соперника и сюрпризы на дороге. Держи газ в пол и финишируй первым.',
+    title: 'Турбо <span>Круг</span>', lede: 'Тридцать трасс, четыре соперника и сюрпризы на дороге. Держи газ в пол и финишируй первым.',
+    mCareer: 'Карьера', mCareerSub: '4 лиги с заданиями и наградами', lgLocked: 'откроется после 3 заданий прошлой лиги',
+    'lg.rookie': 'Новичок', 'lg.amateur': 'Любитель', 'lg.pro': 'Профи', 'lg.legend': 'Легенда',
+    'goal.top3': 'Финишируйте в тройке', 'goal.win': 'Победите', 'goal.clean': 'В тройке, корпус целее 80%',
+    goalOk: 'Задание выполнено!', goalNo: 'Задание не выполнено: {g}.', goalPts: '+{n} очков за задание.', goalAgain: 'Награда уже получена раньше.', leagueBonus: 'Лига пройдена: бонус +{n}!', nextEv: 'Следующее задание',
+    daily: '🗓 Трасса дня', dailyDone: 'Трасса дня', yourBest: 'ваш лучший {t}', dailyRank: 'Трасса дня: {n}-е место из {m}', dailyTop: 'лучший — {p}, {t}',
+    photo: '📷 Фото', shot: '📸 Снимок', photoHint: 'Тяните, чтобы вращать камеру; колёсико или два пальца — ближе и дальше',
+    quickMatch: '🔎 Найти гонку', quickNote: 'Случайная трасса, живые соперники, пустые места займут боты. Или создайте комнату для друзей:', quickTitle: 'Ищем соперников', quickWait: 'Игроков: {n} из 5 · старт через {s} с',
     randMap: '🎲 Случайная', play: 'Играть', quick: 'Быстрый старт', chooseMode: 'Выберите режим', step1: 'Шаг 1 из 2', step2: 'Шаг 2 из 2', back: 'Назад',
     quickSub: '{m} · {map} · кругов: {l}',
     track: 'Трасса', laps: 'Круги', rivals: 'Соперники', controls: 'Управление',
@@ -1000,7 +1034,14 @@ const STR = {
     'hit.snowball': 'Полный капот снега', 'hit.bomb': 'Прилетело камнем',
   },
   en: {
-    title: 'Turbo <span>Lap</span>', lede: 'Eight tracks, four rivals and surprises on the road. Keep it floored and finish first.',
+    title: 'Turbo <span>Lap</span>', lede: 'Thirty tracks, four rivals and surprises on the road. Keep it floored and finish first.',
+    mCareer: 'Career', mCareerSub: '4 leagues with goals and rewards', lgLocked: 'opens after 3 races of the previous league',
+    'lg.rookie': 'Rookie', 'lg.amateur': 'Amateur', 'lg.pro': 'Pro', 'lg.legend': 'Legend',
+    'goal.top3': 'Finish in the top three', 'goal.win': 'Win', 'goal.clean': 'Top three, hull above 80%',
+    goalOk: 'Goal complete!', goalNo: 'Goal not met: {g}.', goalPts: '+{n} points for the goal.', goalAgain: 'Reward already collected.', leagueBonus: 'League complete: bonus +{n}!', nextEv: 'Next race',
+    daily: '🗓 Track of the day', dailyDone: 'Track of the day', yourBest: 'your best {t}', dailyRank: 'Track of the day: {n} of {m}', dailyTop: 'best — {p}, {t}',
+    photo: '📷 Photo', shot: '📸 Take picture', photoHint: 'Drag to orbit the camera; wheel or two fingers to zoom',
+    quickMatch: '🔎 Find a race', quickNote: 'A random track with real rivals; bots fill the empty places. Or make a room for friends:', quickTitle: 'Finding rivals', quickWait: 'Players: {n} of 5 · starts in {s} s',
     randMap: '🎲 Random', play: 'Play', quick: 'Quick start', chooseMode: 'Choose a mode', step1: 'Step 1 of 2', step2: 'Step 2 of 2', back: 'Back',
     quickSub: '{m} · {map} · {l} laps',
     track: 'Track', laps: 'Laps', rivals: 'Rivals', controls: 'Controls',
@@ -1649,7 +1690,7 @@ function physCar(c, dt) {
   const p = tr.pts[idx], hw = map.width / 2;
   const fm = featMods(c, idx, (c.x - p.x) * p.nx + (c.y - p.y) * p.ny, dt);
   if (c.warped) { c.warped = false; return; } // went through a portal: carry on from the other side next step
-  const sm = statusMods(c, dt);
+  const sm = statusMods(c, dt), dk = draftK(c, dt);
   // jump ramps: launch off the lip, fly under the track's gravity, land with a thump
   if (map._ramps && !(c.air > 0) && c.vF > 150) for (const ri of map._ramps) {
     if ((idx - ri + tr.N) % tr.N <= 2 && c.rampAt !== ri) { c.rampAt = ri; c.vz = c.vF * .55; c.air = .1; if (c.isPlayer) tone('sine', 300, 700, .35, .05); }
@@ -1677,7 +1718,7 @@ function physCar(c, dt) {
   c.repairing = false;
   if (c.damage > 0 && c.speed < 170 && inPit(idx, lat)) { c.damage = Math.max(0, c.damage - dt * .9); c.repairing = true; }
   const offMul = 1 - (1 - map.offMul) * (1 - c.offRes);
-  const offPen = off && !sm.offOk, maxSpd = c.top * (offPen ? offMul : 1) * (wet ? .55 : 1) * c.skill * c.band * (1 - .28 * c.damage) * (boosting ? 1.2 : 1) * fm.max * sm.max;
+  const offPen = off && !sm.offOk, maxSpd = c.top * (offPen ? offMul : 1) * (wet ? .55 : 1) * c.skill * c.band * (1 - .28 * c.damage) * (boosting ? 1.2 : 1) * fm.max * sm.max * (1 + .07 * dk);
 
   let vF = c.vx * Math.cos(c.angle) + c.vy * Math.sin(c.angle);
   const sr = Math.min(1, Math.abs(vF) / c.top), bike = c.type === 'moto';
@@ -1691,7 +1732,7 @@ function physCar(c, dt) {
   vF = c.vx * fx + c.vy * fy; let vR = c.vx * rx + c.vy * ry;
   const th = boosting && c.inThrottle >= 0 ? 1 : c.inThrottle;
   if (airborne) { /* no traction in the air */ }
-  else if (th > 0) { if (vF < maxSpd) vF += c.accel * fm.acc * sm.acc * (1 - .2 * c.damage) * (boosting ? 1.8 : 1) * (c.wheelspinT > 0 ? .15 : 1) * th * (1 - .6 * Math.max(0, vF) / maxSpd) * dt; }
+  else if (th > 0) { if (vF < maxSpd) vF += c.accel * fm.acc * sm.acc * (1 + .35 * dk) * (1 - .2 * c.damage) * (boosting ? 1.8 : 1) * (c.wheelspinT > 0 ? .15 : 1) * th * (1 - .6 * Math.max(0, vF) / maxSpd) * dt; }
   else if (th < 0) { if (vF > 15) vF -= BRAKE * (c.brakeMul || 1) * -th * dt; else if (vF > -maxSpd * .35) vF -= REV * -th * dt; }
   const drag = (offPen ? map.offDrag * (1 - c.offRes * .7) : .25) + fm.drag;
   vF -= vF * drag * (th === 0 ? 1.6 : 1) * dt;
@@ -1982,6 +2023,8 @@ const isNight = () => !!(S.map && (S.map.night || S.map.dark || S.nightNow));
 function rollConditions() {
   const ws = S.weatherSel, ns = S.nightSel;
   S.weatherNow = ws === 'random' ? (Math.random() < .55 ? 'clear' : Math.random() < .6 ? 'rain' : 'fog') : ws;
+  if (S.gameMode === 'daily' && S.daily) { S.weatherNow = S.daily.weather; S.nightNow = S.daily.night; return; } // the same for everyone today
+  if (S.gameMode === 'career') { S.weatherNow = (S.map && S.map.wx) || 'clear'; S.nightNow = false; return; }
   if (ws === 'clear' && S.map && S.map.wx) S.weatherNow = S.map.wx; // some tracks have their own weather unless you pick one
   S.nightNow = ns === 'random' ? Math.random() < .35 : ns === 'night';
 }
@@ -2949,12 +2992,21 @@ function renderOnline() {
   const err = NET.err ? `<p class="on-err">${esc(NET.err)}</p>` : '';
   if (!NET.room) {
     box.innerHTML = `${err}<div class="set"><label class="label" for="onName">${t('pname')}</label><input id="onName" class="text-in" maxlength="16" value="${esc(myName())}"></div>
-      <button id="onCreate" class="btn primary">${t('createRoom')}</button>
+      <button id="onQuick" class="btn primary">${t('quickMatch')}</button>
+      <p class="on-note">${t('quickNote')}</p>
+      <button id="onCreate" class="btn">${t('createRoom')}</button>
       <p class="on-note">${t('orJoin')}</p>
       <div class="on-row"><input id="onCode" class="text-in code-in" maxlength="4" placeholder="${t('codePh')}" autocomplete="off" spellcheck="false"><button id="onJoin" class="btn">${t('joinRoom')}</button></div>`;
     return;
   }
   const r = NET.room, host = netHost(), map = MAPS.find(m => m.id === r.cfg.map) || MAPS[0];
+  if (r.quick) { // public room: it starts by itself and bots fill the empty places
+    box.innerHTML = `${err}<h3 class="label">${t('quickTitle')}</h3>
+      <ul class="plist">${r.players.map(pl => `<li><i style="background:${esc(pl.color)}"></i><span>${esc(pl.name)} <em>${CARS.some(m => m.id === pl.car) ? t('car.' + pl.car) : ''}</em></span><em>${pl.id === NET.you ? t('you2') : ''}</em></li>`).join('')}</ul>
+      <p class="on-note">${t('roomCfg', { map: t('map.' + map.id), laps: lapsWord(r.cfg.laps) })} · ${t('bots')}</p>
+      <p id="onWait" class="on-note on-wait"></p>`;
+    updQuickWait(); return;
+  }
   box.innerHTML = `${err}<div class="room-code"><div><h3 class="label">${t('roomCode')}</h3><b>${r.code}</b></div><button id="onCopy" class="btn">${t('copy')}</button></div>
     <p class="on-note">${t('shareHint')}</p>
     <h3 class="label">${t('players')} · ${r.players.length}/5</h3>
@@ -2963,6 +3015,12 @@ function renderOnline() {
     ${host ? `<div class="on-row"><div id="onBots" class="seg words"><button data-b="1" aria-pressed="${r.cfg.bots}">${t('bots')}: ${t('on')}</button><button data-b="0" aria-pressed="${!r.cfg.bots}">${t('off')}</button></div></div>
     <button id="onStart" class="btn primary">${t('startOnline')}</button>` : `<p class="on-note">${t('waitHost')}</p>`}`;
 }
+function updQuickWait() { // the countdown in a public room
+  const el = $('#onWait'), r = NET.room; if (!el || !r || !r.quick || r.started) return;
+  const sec = Math.max(0, Math.ceil((r.startAt - NET.offset - Date.now()) / 1000));
+  el.textContent = t('quickWait', { n: r.players.length, s: sec });
+}
+setInterval(() => { if (!$('#online').hidden) updQuickWait(); }, 500);
 function openOnline() {
   $('#menu').hidden = true; $('#results').hidden = true; $('#online').hidden = false; renderOnline();
   if (NET.room && !NET.room.started) netSend(Object.assign({ t: 'profile' }, netProfile()));
@@ -2971,7 +3029,8 @@ function openOnline() {
 $('#online').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
   const name = $('#onName'); if (name) { S.pname = name.value.trim().slice(0, 16); store.set('turbo-krug-name', S.pname); $('#pname').value = S.pname; }
-  if (b.id === 'onCreate') netConnect(() => netSend(Object.assign({ t: 'create' }, netProfile())));
+  if (b.id === 'onQuick') netConnect(() => netSend(Object.assign({ t: 'quick' }, netProfile())));
+  else if (b.id === 'onCreate') netConnect(() => netSend(Object.assign({ t: 'create' }, netProfile())));
   else if (b.id === 'onJoin') { const code = ($('#onCode').value || '').toUpperCase().trim(); if (code.length === 4) netConnect(() => netSend(Object.assign({ t: 'join', code }, netProfile()))); }
   else if (b.id === 'onCopy') { const code = NET.room && NET.room.code; try { navigator.clipboard.writeText(code).then(() => { b.textContent = t('copied'); }).catch(() => {}); } catch (_) {} }
   else if (b.id === 'onStart') { initAudio(); netSend({ t: 'cfg', map: MAPS[S.mapIndex].id, laps: S.laps, bots: NET.room.cfg.bots }); setTimeout(() => netSend({ t: 'start' }), 120); }
@@ -3066,7 +3125,8 @@ function toMenu() {
   if (S.cup && !S.cup.done) S.cup = null;
   document.body.classList.remove('duo'); $('#hud2').hidden = true;
   renderMapList(); renderMenuStrip(); syncMode(); setConditions();
-  setMenuPage(S.menuPage === 'track' || S.menuPage === 'mode' ? S.menuPage : 'home'); // after a race "track select" lands back on the track page
+  restoreSettings();
+  setMenuPage(['track', 'mode', 'career'].includes(S.menuPage) ? S.menuPage : 'home'); // after a race "track select" lands back where you came from
 }
 function togglePause(force) {
   if (isOnline()) return; // the race goes on for everyone else
@@ -3095,8 +3155,10 @@ function onPlayerFinish(c) {
   S.earned = S.gameMode === 'trial' ? Math.round(20 * LAP_K[S.laps]) + (S.newRecord ? 40 : 0)
     : Math.round(PLACE_PTS[c.place - 1] * LAP_K[S.laps] * DIFFS[S.diff].pts) + (S.newRecord ? 25 : 0);
   S.earned += S.coinsGot || 0; // coins picked up on the way
+  if (S.gameMode === 'career' && S.career) S.earned += careerFinish(c);
+  if (S.gameMode === 'daily' && S.daily) dailyFinish(c);
   wallet.coins += S.earned; saveWallet(); checkAch();
-  $('#resNet').hidden = true; if (!S.duo) submitLap(c.best, c.model.id || 'start');
+  $('#resNet').hidden = true; if (!S.duo && S.gameMode !== 'daily') submitLap(c.best, c.model.id || 'start'); // the daily board has its own line
   if (S.gameMode === 'trial') toast(t('finish'), fmt(c.finishTime), S.newRecord ? 'good' : '');
   else toast(c.place === 1 ? t('victory') : t('finish'), t('placeSub', { o: ord(c.place), t: fmt(c.finishTime) }), c.place === 1 ? 'good' : '');
   beep(660, .15); setTimeout(() => beep(990, .3), 160);
@@ -3128,6 +3190,13 @@ function showResults(keepFocus) {
   const nxt = CARS.find((m, i) => i > CARS.indexOf(curModel()) && !wallet.owned.includes(m.id));
   $('#resHint').textContent = t('total', { n: wallet.coins }) + (!nxt ? t('topCar')
     : wallet.coins >= nxt.price ? t('canBuy', { car: carName(nxt) }) : t('needFor', { car: carName(nxt), n: nxt.price - wallet.coins }));
+  $('#nextBtn').textContent = t('next');
+  if (S.gameMode === 'career' && S.careerRes) { // the goal, and the way on
+    const R = S.careerRes, nx = S.career.e + 1 < 4 ? S.career : leagueOpen(S.career.l + 1) && CAREER[S.career.l + 1] ? { l: S.career.l + 1, e: -1 } : null;
+    $('#resHint').textContent = (R.ok ? t('goalOk') : t('goalNo', { g: t('goal.' + R.goal).toLowerCase() })) + (R.reward ? ' ' + t('goalPts', { n: R.reward }) : R.ok ? ' ' + t('goalAgain') : '') + (R.bonus ? ' ' + t('leagueBonus', { n: R.bonus }) : '');
+    $('#nextBtn').hidden = !nx; $('#nextBtn').textContent = t('nextEv');
+  }
+  if (S.gameMode === 'daily') { $('#nextBtn').hidden = true; $('#resTitle').textContent = t('dailyDone') + ' · ' + $('#resTitle').textContent; }
   $('#results').hidden = false; $('#touch').hidden = true; if (!keepFocus) (cup ? $('#cupNextBtn') : $('#againBtn')).focus({ preventScroll: true });
   fillResults();
 }
@@ -3423,7 +3492,9 @@ function preview3D(m, color) { // renders a vehicle once into a small offscreen 
     PREV.cam = new THREE.PerspectiveCamera(30, 480 / 280, 1, 2000);
   }
   const g = makeCar3D(m, color); g.rotation.y = -.5; PREV.scene.add(g); // nose to the right and a little toward us
-  const box = new THREE.Box3().setFromObject(g), c = box.getCenter(new THREE.Vector3()), size = box.getSize(new THREE.Vector3()), r = Math.max(size.x, size.z, size.y * 1.6) * .5;
+  const box = new THREE.Box3(), u = g.userData; g.updateMatrixWorld(true);
+  g.traverse(o => { if (o.isMesh && o.visible && o !== u.flame && o !== u.shield && o !== u.beam && o !== u.blob) box.expandByObject(o); }); // only what you can see: the headlight cone is huge
+  const c = box.getCenter(new THREE.Vector3()), size = box.getSize(new THREE.Vector3()), r = Math.max(size.x, size.z, size.y * 1.6) * .5;
   PREV.cam.position.set(c.x + r * .7, c.y + r * 1.1, c.z + r * 3.1); PREV.cam.lookAt(c);
   PREV.r.render(PREV.scene, PREV.cam);
   const out = document.createElement('canvas'); out.width = 480; out.height = 280; out.getContext('2d').drawImage(PREV.r.domElement, 0, 0);
@@ -4220,16 +4291,17 @@ function makeCar3D(m, color, ghost) {
   const tail = new THREE.MeshBasicMaterial(Object.assign({ color: 0x6a0a0a }, op));
   const headM = new THREE.MeshBasicMaterial(Object.assign({ color: 0xfff1c4 }, op));
   const body = part('box', paint, L * .9, 6, Wd, -L * .02, 8.5, 0, g);
-  part('box', paint, L * .3, 3.2, Wd * .94, L * .34, 11, 0, g).rotation.z = -.16; // sloped bonnet
+  const bonnet = part('box', paint, L * .3, 3.2, Wd * .94, L * .34, 11, 0, g); bonnet.rotation.z = -.16; // sloped bonnet
   part('box', paint, L * .2, 2.6, Wd * .94, -L * .38, 11.4, 0, g).rotation.z = .1; // boot
   if (m.taper) part('box', paint, L * .28, 4, Wd * .86, L * .42, 6.5, 0, g);
   part('box', black, L * .96, 2.5, Wd * .96, 0, 4.4, 0, g); // floor and side skirts
-  part('box', black, 2.4, 3.2, Wd * 1.02, L * .48, 5.6, 0, g); // front bumper / splitter
-  part('box', black, 2.4, 3, Wd * .98, -L * .47, 6.2, 0, g); // rear bumper
+  const bumperF = part('box', black, 2.4, 3.2, Wd * 1.02, L * .48, 5.6, 0, g); // front bumper / splitter
+  const bumperR = part('box', black, 2.4, 3, Wd * .98, -L * .47, 6.2, 0, g); // rear bumper
   for (const sz of [-1, 1]) part('cyl', lam('#9aa0aa'), .9, 3, .9, -L * .5 - .6, 5.2, sz * Wd * .2, g).rotation.z = Math.PI / 2; // exhausts
   const cab = part('box', glass, L * .44, 5.6, Wd * .82, -L * .05, 14.3, 0, g);
   part('box', paint, L * .36, 1, Wd * .84, -L * .07, 17.4, 0, g); // roof
-  for (const sz of [-1, 1]) { part('box', paint, L * .05, 5.6, .8, L * .17, 14.2, sz * Wd * .4, g).rotation.z = -.35; part('box', paint, 2.2, 1.6, 1.4, L * .2, 13.4, sz * (Wd / 2 + .7), g); } // A-pillars, mirrors
+  const mirrors = [];
+  for (const sz of [-1, 1]) { part('box', paint, L * .05, 5.6, .8, L * .17, 14.2, sz * Wd * .4, g).rotation.z = -.35; mirrors.push(part('box', paint, 2.2, 1.6, 1.4, L * .2, 13.4, sz * (Wd / 2 + .7), g)); } // A-pillars, mirrors
   if (m.stripes === 'double') { part('box', stripe, L * .98, .8, 2.4, 0, 11.6, -3.2, g); part('box', stripe, L * .98, .8, 2.4, 0, 11.6, 3.2, g); }
   else if (m.stripes === 'side') { part('box', stripe, L * .8, 1.6, .6, 0, 9, Wd / 2 + .1, g); part('box', stripe, L * .8, 1.6, .6, 0, 9, -Wd / 2 - .1, g); }
   else part('box', stripe, L * .98, .8, 3.6, 0, 11.6, 0, g);
@@ -4257,7 +4329,7 @@ function makeCar3D(m, color, ghost) {
   beam.scale.set(-180, 50, 70); beam.position.set(L / 2, 7, 0); beam.visible = false; g.add(beam);
   if (!ghost) g.traverse(o => { if (o.isMesh && o !== flame && o !== shield && o !== beam) o.castShadow = true; });
   if (!ghost) addBlob(g, L * .62, Wd * .8);
-  g.userData = { paint, tail, wheels, front, flame, shield, beam, base: col3(color), spin: 0, mats: [paint, glass, black, stripe, tail, headM, flame.material, shield.material, beam.material] };
+  g.userData = { paint, tail, wheels, front, flame, shield, beam, bonnet, bumperF, bumperR, mirrors, base: col3(color), spin: 0, mats: [paint, glass, black, stripe, tail, headM, flame.material, shield.material, beam.material] };
   return g;
 }
 function addBlob(g, rx, rz) { // soft contact shadow, so vehicles sit on the road even without shadow maps
@@ -4305,6 +4377,7 @@ function updCar3D(c, dt, tm) {
   u.flame.visible = !!c.boosting; if (c.boosting) { u.flame.material.color.setHex(c.nitroOn ? 0x4fc8ff : 0xff9a1f); u.flame.scale.x = 12 + Math.random() * 8; }
   u.shield.visible = c.shieldT > 0; if (c.shieldT > 0) u.shield.material.opacity = c.shieldT < 1.5 && Math.sin(tm * 20) < 0 ? .08 : .22;
   u.beam.visible = isNight() && u.type !== 'dog';
+  if (u.bonnet) carDamageLook(c, u);
   statusLook(c, g, u, tm);
 }
 
@@ -4739,6 +4812,7 @@ function render3D(dt) {
     fctx.setTransform(fx_dpr(), 0, 0, fx_dpr(), 0, 0); fctx.clearRect(0, 0, W, H);
     return;
   }
+  if (S.mode === 'photo') { const cam = photoCam(f); aimLights(f, 0, 0); sync3DObjects(0, tm); G3.r.render(G3.scene, cam); fctx.setTransform(fx_dpr(), 0, 0, fx_dpr(), 0, 0); fctx.clearRect(0, 0, W, H); return; }
   sync3DObjects(dt, tm);
   // particles and skid marks are shared by both views
   const pa = G3.pts.geometry.attributes, n = Math.min(S.parts.length, G3.PN);
@@ -5216,12 +5290,15 @@ function setMenuPage(pg) {
   document.querySelectorAll('#menu .mpage').forEach(el => { el.hidden = el.dataset.page !== pg; });
   $('#menu').scrollTop = 0;
   if (pg === 'home') updQuick();
+  if (pg === 'career') renderCareer();
   const f = { home: '#playBtn', mode: '#modeSeg button[aria-pressed="true"]', track: '#startBtn' }[pg];
   if (!touchMode) { const el = $(f); if (el) el.focus({ preventScroll: true }); }
 }
-function modeName(m) { return t({ race: 'mRace', cup: 'mCup', trial: 'mTrial', duo: 'mDuo', online: 'mOnline' }[m] || 'mRace'); }
+function modeName(m) { return t({ race: 'mRace', cup: 'mCup', trial: 'mTrial', duo: 'mDuo', online: 'mOnline', career: 'mCareer', daily: 'mRace' }[m] || 'mRace'); }
 function updQuick() {
-  $('#quickSub').textContent = t('quickSub', { m: modeName(S.gameMode), map: t('map.' + MAPS[S.mapIndex].id), l: S.laps });
+  const qm = S.gameMode === 'career' || S.gameMode === 'daily' ? 'race' : S.gameMode;
+  $('#quickSub').textContent = t('quickSub', { m: modeName(qm), map: t('map.' + MAPS[S.mapIndex].id), l: S.laps });
+  updDailyBtn();
 }
 function syncMode() {
   if ($('#trackHead')) $('#trackHead').textContent = modeName(S.gameMode);
@@ -5292,6 +5369,138 @@ function drawPreview(cv, map) {
   x.strokeStyle = map.c.asphalt; x.lineWidth = map.width; x.stroke(tr.path);
   const p = tr.pts[0]; x.strokeStyle = '#fff'; x.lineWidth = 40;
   x.beginPath(); x.moveTo(p.x - p.nx * map.width * .6, p.y - p.ny * map.width * .6); x.lineTo(p.x + p.nx * map.width * .6, p.y + p.ny * map.width * .6); x.stroke();
+}
+
+// ---------- career: four leagues of four races, each with a goal ----------
+const CAREER = [
+  { id: 'rookie', diff: 0, laps: 3, reward: 60, ev: [['valley', 'top3'], ['beach', 'top3'], ['meadow', 'win'], ['canyon', 'clean']] },
+  { id: 'amateur', diff: 1, laps: 3, reward: 100, ev: [['city', 'top3'], ['autumn', 'win'], ['tropic', 'clean'], ['jungle', 'win']] },
+  { id: 'pro', diff: 2, laps: 3, reward: 160, ev: [['volcano', 'top3'], ['dunes', 'win'], ['harbor', 'clean'], ['temple', 'win']] },
+  { id: 'legend', diff: 2, laps: 5, reward: 260, ev: [['pass', 'win'], ['neon', 'win'], ['mars', 'clean'], ['haunted', 'win']] },
+];
+let career = { done: {}, bonus: {} };
+try { const c = JSON.parse(store.get('turbo-krug-career') || 'null'); if (c && c.done) career = { done: c.done || {}, bonus: c.bonus || {} }; } catch (e) {}
+const saveCareer = () => store.set('turbo-krug-career', JSON.stringify(career));
+const evKey = (l, e) => CAREER[l].id + ':' + e;
+const leagueDone = l => CAREER[l].ev.filter((_, e) => career.done[evKey(l, e)]).length;
+const leagueOpen = l => l === 0 || leagueDone(l - 1) >= 3;
+function goalMet(goal, c) { return goal === 'win' ? c.place === 1 : goal === 'clean' ? c.place <= 3 && c.damage <= .2 : c.place <= 3; }
+function renderCareer() {
+  $('#careerList').innerHTML = CAREER.map((L, l) => {
+    const open = leagueOpen(l), n = leagueDone(l);
+    return `<section class="lg${open ? '' : ' locked'}"><header><b>${t('lg.' + L.id)}</b><span>${t('diff' + L.diff)} · ${lapsWord(L.laps)} · ${n}/4${open ? '' : ' · ' + t('lgLocked')}</span></header><div class="evs">${L.ev.map(([mid, goal], e) => {
+      const done = career.done[evKey(l, e)];
+      return `<button class="ev${done ? ' done' : ''}" data-l="${l}" data-e="${e}"${open ? '' : ' disabled'}><canvas width="120" height="72"></canvas><span class="ev-t"><b>${t('map.' + mid)}</b><small>${t('goal.' + goal)}</small></span><span class="ev-r">${done ? '✓' : '+' + L.reward}</span></button>`;
+    }).join('')}</div></section>`;
+  }).join('');
+  $('#careerList').querySelectorAll('.ev').forEach(b => drawPreview(b.querySelector('canvas'), MAPS.find(m => m.id === CAREER[+b.dataset.l].ev[+b.dataset.e][0])));
+}
+function keepSettings() { if (!S.saved) S.saved = { laps: S.laps, diff: S.diff }; } // career and daily races use their own laps and difficulty
+function restoreSettings() { if (S.saved) { S.laps = S.saved.laps; S.diff = S.saved.diff; S.saved = null; } }
+function startCareer(l, e) {
+  if (!leagueOpen(l)) return;
+  const L = CAREER[l]; keepSettings();
+  S.gameMode = 'career'; S.career = { l, e }; S.laps = L.laps; S.diff = L.diff;
+  S.mapIndex = MAPS.findIndex(m => m.id === L.ev[e][0]); startRace();
+}
+function careerFinish(c) { // called at the finish: did we meet the goal, and is it the first time?
+  const { l, e } = S.career, L = CAREER[l], k = evKey(l, e), ok = goalMet(L.ev[e][1], c), first = ok && !career.done[k];
+  let bonus = 0;
+  if (first) { career.done[k] = true; if (leagueDone(l) === 4 && !career.bonus[L.id]) { career.bonus[L.id] = true; bonus = L.reward * 2; } saveCareer(); }
+  S.careerRes = { ok, first, reward: first ? L.reward : 0, bonus, goal: L.ev[e][1] };
+  return (first ? L.reward : 0) + bonus;
+}
+// ---------- track of the day: the same track and weather for everyone today ----------
+function dailyInfo() {
+  const date = new Date().toISOString().slice(0, 10); let h = 7; for (const ch of date) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+  const r = rng(h), mi = Math.floor(r() * MAPS.length);
+  return { date, mi, map: MAPS[mi], weather: ['clear', 'clear', 'rain', 'fog'][Math.floor(r() * 4)], night: r() < .3 };
+}
+function dailyBest() { try { const d = JSON.parse(store.get('turbo-krug-daily') || 'null'), i = dailyInfo(); return d && d.date === i.date && d.map === i.map.id ? d.best : Infinity; } catch (e) { return Infinity; } }
+function updDailyBtn() {
+  const d = dailyInfo(), best = dailyBest(), cond = [d.weather !== 'clear' ? t(d.weather === 'rain' ? 'wRain' : 'wFog').toLowerCase() : '', d.night ? t('nNight').toLowerCase() : ''].filter(Boolean).join(', ');
+  $('#dailySub').textContent = t('map.' + d.map.id) + (cond ? ' · ' + cond : '') + (isFinite(best) ? ' · ' + t('yourBest', { t: fmt(best) }) : '');
+}
+function startDaily() {
+  const d = dailyInfo(); keepSettings();
+  S.gameMode = 'daily'; S.daily = d; S.laps = 3; S.diff = 1; S.mapIndex = d.mi; startRace();
+}
+function dailyFinish(c) {
+  const d = S.daily, time = c.finishTime;
+  if (time < dailyBest()) store.set('turbo-krug-daily', JSON.stringify({ date: d.date, map: d.map.id, best: time }));
+  if (!NET.ok) return;
+  fetch('/api/daily', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ date: d.date, map: d.map.id, time, car: c.model.id || 'start', name: myName() }) })
+    .then(r => r.json()).then(r => {
+      if (!r || !r.rank) return;
+      const el = $('#resNet'), top = (r.top || [])[0];
+      el.textContent = t('dailyRank', { n: r.rank, m: r.total }) + (top ? ' · ' + t('dailyTop', { p: top.name, t: fmt(top.time) }) : ''); el.hidden = false;
+    }).catch(() => {});
+}
+// ---------- slipstream: tuck in behind a rival for a little extra speed ----------
+function draftK(c, dt) {
+  let on = false;
+  if (c.speed > 160 && !(c.air > 0)) {
+    const fx = Math.cos(c.angle), fy = Math.sin(c.angle);
+    for (const o of S.cars) {
+      if (o === c || o.respawnT > 0 || o.speed < 140) continue;
+      const dx = o.x - c.x, dy = o.y - c.y, ah = dx * fx + dy * fy;
+      if (ah > 28 && ah < 170 && Math.abs(-dx * fy + dy * fx) < 22) { on = true; break; }
+    }
+  }
+  c.draftT = on ? Math.min(1.6, (c.draftT || 0) + dt) : Math.max(0, (c.draftT || 0) - dt * 2);
+  const k = clamp((c.draftT - .4) / .8, 0, 1);
+  if (k > .3 && c.isPlayer && Math.random() < .35) { // thin air streaks along the sides
+    const s = (Math.random() < .5 ? -1 : 1) * 12, fx = Math.cos(c.angle), fy = Math.sin(c.angle);
+    S.parts.push({ x: c.x - fy * s + fx * 18, y: c.y + fx * s + fy * 18, vx: -c.vx * .6, vy: -c.vy * .6, life: .25, max: .25, r: 2, op: .5, col: '235,245,255' });
+  }
+  return k;
+}
+// ---------- dents: the bonnet buckles, bumpers come off, mirrors snap ----------
+function carDamageLook(c, u) {
+  const d = c.damage;
+  u.bonnet.rotation.z = -.16 - Math.max(0, d - .2) * .35; u.bonnet.rotation.x = Math.max(0, d - .35) * .25;
+  const fOff = d > .78, rOff = d > .9;
+  if (fOff && u.bumperF.visible) burst(c.x + Math.cos(c.angle) * 20, c.y + Math.sin(c.angle) * 20, '40,40,44', 10, 160);
+  if (rOff && u.bumperR.visible) burst(c.x - Math.cos(c.angle) * 20, c.y - Math.sin(c.angle) * 20, '40,40,44', 10, 160);
+  u.bumperF.visible = !fOff; u.bumperF.rotation.y = Math.max(0, d - .3) * .5; u.bumperF.position.y = 5.6 - Math.max(0, d - .3) * 3;
+  u.bumperR.visible = !rOff; u.bumperR.rotation.y = -Math.max(0, d - .5) * .4;
+  u.mirrors.forEach((m, i) => { m.visible = d < (i ? .55 : .68); });
+}
+// ---------- photo mode: from the pause menu, orbit the car and save a picture ----------
+const PH = { yaw: 0, pitch: .3, dist: 95, ptrs: new Map(), pinch: 0 };
+function enterPhoto() {
+  const f = player(); if (!f || !G3.ok) return;
+  S.mode = 'photo'; PH.yaw = f.angle + Math.PI + .6; PH.pitch = .3; PH.dist = 95;
+  for (const id of ['#pause', '#hud', '#touch', '#toast', '#hint']) $(id).hidden = true;
+  $('#photoBar').hidden = false;
+}
+function exitPhoto() { S.mode = 'paused'; $('#photoBar').hidden = true; $('#hud').hidden = false; $('#pause').hidden = false; $('#resumeBtn').focus(); }
+function takeShot() {
+  render3D(0); // draw now, then read the picture before the browser clears it
+  G3.r.domElement.toBlob(b => { if (!b) return; const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'turbo-krug-' + Date.now() + '.png'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 3000); });
+  S.flashT = .15;
+}
+function photoCam(f) {
+  const cam = G3.cam, cp = Math.cos(PH.pitch);
+  cam.position.set(f.x + Math.cos(PH.yaw) * cp * PH.dist, 8 + Math.sin(PH.pitch) * PH.dist, f.y + Math.sin(PH.yaw) * cp * PH.dist);
+  cam.lookAt(f.x, 10 + (f.air || 0), f.y); cam.fov = 50; cam.aspect = W / H; cam.updateProjectionMatrix();
+  return cam;
+}
+function bindPhoto() {
+  const st = $('#stage');
+  st.addEventListener('pointerdown', e => { if (S.mode !== 'photo') return; PH.ptrs.set(e.pointerId, [e.clientX, e.clientY]); try { st.setPointerCapture(e.pointerId); } catch (_) {} });
+  st.addEventListener('pointermove', e => {
+    if (S.mode !== 'photo' || !PH.ptrs.has(e.pointerId)) return;
+    const [px, py] = PH.ptrs.get(e.pointerId); PH.ptrs.set(e.pointerId, [e.clientX, e.clientY]);
+    if (PH.ptrs.size === 2) { const [a, b] = [...PH.ptrs.values()], d = Math.hypot(a[0] - b[0], a[1] - b[1]); if (PH.pinch) PH.dist = clamp(PH.dist * PH.pinch / d, 35, 420); PH.pinch = d; return; }
+    PH.yaw -= (e.clientX - px) * .008; PH.pitch = clamp(PH.pitch + (e.clientY - py) * .006, .05, 1.35);
+  });
+  const up = e => { PH.ptrs.delete(e.pointerId); PH.pinch = 0; };
+  st.addEventListener('pointerup', up); st.addEventListener('pointercancel', up);
+  st.addEventListener('wheel', e => { if (S.mode !== 'photo') return; e.preventDefault(); PH.dist = clamp(PH.dist * (1 + e.deltaY * .001), 35, 420); }, { passive: false });
+  $('#photoBtn').addEventListener('click', enterPhoto);
+  $('#photoBack').addEventListener('click', exitPhoto);
+  $('#shotBtn').addEventListener('click', takeShot);
 }
 
 // ---------- garage ----------
@@ -5443,13 +5652,14 @@ addEventListener('keydown', e => {
   K[code] = true;
   if (e.repeat) return;
   if (S.mode === 'replay' && (code === 'Escape' || code === 'Enter' || code === 'Space')) { e.preventDefault(); endReplay(); return; }
+  if (S.mode === 'photo' && code === 'Escape') { exitPhoto(); return; }
   if (code === 'Escape' && !$('#settings').hidden) closeSettings();
   else if (code === 'Escape' && !$('#garage').hidden) closeGarage();
   else if (code === 'Escape' && !$('#achievements').hidden) $('#achBack').click();
   else if (code === 'Escape' && !$('#records').hidden) $('#recBack').click();
   else if (code === 'Escape' && !$('#help').hidden) $('#helpBack').click();
   else if (code === 'Escape' && !$('#online').hidden) $('#onBack').click();
-  else if (code === 'Escape' && S.mode === 'menu' && !$('#menu').hidden && S.menuPage && S.menuPage !== 'home') setMenuPage(S.menuPage === 'track' ? 'mode' : 'home');
+  else if (code === 'Escape' && S.mode === 'menu' && !$('#menu').hidden && S.menuPage && S.menuPage !== 'home') setMenuPage(S.menuPage === 'track' || S.menuPage === 'career' ? 'mode' : 'home');
   else if (code === 'Escape' || code === 'KeyP') togglePause();
   else if (code === 'Enter' && S.mode === 'menu') { if (!overlayOpen() && !(document.activeElement && document.activeElement.tagName === 'BUTTON' && $('#menu').contains(document.activeElement))) { e.preventDefault(); if (S.menuPage === 'track') startRace(); else if (S.menuPage === 'mode') setMenuPage('track'); else setMenuPage('mode'); } }
   else if (code === 'KeyM' && e.target.tagName !== 'INPUT') setVolume(S.volume > 0 ? 0 : (S.prevVolume || 60));
@@ -5466,6 +5676,7 @@ document.addEventListener('visibilitychange', () => { if (document.hidden && !S.
 const touchMode = matchMedia('(pointer: coarse)').matches;
 if (touchMode) document.body.classList.add('touchmode');
 bindTouch();
+bindPhoto();
 document.querySelectorAll('#touch button').forEach(b => {
   const k = b.dataset.k;
   if (b.dataset.act === 'item') { b.addEventListener('pointerdown', e => { e.preventDefault(); buzz(12); const p = player(); if (S.mode === 'race' && p && !p.finished) useItem(p); }); return; }
@@ -5504,14 +5715,16 @@ $('#modeSeg').addEventListener('click', e => {
   if (b.dataset.mode === 'online' && S.gameMode !== 'online') S.offlineMode = S.gameMode;
   S.gameMode = b.dataset.mode; store.set('turbo-krug-mode', S.gameMode); S.cup = null; syncMode();
   if (S.gameMode === 'online') { initAudio(); openOnline(); return; } // rooms have their own screen
-  setMenuPage('track');
+  setMenuPage(S.gameMode === 'career' ? 'career' : 'track');
 });
 $('#playBtn').addEventListener('click', () => setMenuPage('mode'));
 $('#randMap').addEventListener('click', () => { // pick another track at random and scroll it into view
   let i = S.mapIndex; while (i === S.mapIndex && MAPS.length > 1) i = Math.floor(Math.random() * MAPS.length);
   setupMap(i); resetRace('menu'); renderMapList(); syncMode(); const b = $('#map-' + MAPS[i].id); if (b) b.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
 });
-$('#quickBtn').addEventListener('click', () => { if (S.gameMode === 'online') { S.gameMode = 'race'; syncMode(); } startRace(); });
+$('#quickBtn').addEventListener('click', () => { if (['online', 'career', 'daily'].includes(S.gameMode)) { S.gameMode = 'race'; syncMode(); } startRace(); });
+$('#dailyBtn').addEventListener('click', startDaily);
+$('#careerList').addEventListener('click', e => { const b = e.target.closest('.ev'); if (b && !b.disabled) startCareer(+b.dataset.l, +b.dataset.e); });
 document.querySelectorAll('#menu .back').forEach(b => b.addEventListener('click', () => setMenuPage(b.dataset.back)));
 $('#cupNextBtn').addEventListener('click', cupNext);
 $('#p2Next').addEventListener('click', () => {
@@ -5526,8 +5739,11 @@ $('#resumeBtn').addEventListener('click', () => togglePause());
 $('#restartBtn').addEventListener('click', startRace);
 $('#menuBtn').addEventListener('click', toMenu);
 $('#againBtn').addEventListener('click', startRace);
-$('#nextBtn').addEventListener('click', () => { S.mapIndex = (S.mapIndex + 1) % MAPS.length; startRace(); });
-$('#resMenuBtn').addEventListener('click', toMenu);
+$('#nextBtn').addEventListener('click', () => {
+  if (S.gameMode === 'career' && S.career) { const { l, e } = S.career; if (e + 1 < 4) startCareer(l, e + 1); else if (CAREER[l + 1]) startCareer(l + 1, 0); return; }
+  S.mapIndex = (S.mapIndex + 1) % MAPS.length; startRace();
+});
+$('#resMenuBtn').addEventListener('click', () => { S.menuPage = S.gameMode === 'career' ? 'career' : S.gameMode === 'daily' ? 'home' : S.menuPage; toMenu(); });
 addEventListener('resize', resize);
 
 // ---------- loop ----------
@@ -5573,13 +5789,13 @@ function tick(dt) {
   try {
     pollPad(dt);
     if (S.mode === 'replay') updReplay(dt);
-    else if (S.mode !== 'paused') {
+    else if (S.mode !== 'paused' && S.mode !== 'photo') {
       accT += dt;
       let n = 0; while (accT >= DT && n++ < 12) { snapPrev(); step(DT); accT -= DT; }
       if (accT > DT) accT = 0;
     }
-    const blend = !S.noBlend && S.mode !== 'replay' && S.mode !== 'paused' && S.cars.length ? blendIn(clamp(accT / DT, 0, 1)) : null;
-    try { (G3.ok ? render3D : render)(S.mode === 'paused' ? 0 : dt); } finally { if (blend) blendOut(blend); }
+    const blend = !S.noBlend && S.mode !== 'replay' && S.mode !== 'paused' && S.mode !== 'photo' && S.cars.length ? blendIn(clamp(accT / DT, 0, 1)) : null;
+    try { (G3.ok ? render3D : render)(S.mode === 'paused' || S.mode === 'photo' ? 0 : dt); } finally { if (blend) blendOut(blend); }
     perfWatch(dt);
     if (S.mode !== 'menu' && S.mode !== 'replay') { updHud(dt); updHint(dt); }
     updAchBanner(dt);

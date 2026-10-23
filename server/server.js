@@ -57,6 +57,31 @@ function postScore(body) {
   return { ok: true, rank: me ? list.indexOf(me) + 1 : 0, best: me ? me.time : time, improved: true };
 }
 
+// ---------- track of the day: whole-race times, one board per date and track ----------
+const DAILY = path.join(DATA, 'daily.json');
+let daily = {};
+try { daily = JSON.parse(fs.readFileSync(DAILY, 'utf8')) || {}; } catch (e) { daily = {}; }
+let dailyTimer = null;
+function saveDaily() {
+  clearTimeout(dailyTimer);
+  dailyTimer = setTimeout(() => { const tmp = DAILY + '.tmp'; fs.writeFile(tmp, JSON.stringify(daily), err => { if (!err) fs.rename(tmp, DAILY, () => {}); }); }, 400);
+}
+const dayKey = ms => new Date(ms).toISOString().slice(0, 10);
+function postDaily(body) {
+  const date = String(body.date || ''), map = body.map, time = +body.time, name = cleanName(body.name), car = String(body.car || ''), now = Date.now();
+  if (![dayKey(now), dayKey(now - 864e5), dayKey(now + 864e5)].includes(date)) return { error: 'invalid' }; // time zones: allow a day either side
+  if (!MAPS.includes(map) || !isFinite(time) || time < 20 || time > 1500 || !VEHICLES.test(car)) return { error: 'invalid' };
+  for (const k of Object.keys(daily)) if (k.slice(0, 10) < dayKey(now - 3 * 864e5)) delete daily[k];
+  const key = date + ':' + map, list = daily[key] || (daily[key] = []);
+  const old = list.find(r => r.name.toLowerCase() === name.toLowerCase());
+  if (old) { if (time < old.time) Object.assign(old, { time: Math.round(time * 1000) / 1000, car }); }
+  else list.push({ name, time: Math.round(time * 1000) / 1000, car });
+  list.sort((a, b) => a.time - b.time); if (list.length > 300) list.length = 300;
+  saveDaily();
+  const me = list.find(r => r.name.toLowerCase() === name.toLowerCase());
+  return { ok: true, rank: me ? list.indexOf(me) + 1 : 0, total: list.length, best: me ? me.time : time, top: list.slice(0, 5) };
+}
+
 const server = http.createServer(async (req, res) => {
   const ip = String(req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').split(',')[0].trim();
   const send = (code, obj) => { if (res.headersSent) return; res.writeHead(code, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' }); res.end(JSON.stringify(obj)); };
@@ -72,6 +97,15 @@ const server = http.createServer(async (req, res) => {
       if (limited(ip, 30, 60000)) return send(429, { error: 'slow down' });
       const body = JSON.parse(await readBody(req, 2048) || '{}');
       const r = postScore(body);
+      return send(r.error ? 400 : 200, r);
+    }
+    if (url.pathname === '/api/daily' && req.method === 'GET') {
+      const key = String(url.searchParams.get('date') || '') + ':' + String(url.searchParams.get('map') || ''), list = daily[key] || [];
+      return send(200, { top: list.slice(0, 10), total: list.length });
+    }
+    if (url.pathname === '/api/daily' && req.method === 'POST') {
+      if (limited(ip, 30, 60000)) return send(429, { error: 'slow down' });
+      const r = postDaily(JSON.parse(await readBody(req, 2048) || '{}'));
       return send(r.error ? 400 : 200, r);
     }
     if (STATIC && req.method === 'GET' && !url.pathname.startsWith('/api')) { // optional static files, for running everything locally
@@ -165,7 +199,7 @@ const rooms = new Map();
 const LETTERS = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
 function newCode() { let c; do { c = Array.from({ length: 4 }, () => LETTERS[crypto.randomInt(LETTERS.length)]).join(''); } while (rooms.has(c)); return c; }
 const pub = c => ({ id: c.id, name: c.name, car: c.car, color: c.color });
-function roomState(r) { return { t: 'room', code: r.code, host: r.host.id, started: r.started, cfg: r.cfg, players: [...r.clients].map(pub) }; }
+function roomState(r) { return { t: 'room', code: r.code, host: r.host.id, started: r.started, cfg: r.cfg, quick: !!r.quick, startAt: r.startAt || 0, players: [...r.clients].map(pub) }; }
 function broadcast(r, obj, except) { const s = JSON.stringify(obj); for (const c of r.clients) if (c !== except) c.send(s); }
 function setProfile(c, m) {
   c.name = cleanName(m.name); c.car = VEHICLES.test(String(m.car || '')) ? m.car : 'start';
@@ -175,7 +209,7 @@ function leave(c) {
   clients.delete(c);
   const r = c.room; if (!r) return;
   r.clients.delete(c); c.room = null;
-  if (!r.clients.size) { rooms.delete(r.code); return; }
+  if (!r.clients.size) { clearTimeout(r.timer); rooms.delete(r.code); return; }
   if (r.host === c) {
     if (r.started) { broadcast(r, { t: 'closed', reason: 'host' }); for (const o of r.clients) o.room = null; rooms.delete(r.code); return; }
     r.host = r.clients.values().next().value;
@@ -183,6 +217,15 @@ function leave(c) {
   broadcast(r, { t: 'left', id: c.id });
   broadcast(r, roomState(r));
 }
+// Quick match: public rooms on a random track that start by themselves; bots fill the empty places.
+const QUICK_WAIT = 20000;
+function startRoom(r) {
+  if (!r || r.started || !r.clients.size || rooms.get(r.code) !== r) return;
+  clearTimeout(r.timer); r.started = true; r.startAt = 0;
+  const humans = [...r.clients].map(pub), bots = r.cfg.bots ? Math.max(0, MAX_PLAYERS - humans.length) : 0;
+  broadcast(r, { t: 'start', map: r.cfg.map, laps: r.cfg.laps, seed: crypto.randomInt(1e9), startAt: Date.now() + 4800, humans, bots });
+}
+function armQuick(r, ms) { clearTimeout(r.timer); r.startAt = Date.now() + ms; r.timer = setTimeout(() => startRoom(r), ms); }
 function onMessage(c, m) {
   const r = c.room;
   switch (m.t) {
@@ -203,20 +246,23 @@ function onMessage(c, m) {
       setProfile(c, m); room.clients.add(c); c.room = room;
       broadcast(room, roomState(room)); return;
     }
+    case 'quick': {
+      let room = [...rooms.values()].find(x => x.quick && !x.started && x.clients.size < MAX_PLAYERS && x !== r);
+      if (r) leave(c);
+      setProfile(c, m);
+      if (!room) { room = { code: newCode(), host: c, clients: new Set(), started: false, quick: true, cfg: { map: MAPS[crypto.randomInt(MAPS.length)], laps: 3, bots: true } }; rooms.set(room.code, room); armQuick(room, QUICK_WAIT); }
+      room.clients.add(c); c.room = room;
+      if (room.clients.size >= MAX_PLAYERS) armQuick(room, 2500); // full: go almost at once
+      broadcast(room, roomState(room)); return;
+    }
     case 'profile': if (r && !r.started) { setProfile(c, m); broadcast(r, roomState(r)); } return;
     case 'leave': if (r) leave(c); return;
     case 'cfg':
-      if (!r || r.host !== c || r.started) return;
+      if (!r || r.host !== c || r.started || r.quick) return;
       r.cfg = { map: MAPS.includes(m.map) ? m.map : r.cfg.map, laps: [1, 3, 5].includes(m.laps) ? m.laps : r.cfg.laps, bots: !!m.bots };
       broadcast(r, roomState(r)); return;
-    case 'start': {
-      if (!r || r.host !== c || r.started) return;
-      r.started = true;
-      const humans = [...r.clients].map(pub), bots = r.cfg.bots ? Math.max(0, MAX_PLAYERS - humans.length) : 0;
-      broadcast(r, { t: 'start', map: r.cfg.map, laps: r.cfg.laps, seed: crypto.randomInt(1e9), startAt: Date.now() + 4800, humans, bots });
-      return;
-    }
-    case 'lobby': if (r && r.host === c) { r.started = false; broadcast(r, roomState(r)); } return;
+    case 'start': if (r && r.host === c && !r.quick) startRoom(r); return;
+    case 'lobby': if (r && r.host === c) { r.started = false; if (r.quick) { r.cfg.map = MAPS[crypto.randomInt(MAPS.length)]; armQuick(r, QUICK_WAIT); } broadcast(r, roomState(r)); } return;
     case 'b': case 'hz': // bots and hazards are simulated by the host only
       if (r && r.started && r.host === c) { m.id = c.id; broadcast(r, m, c); }
       return;
