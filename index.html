@@ -95,16 +95,56 @@ h1 span{color:var(--accent)}
 
 .center{justify-content:center;background:rgba(8,9,12,.55)}
 .center .panel{width:min(420px,100%)}
-.center .panel.garage-panel{width:min(740px,100%)}
+.center .panel.garage-panel,.center .panel.ach-panel{width:min(980px,100%)}
 .g-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
 .g-head .res-sub{max-width:44ch}
+.tabs{display:flex;flex-wrap:wrap;gap:6px}
+.tabs button{height:36px;padding:0 14px;border-radius:99px;border:1px solid var(--line);background:var(--panel-2);font-weight:800;font-size:13px}
+.tabs button[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.g-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:16px;align-items:start}
 .cars{display:grid;gap:8px}
-.car{display:grid;grid-template-columns:120px minmax(0,1fr) 180px;gap:16px;align-items:center;padding:10px 14px 10px 10px;background:var(--panel-2);border:1px solid var(--line);border-radius:10px}
-.car.sel{border-color:var(--accent);background:#25231b}
-.car canvas{width:120px;height:70px;display:block}
-.c-txt{display:grid;gap:4px;min-width:0}
-.c-txt b{font-family:var(--display);font-weight:400;font-size:18px}
-.c-tag{font-size:13px;color:var(--muted);margin-bottom:2px}
+.car{display:grid;grid-template-columns:96px minmax(0,1fr) auto;gap:12px;align-items:center;padding:8px 12px 8px 8px;text-align:left;background:var(--panel-2);border:1px solid var(--line);border-radius:10px}
+.car:hover{border-color:#4a5161}
+.car[aria-pressed="true"]{border-color:var(--accent);background:#25231b}
+.car canvas{width:96px;height:56px;display:block}
+.c-txt{display:grid;gap:2px;min-width:0}
+.c-txt b{font-family:var(--display);font-weight:400;font-size:16px}
+.c-tag{font-size:12px;color:var(--muted)}
+.c-badge{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:99px;border:1px solid var(--line);white-space:nowrap;font-variant-numeric:tabular-nums}
+.c-badge.on{border-color:var(--go);color:var(--go)}
+.veh-detail{display:grid;gap:12px;padding:14px;background:var(--panel-2);border:1px solid var(--line);border-radius:12px;min-width:0}
+.veh-detail canvas{width:100%;max-width:100%;aspect-ratio:2/1;height:auto;display:block;border-radius:8px;background:#11141b}
+.vd-head{display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap}
+.vd-head b{font-family:var(--display);font-weight:400;font-size:22px}
+.vd-tag{margin:0;color:var(--muted);font-size:13px}
+.vd-traits{display:flex;flex-wrap:wrap;gap:6px}
+.vd-traits span{font-size:11px;font-weight:800;letter-spacing:.04em;padding:3px 8px;border-radius:99px;background:#20242e;color:var(--fg)}
+.tune{display:grid;gap:8px}
+.tune-row{display:grid;grid-template-columns:minmax(70px,auto) auto minmax(0,1fr);gap:10px;align-items:center;font-size:13px}
+.pips{display:flex;gap:4px}
+.pips i{width:18px;height:8px;border-radius:2px;background:#2c313c}
+.pips i.on{background:var(--accent)}
+.tune-row .btn{height:34px;flex:none;font-size:12px;padding:0 10px}
+.swatches{display:flex;flex-wrap:wrap;gap:6px}
+.swatches button{width:30px;height:30px;border-radius:50%;border:2px solid transparent;box-shadow:inset 0 0 0 2px rgba(0,0,0,.3)}
+.swatches button[aria-pressed="true"]{border-color:var(--fg)}
+.vd-note{margin:0;font-size:12px;color:var(--muted)}
+.ach-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px}
+.ach-item{display:grid;grid-template-columns:36px minmax(0,1fr);gap:10px;align-items:start;padding:10px 12px;background:var(--panel-2);border:1px solid var(--line);border-radius:10px}
+.ach-item.done{border-color:#4d5a2a;background:#1f2416}
+.ach-item i{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:#2c313c;font-style:normal;font-family:var(--display);color:var(--muted)}
+.ach-item.done i{background:var(--accent);color:var(--accent-ink)}
+.ach-item b{font-weight:800;font-size:14px}
+.ach-item p{margin:2px 0 6px;font-size:12px;color:var(--muted)}
+.ach-item .bar{height:6px;border-radius:3px;background:#2c313c;overflow:hidden}
+.ach-item .bar s{display:block;height:100%;background:var(--accent)}
+.ach-item em{font-style:normal;font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+.ach-banner{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 70px);transform:translateX(-50%);z-index:40;display:grid;grid-template-columns:auto auto;column-gap:12px;align-items:center;padding:10px 16px;background:#1f2416;border:1px solid var(--accent);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.5);pointer-events:none}
+.ach-banner .label{margin:0;grid-column:1/-1;color:var(--accent)}
+.ach-banner b{font-family:var(--display);font-weight:400;font-size:18px}
+.ach-banner em{font-style:normal;font-weight:800;color:var(--accent)}
+.menu-links{display:flex;flex-wrap:wrap;gap:8px}
+.menu-links .btn{flex:1 1 120px;height:40px}
 .st{display:grid;grid-template-columns:82px minmax(0,1fr) 70px;gap:8px;align-items:center;font-size:12px;color:var(--muted)}
 .st i{height:6px;border-radius:3px;background:#2c313c;overflow:hidden}
 .st s{display:block;height:100%;background:var(--accent);border-radius:3px}
@@ -224,7 +264,8 @@ body.touchmode .hud-bl,body.touchmode .mini{bottom:calc(env(safe-area-inset-bott
 .overlay{overscroll-behavior:contain}
 .menu-panel{--gap:22px;gap:var(--gap)}
 .menu-panel .col{display:contents}
-.cta-row,.garage-panel>#garageBack,.results .btns,#settings #setDone{position:sticky;bottom:0;z-index:2;background:var(--sticky);box-shadow:0 -14px 16px 2px var(--sticky);border-radius:10px}
+.cta-row,.garage-panel>#garageBack,.ach-panel>#achBack,.results .btns,#settings #setDone{position:sticky;bottom:0;z-index:2;background:var(--sticky);box-shadow:0 -14px 16px 2px var(--sticky);border-radius:10px}
+.garage-panel>#garageBack,.ach-panel>#achBack,#settings #setDone{background:var(--accent)}
 @media (min-width:980px),(min-width:700px) and (max-height:600px){
   .menu{background:linear-gradient(90deg,rgba(9,10,13,.94) 0%,rgba(9,10,13,.72) 60%,rgba(9,10,13,.2) 100%)}
   .menu-panel{width:min(1060px,100%);grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);column-gap:30px}
@@ -239,8 +280,6 @@ body.touchmode .hud-bl,body.touchmode .mini{bottom:calc(env(safe-area-inset-bott
   .maps,.cars{gap:6px}
   .map{padding:6px 10px 6px 6px;gap:12px;grid-template-columns:86px minmax(0,1fr) auto}
   .map canvas{width:86px;height:50px}
-  .car{padding:8px 12px 8px 8px}
-  .car canvas{width:100px;height:58px}
   td{padding:7px 6px}
   .res-title{font-size:30px}
 }
@@ -254,8 +293,8 @@ body.touchmode .hud-bl,body.touchmode .mini{bottom:calc(env(safe-area-inset-bott
   .seg button{height:36px}
   .garage-strip{grid-template-columns:72px minmax(0,1fr) auto auto;padding:6px 10px 6px 6px}
   .garage-strip canvas{width:72px;height:42px}
-  .car{grid-template-columns:80px minmax(0,1fr) 170px}
-  .car canvas{width:80px;height:46px}
+  .car{grid-template-columns:72px minmax(0,1fr) auto}
+  .car canvas{width:72px;height:42px}
   .st{font-size:11px}
   .btn{height:42px}
 }
@@ -297,9 +336,7 @@ body.touchmode .hud-bl,body.touchmode .mini{bottom:calc(env(safe-area-inset-bott
   .menu{background:rgba(9,10,13,.78)}
 }
 @media (max-width:620px){
-  .car{grid-template-columns:96px minmax(0,1fr)}
-  .car canvas{width:96px;height:56px}
-  .c-act{grid-column:1/-1}
+  .g-body{grid-template-columns:1fr}
   .garage-strip{grid-template-columns:72px minmax(0,1fr) auto}
   .garage-strip canvas{width:72px;height:42px}
   .garage-strip .btn{grid-column:1/-1}
@@ -405,9 +442,12 @@ body.touchmode .hud-bl,body.touchmode .mini{bottom:calc(env(safe-area-inset-bott
     </div>
     <div class="garage-strip">
       <canvas id="curCarCv" width="192" height="112"></canvas>
-      <div><h2 class="label" data-t="yourCar">Ваша машина</h2><b id="curCarName">Старт</b></div>
+      <div><h2 class="label" data-t="yourCar">Ваш транспорт</h2><b id="curCarName">Старт</b></div>
       <div class="coins"><h2 class="label" data-t="points">Очки</h2><b id="coinsMenu">0</b></div>
       <button id="garageBtn" class="btn" data-t="garage">Гараж</button>
+    </div>
+    <div class="menu-links">
+      <button id="achBtn" class="btn" data-t="achTitle">Достижения</button>
     </div>
     <div class="cta-row">
       <button id="startBtn" class="cta"><span data-t="start">На старт</span> <kbd>Enter</kbd></button>
@@ -523,10 +563,29 @@ body.touchmode .hud-bl,body.touchmode .mini{bottom:calc(env(safe-area-inset-bott
       </div>
       <div class="coins big"><h2 class="label" data-t="points">Очки</h2><b id="coinsGarage">0</b></div>
     </header>
-    <div id="cars" class="cars"></div>
+    <div id="vehTabs" class="tabs" role="tablist"></div>
+    <div class="g-body">
+      <div id="cars" class="cars"></div>
+      <div id="vehDetail" class="veh-detail"></div>
+    </div>
     <button id="garageBack" class="btn primary" data-t="done">Готово</button>
   </div>
 </div>
+
+<div id="achievements" class="overlay center" hidden>
+  <div class="panel ach-panel">
+    <div class="checker" aria-hidden="true"></div>
+    <header class="g-head">
+      <div>
+        <h2 class="res-title" data-t="achTitle">Достижения</h2>
+        <p id="achSub" class="res-sub"></p>
+      </div>
+    </header>
+    <div id="achList" class="ach-list"></div>
+    <button id="achBack" class="btn primary" data-t="done">Готово</button>
+  </div>
+</div>
+<div id="achBanner" class="ach-banner" hidden><span class="label" data-t="achNew">Достижение</span><b id="achName"></b><em id="achReward"></em></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
@@ -546,6 +605,33 @@ const STR = {
     k1: '<b>W / S</b> газ и тормоз', k2: '<b>A / D</b> руль, <b>Пробел</b> ручник', k3: '<b>Shift</b> нитро, <b>E</b> предмет', k4: '<b>R</b> на трассу, <b>Esc</b> пауза, <b>M</b> звук',
     nitro: 'Нитро', hull: 'Корпус', repair: 'Ремонт', item: 'Предмет',
     camera: 'Камера', camNear: 'Близко', camFar: 'Далеко', camTop: 'Сверху', gfx: 'Графика', gfxHigh: 'Красивая', gfxLow: 'Быстрая',
+    'car.bike': 'Байк', 'car.bike.tag': 'Лёгкий и резкий, ложится в поворот',
+    'car.superbike': 'Супербайк', 'car.superbike.tag': 'Ракета на двух колёсах',
+    'car.sled': 'Снегоход', 'car.sled.tag': 'Держит лёд и снег, на асфальте медленнее',
+    'car.dog': 'Шарик', 'car.dog.tag': 'Бежит лапами, трава ему не помеха',
+    'car.greyhound': 'Борзая', 'car.greyhound.tag': 'Самая быстрая собака на свете',
+    'vt.car': 'Машины', 'vt.moto': 'Мотоциклы', 'vt.sled': 'Снегоходы', 'vt.dog': 'Собаки',
+    'tr.ice': 'Не скользит на льду', 'tr.off': 'Почти не тормозит вне трассы', 'tr.asphalt': 'На асфальте −6% скорости', 'tr.lean': 'Острое руление',
+    owned: 'Есть', price: '{n} очков', tuning: 'Тюнинг', 'tu.e': 'Двигатель', 'tu.t': 'Шины', 'tu.b': 'Тормоза', upgrade: 'Улучшить · {n}', maxed: 'Максимум',
+    paint: 'Покраска', paintNote: 'Новый цвет — 40 очков', buyFirst: 'Сначала купите этот транспорт', sBrake: 'Тормоза',
+    achTitle: 'Достижения', achNew: 'Достижение', achSub: 'Открыто {a} из {b}', achReward: '+{n} очков',
+    'ach.first_win': 'Первая победа', 'ach.first_win.d': 'Выиграйте любую гонку',
+    'ach.wins_10': 'Король трассы', 'ach.wins_10.d': 'Выиграйте 10 гонок',
+    'ach.hard_win': 'Против лучших', 'ach.hard_win.d': 'Победите сложных соперников',
+    'ach.cup': 'Кубок в руках', 'ach.cup.d': 'Выиграйте чемпионат',
+    'ach.all_tracks': 'Покоритель трасс', 'ach.all_tracks.d': 'Победите на каждой трассе',
+    'ach.perfect_5': 'Реакция пилота', 'ach.perfect_5.d': 'Сделайте 5 идеальных стартов',
+    'ach.nitro_60': 'Нитроман', 'ach.nitro_60.d': 'Проедьте минуту на нитро',
+    'ach.drift_120': 'Король заноса', 'ach.drift_120.d': 'Проведите две минуты в заносе',
+    'ach.oil_5': 'Скользкий тип', 'ach.oil_5.d': 'Пусть 5 соперников наедут на ваше масло',
+    'ach.cones_20': 'Гроза конусов', 'ach.cones_20.d': 'Собейте 20 конусов',
+    'ach.deer_3': 'Друг оленей', 'ach.deer_3.d': 'Трижды встретьтесь с оленем лоб в лоб',
+    'ach.lava_5': 'Пловец в лаве', 'ach.lava_5.d': 'Упадите в лаву 5 раз',
+    'ach.clean_lap': 'Ни царапины', 'ach.clean_lap.d': 'Проедьте круг без единого удара',
+    'ach.speed_250': 'Быстрее ветра', 'ach.speed_250.d': 'Разгонитесь до 250 км/ч',
+    'ach.garage_5': 'Коллекционер', 'ach.garage_5.d': 'Соберите 5 видов транспорта',
+    'ach.tune_max': 'Механик', 'ach.tune_max.d': 'Прокачайте что-нибудь до максимума',
+    'ach.dog_win': 'Хороший мальчик', 'ach.dog_win.d': 'Выиграйте гонку на собаке',
     mode: 'Режим', mRace: 'Гонка', mRaceSub: 'Одна трасса с ботами', mCup: 'Чемпионат', mCupSub: 'Все трассы подряд', mTrial: 'На время', mTrialSub: 'Вы и ваш призрак',
     cupNote: 'В чемпионате трассы идут по очереди', cupStage: 'Чемпионат · этап {a} из {b}', nextStage: 'Следующий этап', newCup: 'Новый чемпионат',
     cupFinal: 'Итоги чемпионата', cupWin: 'Кубок ваш!', cupPlace: '{o} место в чемпионате', cupBonus: 'Бонус за чемпионат: +{n} очков', ptsCol: 'Очки',
@@ -564,7 +650,7 @@ const STR = {
     perfectStart: 'Идеальный старт!', perfectStartSub: 'Газ точно на зелёный', goodStart: 'Хороший старт',
     wheelspin: 'Пробуксовка!', wheelspinSub: 'Газ нажат слишком рано', oilHit: 'Масло!', oilHitSub: 'Машину закрутило',
     diff0: 'Лёгкие', diff1: 'Средние', diff2: 'Сложные', diffNote: 'Очки ×{k}',
-    yourCar: 'Ваша машина', points: 'Очки', garage: 'Гараж', settings: 'Настройки', start: 'На старт',
+    yourCar: 'Ваш транспорт', points: 'Очки', garage: 'Гараж', settings: 'Настройки', start: 'На старт',
     paused: 'Пауза', resume: 'Продолжить', restart: 'Заново', trackSelect: 'Выбор трассы',
     victory: 'Победа!', finish: 'Финиш', place: '{o} место', placeSub: '{o} место · {t}',
     driver: 'Пилот', time: 'Время', best: 'Лучший', again: 'Ещё раз', next: 'Следующая трасса',
@@ -610,6 +696,33 @@ const STR = {
     k1: '<b>W / S</b> throttle and brake', k2: '<b>A / D</b> steer, <b>Space</b> handbrake', k3: '<b>Shift</b> nitro, <b>E</b> use item', k4: '<b>R</b> back on track, <b>Esc</b> pause, <b>M</b> mute',
     nitro: 'Nitro', hull: 'Hull', repair: 'Repair', item: 'Item',
     camera: 'Camera', camNear: 'Close', camFar: 'Far', camTop: 'High', gfx: 'Graphics', gfxHigh: 'Detailed', gfxLow: 'Fast',
+    'car.bike': 'Bike', 'car.bike.tag': 'Light and sharp, leans into corners',
+    'car.superbike': 'Superbike', 'car.superbike.tag': 'A rocket on two wheels',
+    'car.sled': 'Snowmobile', 'car.sled.tag': 'Grips ice and snow, slower on tarmac',
+    'car.dog': 'Rex', 'car.dog.tag': 'Runs on paws, grass is no problem',
+    'car.greyhound': 'Greyhound', 'car.greyhound.tag': 'The fastest dog in the world',
+    'vt.car': 'Cars', 'vt.moto': 'Bikes', 'vt.sled': 'Snowmobiles', 'vt.dog': 'Dogs',
+    'tr.ice': 'No sliding on ice', 'tr.off': 'Barely slows off track', 'tr.asphalt': '−6% speed on tarmac', 'tr.lean': 'Sharp steering',
+    owned: 'Owned', price: '{n} points', tuning: 'Tuning', 'tu.e': 'Engine', 'tu.t': 'Tyres', 'tu.b': 'Brakes', upgrade: 'Upgrade · {n}', maxed: 'Maxed',
+    paint: 'Paint', paintNote: 'A new colour costs 40 points', buyFirst: 'Buy this vehicle first', sBrake: 'Brakes',
+    achTitle: 'Achievements', achNew: 'Achievement', achSub: '{a} of {b} unlocked', achReward: '+{n} points',
+    'ach.first_win': 'First win', 'ach.first_win.d': 'Win any race',
+    'ach.wins_10': 'King of the road', 'ach.wins_10.d': 'Win 10 races',
+    'ach.hard_win': 'Against the best', 'ach.hard_win.d': 'Beat hard rivals',
+    'ach.cup': 'Cup in hand', 'ach.cup.d': 'Win a championship',
+    'ach.all_tracks': 'Track master', 'ach.all_tracks.d': 'Win on every track',
+    'ach.perfect_5': 'Quick reflexes', 'ach.perfect_5.d': 'Get 5 perfect starts',
+    'ach.nitro_60': 'Nitro head', 'ach.nitro_60.d': 'Spend a minute on nitro',
+    'ach.drift_120': 'Drift king', 'ach.drift_120.d': 'Spend two minutes drifting',
+    'ach.oil_5': 'Slippery customer', 'ach.oil_5.d': 'Make 5 rivals hit your oil',
+    'ach.cones_20': 'Cone crusher', 'ach.cones_20.d': 'Knock over 20 cones',
+    'ach.deer_3': 'Deer friend', 'ach.deer_3.d': 'Meet a deer head-on three times',
+    'ach.lava_5': 'Lava swimmer', 'ach.lava_5.d': 'Fall into lava 5 times',
+    'ach.clean_lap': 'Not a scratch', 'ach.clean_lap.d': 'Drive a lap without a single hit',
+    'ach.speed_250': 'Faster than wind', 'ach.speed_250.d': 'Reach 250 km/h',
+    'ach.garage_5': 'Collector', 'ach.garage_5.d': 'Own 5 vehicles',
+    'ach.tune_max': 'Mechanic', 'ach.tune_max.d': 'Fully tune any vehicle',
+    'ach.dog_win': 'Good boy', 'ach.dog_win.d': 'Win a race riding a dog',
     mode: 'Mode', mRace: 'Race', mRaceSub: 'One track against bots', mCup: 'Championship', mCupSub: 'Every track in a row', mTrial: 'Time trial', mTrialSub: 'You and your ghost',
     cupNote: 'The championship runs every track in order', cupStage: 'Championship · round {a} of {b}', nextStage: 'Next round', newCup: 'New championship',
     cupFinal: 'Championship results', cupWin: 'The cup is yours!', cupPlace: '{o} in the championship', cupBonus: 'Championship bonus: +{n} points', ptsCol: 'Pts',
@@ -628,7 +741,7 @@ const STR = {
     perfectStart: 'Perfect start!', perfectStartSub: 'Throttle right on green', goodStart: 'Good start',
     wheelspin: 'Wheelspin!', wheelspinSub: 'Throttle pressed too early', oilHit: 'Oil slick!', oilHitSub: 'You spun out',
     diff0: 'Easy', diff1: 'Medium', diff2: 'Hard', diffNote: 'Points ×{k}',
-    yourCar: 'Your car', points: 'Points', garage: 'Garage', settings: 'Settings', start: 'Start race',
+    yourCar: 'Your ride', points: 'Points', garage: 'Garage', settings: 'Settings', start: 'Start race',
     paused: 'Paused', resume: 'Resume', restart: 'Restart', trackSelect: 'Track select',
     victory: 'Victory!', finish: 'Finish', place: '{o} place', placeSub: '{o} place · {t}',
     driver: 'Driver', time: 'Time', best: 'Best', again: 'Race again', next: 'Next track',
@@ -692,18 +805,29 @@ const DRIVERS = [
 ];
 const GRID = [1, 2, 3, 0, 4]; // grid slot -> driver
 const CARS = [
-  { id: 'start', price: 0, top: 540, accel: 430, grip: 1, steer: 1,
+  { id: 'start', type: 'car', price: 0, top: 540, accel: 430, grip: 1, steer: 1,
     color: '#ffc629', stripe: 'rgba(255,255,255,.85)', L: 38, W: 20, taper: 0, wing: 4, stripes: 'center' },
-  { id: 'sprint', price: 250, top: 565, accel: 475, grip: 1.06, steer: 1.03,
+  { id: 'sprint', type: 'car', price: 250, top: 565, accel: 475, grip: 1.06, steer: 1.03,
     color: '#ff8a1f', stripe: '#1d1d22', L: 37, W: 20, taper: 2, wing: 4, stripes: 'double' },
-  { id: 'groza', price: 700, top: 590, accel: 515, grip: 1.13, steer: 1.06,
+  { id: 'groza', type: 'car', price: 700, top: 590, accel: 515, grip: 1.13, steer: 1.06,
     color: '#22c3d4', stripe: '#0c2738', L: 40, W: 20, taper: 4, wing: 5, stripes: 'side', vents: true },
-  { id: 'raketa', price: 1500, top: 622, accel: 565, grip: 1.19, steer: 1.09,
+  { id: 'raketa', type: 'car', price: 1500, top: 622, accel: 565, grip: 1.19, steer: 1.09,
     color: '#f1eee6', stripe: '#e5372b', L: 41, W: 19, taper: 6, wing: 7, wingOut: 2, stripes: 'center', vents: true },
-  { id: 'legenda', price: 3000, top: 655, accel: 625, grip: 1.27, steer: 1.12,
+  { id: 'legenda', type: 'car', price: 3000, top: 655, accel: 625, grip: 1.27, steer: 1.12,
     color: '#d6a92e', stripe: '#141414', L: 42, W: 20, taper: 7, wing: 7, wingOut: 3, stripes: 'double', vents: true },
 ];
-const BOT_MODEL = { stripe: 'rgba(255,255,255,.85)', L: 38, W: 20, taper: 0, wing: 4, stripes: 'center' };
+CARS.push(
+  { id: 'bike', type: 'moto', price: 400, top: 575, accel: 520, grip: .93, steer: 1.18, color: '#e5372b', stripe: '#141414', L: 32, W: 10 },
+  { id: 'superbike', type: 'moto', price: 1800, top: 640, accel: 640, grip: 1.02, steer: 1.22, color: '#2e7cf6', stripe: '#f2eee3', L: 34, W: 10 },
+  { id: 'sled', type: 'sled', price: 600, top: 565, accel: 480, grip: 1.05, steer: 1.02, offRes: .6, iceGrip: 7, asphalt: .94, color: '#ff8a1f', stripe: '#1d1d22', L: 36, W: 18 },
+  { id: 'dog', type: 'dog', price: 300, top: 505, accel: 570, grip: 1.25, steer: 1.15, offRes: .75, iceGrip: 6, color: '#c98b4f', stripe: '#e5372b', L: 30, W: 12 },
+  { id: 'greyhound', type: 'dog', price: 1200, top: 605, accel: 650, grip: 1.3, steer: 1.2, offRes: .75, iceGrip: 6, color: '#a7abb3', stripe: '#2e7cf6', L: 36, W: 11 },
+);
+const VTYPES = ['car', 'moto', 'sled', 'dog'];
+const PAINTS = ['#ffc629', '#ff8a1f', '#e5372b', '#ff5fa8', '#9b5cf0', '#2e7cf6', '#22c3d4', '#1fb36b', '#f1eee6', '#2a2d35', '#c98b4f', '#a7abb3'];
+const TUNE_PARTS = ['e', 't', 'b'];
+const tunePrice = (m, lvl) => Math.round((60 + m.price * .09) * [1, 2, 3.5][lvl]);
+const BOT_MODEL = { type: 'car', stripe: 'rgba(255,255,255,.85)', L: 38, W: 20, taper: 0, wing: 4, stripes: 'center' };
 const DIFFS = [
   { speed: .9, corner: .86, pts: .6 },
   { speed: 1, corner: 1, pts: 1 },
@@ -916,18 +1040,23 @@ const S = {
   finishCount: 0, parts: [], cam: { x: 0, y: 0, z: 1 }, shake: 0, followIdx: 0, followT: 0,
   resultsT: -1, prevMode: null, lit: -1, newRecord: false, flakes: [], diff: 1, simDiff: null, earned: 0,
   volume: 60, prevVolume: 60, haz: [], hazT: 5, hazOn: true, slicks: [], boxes: [], placeT: 0, pressAt: null,
-  cam3: 'near', gfx: 'high', gameMode: 'race', cup: null, ghostOn: true, ghost: null, tut: {}, hintQ: [], hintT: 0, stuckT: 0,
+  cam3: 'near', gfx: 'high', stats: {}, ach: {}, achQ: [], achT: 0, gSel: null, gType: null, gameMode: 'race', cup: null, ghostOn: true, ghost: null, tut: {}, hintQ: [], hintT: 0, stuckT: 0,
 };
 // wallet and settings live in this browser only
-const wallet = { coins: 0, owned: ['start'], car: 'start' };
+const wallet = { coins: 0, owned: ['start'], car: 'start', tune: {}, paint: {} };
 function loadWallet() {
   const c = parseInt(store.get('turbo-krug-coins'), 10); if (c >= 0) wallet.coins = c;
   try { const o = JSON.parse(store.get('turbo-krug-owned') || 'null'); if (Array.isArray(o)) wallet.owned = ['start', ...o.filter(x => x !== 'start' && CARS.some(m => m.id === x))]; } catch (e) {}
   const car = store.get('turbo-krug-car'); if (car && wallet.owned.includes(car)) wallet.car = car;
+  try { wallet.tune = JSON.parse(store.get('turbo-krug-tune') || '{}') || {}; wallet.paint = JSON.parse(store.get('turbo-krug-paint') || '{}') || {}; } catch (e) {}
+  try { S.stats = Object.assign({}, JSON.parse(store.get('turbo-krug-stats') || '{}')); S.ach = JSON.parse(store.get('turbo-krug-ach') || '{}') || {}; } catch (e) { S.stats = {}; S.ach = {}; }
 }
 function saveWallet() {
   store.set('turbo-krug-coins', String(wallet.coins)); store.set('turbo-krug-owned', JSON.stringify(wallet.owned)); store.set('turbo-krug-car', wallet.car);
+  store.set('turbo-krug-tune', JSON.stringify(wallet.tune)); store.set('turbo-krug-paint', JSON.stringify(wallet.paint));
 }
+const tuneOf = id => Object.assign({ e: 0, t: 0, b: 0 }, wallet.tune[id] || {});
+const paintOf = m => wallet.paint[m.id] || m.color;
 const curModel = () => CARS.find(m => m.id === wallet.car) || CARS[0];
 const MAXM = 2400; let marks = new Float32Array(MAXM * 4), markHead = 0, markCount = 0;
 const K = {};
@@ -944,12 +1073,16 @@ function newCar(di, slot) {
   const lat = (slot % 2 ? 1 : -1) * map.width * .22;
   const attract = S.mode === 'menu';
   const dif = DIFFS[S.simDiff != null ? S.simDiff : attract ? 1 : S.diff];
-  const model = d.player ? curModel() : BOT_MODEL, tuned = d.player && !attract;
+  const model = d.player ? curModel() : BOT_MODEL, tuned = d.player && !attract, tu = tuneOf(model.id);
+  const asphaltK = tuned && model.asphalt && map.deco !== 'snow' ? model.asphalt : 1;
   return {
-    di, id: d.id, color: d.player ? model.color : d.color, isPlayer: !!d.player, model,
+    di, id: d.id, color: d.player ? paintOf(model) : d.color, isPlayer: !!d.player, model, type: model.type || 'car',
+    cr: model.type === 'moto' ? 7 : model.type === 'dog' ? 8 : 11, offRes: model.offRes || 0, iceGrip: model.iceGrip || 0,
+    brakeMul: tuned ? 1 + .15 * tu.b : 1, lapClean: true,
     skill: d.player ? (attract ? .975 : 1) : d.skill * dif.speed,
     profile: profileFor(map, d.player ? .975 : d.skill * dif.corner),
-    top: tuned ? model.top : BASE, accel: tuned ? model.accel : ACCEL, gripMul: tuned ? model.grip : 1, steerMul: tuned ? model.steer : 1,
+    top: tuned ? model.top * (1 + .025 * tu.e) * asphaltK : BASE, accel: tuned ? model.accel * (1 + .04 * tu.e) : ACCEL,
+    gripMul: tuned ? model.grip * (1 + .05 * tu.t) : 1, steerMul: tuned ? model.steer * (1 + .02 * tu.b) : 1,
     x: p.x + p.nx * lat, y: p.y + p.ny * lat, angle: p.ang, vx: 0, vy: 0, vF: 0, vR: 0, speed: 0,
     idx, total: idx - tr.N, lapsDone: 0, lapStart: 0, lapTimes: [], best: Infinity, finished: false, finishTime: 0,
     auto: !d.player || attract, lane: lat, laneBase: lat, laneT: 1 + Math.random() * 2,
@@ -994,7 +1127,8 @@ function physCar(c, dt) {
   const boosting = c.boosting = c.nitroOn || c.boostT > 0;
   c.repairing = false;
   if (c.damage > 0 && c.speed < 170 && inPit(idx, lat)) { c.damage = Math.max(0, c.damage - dt * .9); c.repairing = true; }
-  const maxSpd = c.top * (off ? map.offMul : 1) * c.skill * c.band * (1 - .28 * c.damage) * (boosting ? 1.2 : 1);
+  const offMul = 1 - (1 - map.offMul) * (1 - c.offRes);
+  const maxSpd = c.top * (off ? offMul : 1) * c.skill * c.band * (1 - .28 * c.damage) * (boosting ? 1.2 : 1);
 
   let vF = c.vx * Math.cos(c.angle) + c.vy * Math.sin(c.angle);
   const sr = Math.min(1, Math.abs(vF) / c.top);
@@ -1004,11 +1138,11 @@ function physCar(c, dt) {
   vF = c.vx * fx + c.vy * fy; let vR = c.vx * rx + c.vy * ry;
   const th = boosting && c.inThrottle >= 0 ? 1 : c.inThrottle;
   if (th > 0) { if (vF < maxSpd) vF += c.accel * (1 - .2 * c.damage) * (boosting ? 1.8 : 1) * (c.wheelspinT > 0 ? .15 : 1) * th * (1 - .6 * Math.max(0, vF) / maxSpd) * dt; }
-  else if (th < 0) { if (vF > 15) vF -= BRAKE * -th * dt; else if (vF > -maxSpd * .35) vF -= REV * -th * dt; }
-  const drag = off ? map.offDrag : .25;
+  else if (th < 0) { if (vF > 15) vF -= BRAKE * (c.brakeMul || 1) * -th * dt; else if (vF > -maxSpd * .35) vF -= REV * -th * dt; }
+  const drag = off ? map.offDrag * (1 - c.offRes * .7) : .25;
   vF -= vF * drag * (th === 0 ? 1.6 : 1) * dt;
   if (vF > maxSpd) vF -= (vF - maxSpd) * 2.5 * dt;
-  let grip = map.grip * c.gripMul * (off ? .8 : 1);
+  let grip = Math.max(map.grip * c.gripMul, c.iceGrip) * (off ? .8 : 1);
   if (c.inBrake) { grip *= .22; vF -= vF * .6 * dt; }
   vR *= Math.exp(-grip * dt);
   c.vx = fx * vF + rx * vR; c.vy = fy * vF + ry * vR;
@@ -1044,7 +1178,7 @@ function lapCheck(c) {
   const tm = S.time - c.lapStart; c.lapStart = S.time; c.lapTimes.push(tm);
   const wasBest = tm < c.best; if (wasBest) c.best = tm;
   if (S.mode === 'menu') return;
-  if (c.isPlayer && !c.auto) { saveGhost(c, tm); c.rec = []; c.recT = 0; }
+  if (c.isPlayer && !c.auto) { saveGhost(c, tm); c.rec = []; c.recT = 0; if (c.lapClean && c.lapsDone >= 1) bumpStat('cleanLaps'); c.lapClean = true; }
   if (c.lapsDone >= S.laps && !c.finished) {
     c.finished = true; c.finishTime = S.time; c.place = ++S.finishCount;
     if (c.isPlayer) onPlayerFinish(c);
@@ -1100,7 +1234,7 @@ function readPlayer(c) {
   c.inBrake = !!K.Space;
   c.nitroOn = !!(K.ShiftLeft || K.ShiftRight) && c.nitro > 0 && c.inThrottle >= 0;
 }
-const CIRC_OFF = 9, CIRC_R = 11;
+const CIRC_OFF = 9;
 function collide() {
   const cs = S.cars;
   for (let i = 0; i < cs.length; i++) for (let j = i + 1; j < cs.length; j++) {
@@ -1111,8 +1245,9 @@ function collide() {
     for (const sa of [-1, 1]) for (const sb of [-1, 1]) {
       const ax = a.x + ac * CIRC_OFF * sa, ay = a.y + as * CIRC_OFF * sa, bx = b.x + bc * CIRC_OFF * sb, by = b.y + bs * CIRC_OFF * sb;
       const dx = bx - ax, dy = by - ay, d = Math.hypot(dx, dy);
-      if (d >= CIRC_R * 2 || d < 1e-3) continue;
-      const nx = dx / d, ny = dy / d, ov = (CIRC_R * 2 - d) / 2;
+      const rsum = (a.cr || 11) + (b.cr || 11);
+      if (d >= rsum || d < 1e-3) continue;
+      const nx = dx / d, ny = dy / d, ov = (rsum - d) / 2;
       a.x -= nx * ov; a.y -= ny * ov; b.x += nx * ov; b.y += ny * ov;
       const rv = (b.vx - a.vx) * nx + (b.vy - a.vy) * ny;
       if (rv < 0) {
@@ -1177,6 +1312,7 @@ function inPit(idx, lat) {
 function hurt(c, v) {
   if (!v || c.shieldT > 0) return;
   c.damage = Math.min(1, c.damage + v);
+  if (c.isPlayer && v > .004) c.lapClean = false;
 }
 function popShield(c) {
   c.shieldT = 0; burst(c.x, c.y, '120,220,255', 16, 200);
@@ -1187,7 +1323,7 @@ function launch(c) { // reaction to the green light
   if (c.isPlayer && !c.auto) hint('drive');
   if (c.auto) { const r = Math.random(); if (r < .25) c.boostT = 1.1; else if (r < .33) c.wheelspinT = .7; return; }
   if (!(K.KeyW || K.ArrowUp)) { c.startDone = false; return; }
-  if (S.pressAt != null && S.pressAt <= .4) { c.boostT = 1.3; toast(t('perfectStart'), t('perfectStartSub'), 'good'); tone('sawtooth', 300, 900, .35, .06); }
+  if (S.pressAt != null && S.pressAt <= .4) { c.boostT = 1.3; bumpStat('perfectStarts'); toast(t('perfectStart'), t('perfectStartSub'), 'good'); tone('sawtooth', 300, 900, .35, .06); }
   else { c.wheelspinT = .9; toast(t('wheelspin'), t('wheelspinSub'), 'warn'); }
 }
 function onThrottlePress() {
@@ -1230,6 +1366,7 @@ function carPickups(c) {
     c.oilT = .8;
     if (c.shieldT > 0) { popShield(c); continue; }
     c.spin += (Math.random() < .5 ? -1 : 1) * 5.5; c.vx *= .72; c.vy *= .72;
+    if (s.owner && s.owner.isPlayer && !c.isPlayer && S.mode === 'race') bumpStat('oilHits');
     if (c.isPlayer && S.mode === 'race') { toast(t('oilHit'), t('oilHitSub'), 'warn'); tone('sawtooth', 320, 90, .3, .07); }
   }
   if (c.oilT > 0) c.oilT -= DT;
@@ -1396,6 +1533,7 @@ function inLava(h, c) {
 }
 function sink(c) {
   hurt(c, .1);
+  if (c.isPlayer && S.mode === 'race') bumpStat('lava');
   c.respawnT = 1.1; c.vx = c.vy = 0; c.speed = 0; c.skid = null; c.spin = 0;
   burst(c.x, c.y, S.map.c.dust, 26, 260);
   if (c.isPlayer && S.mode === 'race') toast(t('lava'), t('lavaSub'), 'warn');
@@ -1425,6 +1563,7 @@ function hitHazard(c, h, nx, ny, d) {
     else if (vn > 0) { c.vx += nx * vn * 1.2; c.vy += ny * vn * 1.2; }
     return;
   }
+  if (c.isPlayer && S.mode === 'race') { if (h.k === 'cone') bumpStat('cones'); if (h.k === 'deer') bumpStat('deer'); }
   hurt(c, { boulder: Math.max(0, vn - 120) / 1600, cone: .01, tumble: .02, snowball: .06, deer: .12, courier: .08, yeti: .1 }[h.k] || 0);
   switch (h.k) {
     case 'boulder':
@@ -1585,6 +1724,10 @@ function step(dt) {
     if (p && !p.auto && !p.finished) {
       p.recT += dt;
       if (p.recT >= 1 / 30) { p.recT -= 1 / 30; p.rec.push(Math.round(p.x), Math.round(p.y), Math.round(p.angle * 100)); }
+      if (p.nitroOn) bumpStat('nitroTime', dt);
+      if (Math.abs(p.vR) > 60 && p.speed > 150) bumpStat('driftTime', dt);
+      if (p.speed * KMH > (S.stats.maxSpeed || 0)) S.stats.maxSpeed = Math.round(p.speed * KMH);
+      S.achCheckT = (S.achCheckT || 0) - dt; if (S.achCheckT <= 0) { S.achCheckT = 1.5; checkAch(); }
       if (S.time > 7) hint('drift');
       if (p.nitro >= .5) hint('nitro');
       if (p.item) hint('item');
@@ -1675,7 +1818,8 @@ function showCupFinal() {
   const st = cupStandings(false), place = st.findIndex(r => r.me) + 1;
   const bonus = place <= 3 ? Math.round(CUP_BONUS[place - 1] * DIFFS[S.diff].pts * LAP_K[S.laps]) : 0;
   wallet.coins += bonus; saveWallet(); S.cup.done = true;
-  if (place === 1) S.stats && (S.stats.cups = (S.stats.cups || 0) + 1);
+  if (place === 1) bumpStat('cups');
+  checkAch();
   $('#resTitle').textContent = place === 1 ? t('cupWin') : t('cupPlace', { o: ord(place) });
   $('#resSub').textContent = t('cupFinal');
   $('#resRec').hidden = true;
@@ -1711,7 +1855,8 @@ function startRace() {
 function toMenu() {
   setupMap(S.mapIndex);
   resetRace('menu');
-  for (const id of ['#hud', '#touch', '#pause', '#results', '#garage', '#settings', '#hint']) $(id).hidden = true;
+  for (const id of ['#hud', '#touch', '#pause', '#results', '#garage', '#settings', '#hint', '#achievements']) $(id).hidden = true;
+  saveStats();
   $('#menu').hidden = false;
   if (S.cup && !S.cup.done) S.cup = null;
   renderMapList(); renderMenuStrip(); syncMode();
@@ -1725,9 +1870,14 @@ function onPlayerFinish(c) {
   S.mode = 'results'; S.resultsT = 1.4;
   const rec = getRecord(S.map);
   if (c.best < rec) { store.set(recKey(S.map), String(c.best)); S.newRecord = true; }
+  bumpStat('races');
+  if (c.place === 1 && S.gameMode !== 'trial') {
+    bumpStat('wins'); if (S.diff === 2) bumpStat('hardWins'); if (c.type === 'dog') bumpStat('dogWins');
+    const tw = S.stats.tracks || []; if (!tw.includes(S.map.id)) tw.push(S.map.id); S.stats.tracks = tw;
+  }
   S.earned = S.gameMode === 'trial' ? Math.round(20 * LAP_K[S.laps]) + (S.newRecord ? 40 : 0)
     : Math.round(PLACE_PTS[c.place - 1] * LAP_K[S.laps] * DIFFS[S.diff].pts) + (S.newRecord ? 25 : 0);
-  wallet.coins += S.earned; saveWallet();
+  wallet.coins += S.earned; saveWallet(); checkAch();
   if (S.gameMode === 'trial') toast(t('finish'), fmt(c.finishTime), S.newRecord ? 'good' : '');
   else toast(c.place === 1 ? t('victory') : t('finish'), t('placeSub', { o: ord(c.place), t: fmt(c.finishTime) }), c.place === 1 ? 'good' : '');
   beep(660, .15); setTimeout(() => beep(990, .3), 160);
@@ -1963,6 +2113,7 @@ function bodyPath(g, L, Wd, tp, ox, oy) {
   g.quadraticCurveTo(x0, y1, x0, y1 - 5); g.lineTo(x0, y0 + 5); g.quadraticCurveTo(x0, y0, x0 + 5, y0); g.closePath();
 }
 function carShape(g, m, color, steer, brake) {
+  if (m.type === 'moto' || m.type === 'sled' || m.type === 'dog') { rideShape(g, m, color, steer); return; }
   const L = m.L, Wd = m.W;
   g.fillStyle = 'rgba(0,0,0,.35)'; bodyPath(g, L, Wd, m.taper, 3, 4); g.fill();
   g.fillStyle = '#0d0d0f';
@@ -1983,11 +2134,40 @@ function carShape(g, m, color, steer, brake) {
   g.fillStyle = 'rgba(0,0,0,.55)'; g.fillRect(-L / 2 - 1 - (ww - 4) / 2, -Wd / 2 - wo, ww, Wd + wo * 2);
   if (brake) { g.fillStyle = '#ff2f2f'; g.fillRect(-L / 2 - 1, -Wd / 2 + 1, 2, 4); g.fillRect(-L / 2 - 1, Wd / 2 - 5, 2, 4); }
 }
+function rideShape(g, m, color, steer) {
+  const L = m.L, Wd = m.W, el = (x, y, rx, ry, c, a) => { g.fillStyle = c; g.beginPath(); g.ellipse(x, y, rx, ry, a || 0, 0, 7); g.fill(); };
+  if (m.type === 'moto') {
+    el(3, 4, L / 2, 6, 'rgba(0,0,0,.3)');
+    el(L * .38, 0, 6, 2.6, '#111'); el(-L * .38, 0, 6.5, 3, '#111');
+    g.fillStyle = color; rr(g, -L * .32, -3.5, L * .62, 7, 3.5); g.fill();
+    g.fillStyle = m.stripe; g.fillRect(-L * .2, -1, L * .4, 2);
+    g.strokeStyle = '#9aa0aa'; g.lineWidth = 1.8; g.beginPath(); g.moveTo(L * .3, -6); g.lineTo(L * .3, 6); g.stroke();
+    el(-2, 0, 5, 4.5, '#20242e'); el(2, 0, 4, 3.6, color);
+  } else if (m.type === 'sled') {
+    el(3, 4, L / 2, Wd / 2, 'rgba(0,0,0,.3)');
+    g.fillStyle = '#20242e'; g.fillRect(L * .3, -Wd * .42, L * .36, 2.5); g.fillRect(L * .3, Wd * .42 - 2.5, L * .36, 2.5);
+    g.fillStyle = '#1a1d24'; rr(g, -L * .5, -Wd * .34, L * .45, Wd * .68, 2); g.fill();
+    g.fillStyle = color; rr(g, -L * .2, -Wd * .4, L * .62, Wd * .8, 5); g.fill();
+    g.fillStyle = m.stripe; g.fillRect(-L * .15, -1.5, L * .5, 3);
+    g.fillStyle = 'rgba(160,210,255,.5)'; rr(g, L * .2, -Wd * .3, 3, Wd * .6, 1.5); g.fill();
+    el(-2, 0, 4.5, 4.5, '#20242e');
+  } else {
+    const wag = Math.sin(performance.now() / 90) * .4;
+    el(3, 4, L * .45, Wd * .55, 'rgba(0,0,0,.25)');
+    for (const sx of [-1, 1]) for (const sy of [-1, 1]) el(sx * L * .26, sy * Wd * .48, 3.2, 2, '#5a3a1e');
+    g.strokeStyle = color; g.lineWidth = 3; g.lineCap = 'round'; g.beginPath(); g.moveTo(-L * .4, 0); g.lineTo(-L * .62, Math.sin(wag) * 6); g.stroke();
+    el(0, 0, L * .42, Wd * .5, color);
+    g.fillStyle = m.stripe; g.fillRect(L * .2, -Wd * .48, 2.5, Wd * .96);
+    el(L * .42, 0, Wd * .42, Wd * .4, color); el(L * .56, 0, 4, 3, color);
+    el(L * .34, -Wd * .38, 3, 2.2, '#5a3a1e', .4); el(L * .34, Wd * .38, 3, 2.2, '#5a3a1e', -.4);
+    el(L * .66, 0, 1.6, 1.6, '#111');
+  }
+}
 function drawCarPreview(cv, m) {
   const g = cv.getContext('2d'); g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, cv.width, cv.height);
   const s = Math.min(cv.width / 58, cv.height / 34);
   g.setTransform(s, 0, 0, s, cv.width / 2, cv.height / 2); g.rotate(-.2);
-  carShape(g, m, m.color, .4, false);
+  carShape(g, m, paintOf(m), .4, false);
 }
 function drawNight() {
   ctx.globalCompositeOperation = 'lighter';
@@ -2405,7 +2585,64 @@ function show3DMap(map) {
 }
 
 // ---- vehicles
+function makeRide3D(m, color, ghost) {
+  const g = new THREE.Group(); g.rotation.order = 'YXZ';
+  const op = ghost ? { transparent: true, opacity: .35, depthWrite: false } : {}, L = m.L, Wd = m.W;
+  const paint = new THREE.MeshPhongMaterial(Object.assign({ color: col3(color), shininess: 70, specular: 0x444444 }, op));
+  const black = new THREE.MeshLambertMaterial(Object.assign({ color: 0x15161a }, op));
+  const suit = new THREE.MeshLambertMaterial(Object.assign({ color: 0x23283a }, op));
+  const stripe = new THREE.MeshLambertMaterial(Object.assign({ color: col3(m.stripe) }, op));
+  const tail = new THREE.MeshBasicMaterial(Object.assign({ color: 0x6a0a0a }, op));
+  const headM = new THREE.MeshBasicMaterial(Object.assign({ color: 0xfff1c4 }, op));
+  const lean = new THREE.Group(); g.add(lean);
+  const u = { paint, tail, wheels: [], front: [], lean, base: col3(color), spin: 0, mats: [paint, black, suit, stripe, tail, headM] };
+  if (m.type === 'moto') {
+    for (const sx of [1, -1]) { const w = new THREE.Mesh(GEO.wheel, black); w.scale.set(6, 6, 3); w.position.set(sx * L * .38, 6, 0); lean.add(w); u.wheels.push(w); }
+    part('box', paint, L * .55, 6, 5, 0, 12, 0, lean); part('box', paint, L * .25, 5, 7, L * .08, 15, 0, lean);
+    part('box', black, L * .3, 2, 6, -L * .16, 16, 0, lean); part('box', stripe, L * .5, .6, 5.4, 0, 15.2, 0, lean);
+    part('box', lam('#9aa0aa'), 1.5, 14, 1.5, L * .34, 12, 0, lean).rotation.z = -.35;
+    part('box', lam('#9aa0aa'), 1.5, 1.5, 14, L * .28, 19, 0, lean);
+    part('box', suit, 9, 12, 7, -L * .1, 22, 0, lean).rotation.z = -.45;
+    part('sph', paint, 4.8, 4.8, 4.8, L * .05, 29, 0, lean); part('box', lam('#10141c'), 3, 3, 6, L * .05 + 3.5, 29, 0, lean);
+    part('box', suit, 2.5, 2.5, 9, L * .15, 22, 0, lean);
+    part('box', headM, 1, 3, 3, L * .42, 14, 0, lean); part('box', tail, 1, 2.5, 4, -L * .42, 13, 0, lean);
+  } else if (m.type === 'sled') {
+    for (const sz of [-1, 1]) { part('box', black, L * .45, 1.4, 3, L * .3, 1.2, sz * Wd * .38, lean); part('box', black, 2, 8, 2, L * .32, 5, sz * Wd * .3, lean); }
+    part('box', black, L * .48, 6, Wd * .66, -L * .27, 4, 0, lean);
+    const tread = []; for (let i = 0; i < 5; i++) tread.push(part('box', lam('#2b2f38'), 2, 1, Wd * .68, -L * .48 + i * 4.4, 7.4, 0, lean)); u.tread = tread;
+    part('box', paint, L * .62, 8, Wd * .78, L * .08, 9, 0, lean); part('box', paint, L * .25, 5, Wd * .7, L * .36, 7, 0, lean);
+    part('box', stripe, L * .5, .6, 3, L * .05, 13.4, 0, lean);
+    part('box', new THREE.MeshPhongMaterial(Object.assign({ color: 0x9fd4ff, transparent: true, opacity: .5, shininess: 120 }, ghost ? { opacity: .2 } : {})), 1, 6, Wd * .6, L * .26, 16, 0, lean).rotation.z = -.5;
+    part('box', black, L * .3, 3, Wd * .45, -L * .12, 14.5, 0, lean);
+    part('box', suit, 8, 11, 8, -L * .08, 21, 0, lean); part('sph', paint, 4.8, 4.8, 4.8, -L * .04, 29, 0, lean); part('box', lam('#10141c'), 3, 3, 6, -L * .04 + 3.5, 29, 0, lean);
+    part('box', headM, 1, 2.5, 5, L * .48, 8, 0, lean); part('box', tail, 1, 2, 6, -L * .5, 8, 0, lean);
+  } else {
+    const legs = [], sc = m.id === 'greyhound' ? 1.25 : 1;
+    for (const sx of [-1, 1]) for (const sz of [-1, 1]) { const lg = new THREE.Group(); lg.position.set(sx * L * .27, 11 * sc, sz * Wd * .3); part('cyl', paint, 1.8, 11 * sc, 1.8, 0, -5.5 * sc, 0, lg); part('sph', lam('#5a3a1e'), 2.2, 1.6, 2.4, .8, -11 * sc, 0, lg); lean.add(lg); legs.push(lg); }
+    const body = new THREE.Group(); lean.add(body); u.body = body;
+    part('sph', paint, L * .42, 6.5 * (m.id === 'greyhound' ? .85 : 1), Wd * .48, 0, 13 * sc, 0, body);
+    part('cyl', stripe, 4.6, 2, 4.6, L * .3, 15.5 * sc, 0, body).rotation.z = Math.PI / 2;
+    const head = new THREE.Group(); head.position.set(L * .42, 18 * sc, 0); body.add(head); u.head = head;
+    part('sph', paint, 5.5, 5, 5, 0, 0, 0, head); part('box', paint, 6, 3.6, 4.2, 5, -1, 0, head); part('sph', lam('#111111'), 1.4, 1.2, 1.4, 8, -.4, 0, head);
+    part('sph', lam('#111111'), 1, 1, 1, 3, 1.8, -2.6, head); part('sph', lam('#111111'), 1, 1, 1, 3, 1.8, 2.6, head);
+    const ears = []; for (const s of [-1, 1]) { const e = part('box', lam('#5a3a1e'), 2.4, 5.5, 1.2, -1.5, 3, s * 3.4, head); e.rotation.x = s * .5; ears.push(e); } u.ears = ears;
+    const tongue = part('box', lam('#ff7a8a'), 2, .6, 1.6, 7, -3.2, 0, head); u.tongue = tongue;
+    const tl = new THREE.Group(); tl.position.set(-L * .42, 15 * sc, 0); body.add(tl); part('cyl', paint, 1.2, 9, 1.2, 0, 4, 0, tl); tl.rotation.z = .7; u.tailWag = tl;
+    u.legs = legs; u.run = 0;
+  }
+  const flame = new THREE.Mesh(GEO.flame, new THREE.MeshBasicMaterial({ color: 0xff9a1f, transparent: true, opacity: .85, blending: THREE.AdditiveBlending, depthWrite: false }));
+  flame.position.set(-L / 2 - 7, 8, 0); flame.scale.set(12, 3, 3); flame.visible = false; g.add(flame);
+  const shield = new THREE.Mesh(GEO.sph, new THREE.MeshPhongMaterial({ color: 0x5ad2ff, transparent: true, opacity: .22, shininess: 120, emissive: 0x0a3040, depthWrite: false }));
+  shield.scale.set(L * .8, 18, 18); shield.position.y = 12; shield.visible = false; g.add(shield);
+  const beam = new THREE.Mesh(GEO.beam, new THREE.MeshBasicMaterial({ color: 0xfff1c8, transparent: true, opacity: .1, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide }));
+  beam.scale.set(-170, 44, 56); beam.position.set(L / 2, 10, 0); beam.visible = false; if (m.type !== 'dog') g.add(beam);
+  u.flame = flame; u.shield = shield; u.beam = beam; u.mats.push(flame.material, shield.material, beam.material); u.type = m.type;
+  if (!ghost) g.traverse(o => { if (o.isMesh && o !== flame && o !== shield && o !== beam) o.castShadow = true; });
+  g.userData = u;
+  return g;
+}
 function makeCar3D(m, color, ghost) {
+  if (m.type && m.type !== 'car') return makeRide3D(m, color, ghost);
   const g = new THREE.Group(); g.rotation.order = 'YXZ';
   const L = m.L, Wd = m.W, op = ghost ? { transparent: true, opacity: .35, depthWrite: false } : {};
   const paint = new THREE.MeshPhongMaterial(Object.assign({ color: col3(color), shininess: 90, specular: 0x555555 }, op));
@@ -2458,16 +2695,28 @@ function updCar3D(c, dt, tm) {
   g.visible = vis;
   g.position.set(c.x, y + (c.air || 0), c.y);
   g.rotation.y = -c.angle;
-  g.rotation.x = clamp(-c.vR * .0012, -.12, .12);
+  g.rotation.x = u.type === 'moto' ? 0 : clamp(-c.vR * .0012, -.12, .12);
   g.rotation.z = clamp((c.accLook || 0), -.05, .05);
+  if (u.lean) { // bikes and sleds lean into the turn, the dog runs
+    const want = u.type === 'moto' ? -c.inSteer * Math.min(1, c.speed / 260) * .55 : u.type === 'sled' ? -c.inSteer * Math.min(1, c.speed / 300) * .12 : 0;
+    u.lean.rotation.x += (want - u.lean.rotation.x) * Math.min(1, dt * 6);
+  }
+  if (u.legs) {
+    const sp = Math.min(1, c.speed / 300); u.run += c.speed * dt * .045 + dt * 2;
+    u.legs.forEach((l, i) => { l.rotation.z = Math.sin(u.run + (i === 0 || i === 3 ? 0 : Math.PI)) * .9 * sp; });
+    u.body.position.y = Math.abs(Math.sin(u.run)) * 3 * sp; u.tailWag.rotation.x = Math.sin(tm * 14) * .6;
+    u.ears.forEach((e, i) => { e.rotation.z = -.3 - sp * .6 + Math.sin(u.run * 2 + i) * .1; });
+    u.tongue.visible = c.speed > 120;
+  }
+  if (u.tread) u.tread.forEach((b, i) => { b.position.x = -c.model.L * .48 + ((i * 4.4 + u.spin * 4) % 22); });
   u.spin += (c.vF || 0) * dt / 4.6;
   for (const w of u.wheels) w.rotation.z = -u.spin;
   for (const f of u.front) f.rotation.y = -c.inSteer * .45;
   u.tail.color.setHex(c.inThrottle < 0 || c.inBrake ? 0xff2a2a : 0x6a0a0a);
-  u.paint.color.copy(u.base).lerp(dark3(), c.damage * .45);
+  if (u.type !== 'dog') u.paint.color.copy(u.base).lerp(dark3(), c.damage * .45);
   u.flame.visible = !!c.boosting; if (c.boosting) { u.flame.material.color.setHex(c.nitroOn ? 0x4fc8ff : 0xff9a1f); u.flame.scale.x = 12 + Math.random() * 8; }
   u.shield.visible = c.shieldT > 0; if (c.shieldT > 0) u.shield.material.opacity = c.shieldT < 1.5 && Math.sin(tm * 20) < 0 ? .08 : .22;
-  u.beam.visible = !!S.map.night;
+  u.beam.visible = !!S.map.night && u.type !== 'dog';
 }
 
 // ---- hazards
@@ -2648,7 +2897,8 @@ function render3D(dt) {
   if (map.lava && !reduceMotion && Math.random() < .6) S.parts.push({ x: f.x + (Math.random() - .5) * 1400, y: f.y + (Math.random() - .5) * 1400, vx: (Math.random() - .5) * 20, vy: (Math.random() - .5) * 20, life: 1.6, max: 1.6, r: 1.6, col: '255,200,90', up: 1 });
   if (map._lavaTex && !reduceMotion) { map._lavaTex.offset.x = (tm * .025) % 1; map._lavaTex.offset.y = (tm * .015) % 1; }
   // chase camera: follows the heading with a soft lag, no roll
-  const P = CAMS3[S.cam3] || CAMS3.near, menu = S.mode === 'menu', dist = menu ? 120 : P[0], hgt = menu ? 52 : P[1], ahead = P[2];
+  const P = CAMS3[S.cam3] || CAMS3.near, menu = S.mode === 'menu', small = !menu && (f.type === 'moto' || f.type === 'dog') ? .82 : 1;
+  const dist = menu ? 120 : P[0] * small, hgt = menu ? 52 : P[1] * (small < 1 && S.cam3 !== 'top' ? .85 : 1), ahead = P[2];
   const k = Math.min(1, dt * (S.cam3 === 'top' ? 2.2 : 3.2));
   if (Math.hypot(c3.x - f.x, c3.z - f.y) > 600) c3.snap = true; // after a respawn or a jump cut
   c3.yaw = c3.snap ? f.angle : c3.yaw + wrapAng(f.angle - c3.yaw) * k;
@@ -2899,36 +3149,133 @@ function statRow(label, v, lo, hi, txt) {
   return `<div class="st"><span>${label}</span><i><s style="width:${pct}%"></s></i><em>${txt}</em></div>`;
 }
 const plus = v => v === 1 ? t('stock') : '+' + Math.round((v - 1) * 100) + '%';
+function vehStats(m) {
+  const tu = tuneOf(m.id);
+  return { top: m.top * (1 + .025 * tu.e), accel: m.accel * (1 + .04 * tu.e), grip: m.grip * (1 + .05 * tu.t), brake: 1 + .15 * tu.b };
+}
 function renderGarage() {
   $('#coinsGarage').textContent = wallet.coins;
-  const box = $('#cars');
-  box.innerHTML = CARS.map(m => {
-    const owned = wallet.owned.includes(m.id), sel = wallet.car === m.id, short = m.price - wallet.coins;
-    const act = sel ? `<button class="btn" disabled>${t('selected')}</button>`
-      : owned ? `<button class="btn" data-sel="${m.id}">${t('select')}</button>`
-      : `<button class="btn primary" data-buy="${m.id}"${short > 0 ? ' disabled' : ''}>${t('buy', { n: m.price })}</button>` + (short > 0 ? `<span class="need">${t('short', { n: short })}</span>` : '');
-    return `<div class="car${sel ? ' sel' : ''}"><canvas width="240" height="140"></canvas><div class="c-txt"><b>${carName(m)}</b><span class="c-tag">${t('car.' + m.id + '.tag')}</span>`
-      + statRow(t('sSpeed'), m.top, 540, 655, Math.round(m.top * KMH) + ' ' + t('kmhLow'))
-      + statRow(t('sAccel'), m.accel, 430, 625, plus(m.accel / 430))
-      + statRow(t('sGrip'), m.grip, 1, 1.27, plus(m.grip))
-      + `</div><div class="c-act">${act}</div></div>`;
+  if (!S.gSel || !CARS.some(m => m.id === S.gSel)) S.gSel = wallet.car;
+  const selM = CARS.find(m => m.id === S.gSel), type = S.gType || selM.type;
+  S.gType = type;
+  $('#vehTabs').innerHTML = VTYPES.map(v => `<button role="tab" data-vt="${v}" aria-selected="${v === type}">${t('vt.' + v)}</button>`).join('');
+  const list = CARS.filter(m => m.type === type);
+  $('#cars').innerHTML = list.map(m => {
+    const owned = wallet.owned.includes(m.id), cur = wallet.car === m.id;
+    const badge = cur ? `<span class="c-badge on">${t('selected')}</span>` : owned ? `<span class="c-badge">${t('owned')}</span>` : `<span class="c-badge">${m.price}</span>`;
+    return `<button class="car" data-pick="${m.id}" aria-pressed="${m.id === S.gSel}"><canvas width="192" height="112"></canvas><span class="c-txt"><b>${carName(m)}</b><span class="c-tag">${t('car.' + m.id + '.tag')}</span></span>${badge}</button>`;
   }).join('');
-  box.querySelectorAll('canvas').forEach((cv, i) => drawCarPreview(cv, CARS[i]));
+  $('#cars').querySelectorAll('canvas').forEach((cv, i) => drawCarPreview(cv, list[i]));
+  renderVehDetail();
 }
-function openGarage() { $('#menu').hidden = true; $('#garage').hidden = false; renderGarage(); $('#garageBack').focus(); }
+function renderVehDetail() {
+  const m = CARS.find(x => x.id === S.gSel), owned = wallet.owned.includes(m.id), cur = wallet.car === m.id, st = vehStats(m), tu = tuneOf(m.id), short = m.price - wallet.coins;
+  const traits = [];
+  if (m.iceGrip) traits.push(t('tr.ice')); if (m.offRes) traits.push(t('tr.off')); if (m.asphalt) traits.push(t('tr.asphalt')); if (m.steer >= 1.15) traits.push(t('tr.lean'));
+  const act = cur ? `<button class="btn" disabled>${t('selected')}</button>`
+    : owned ? `<button class="btn primary" data-sel="${m.id}">${t('select')}</button>`
+    : `<button class="btn primary" data-buy="${m.id}"${short > 0 ? ' disabled' : ''}>${t('buy', { n: m.price })}</button>`;
+  const tune = TUNE_PARTS.map(k => {
+    const lvl = tu[k], price = lvl < 3 ? tunePrice(m, lvl) : 0;
+    const btn = lvl >= 3 ? `<button class="btn" disabled>${t('maxed')}</button>` : `<button class="btn" data-tune="${k}"${!owned || wallet.coins < price ? ' disabled' : ''}>${t('upgrade', { n: price })}</button>`;
+    return `<div class="tune-row"><span>${t('tu.' + k)}</span><span class="pips">${[0, 1, 2].map(i => `<i class="${i < lvl ? 'on' : ''}"></i>`).join('')}</span>${btn}</div>`;
+  }).join('');
+  const col = paintOf(m);
+  $('#vehDetail').innerHTML = `<canvas id="vdCv" width="480" height="240"></canvas>
+    <div class="vd-head"><b>${carName(m)}</b>${!owned && short > 0 ? `<span class="need">${t('short', { n: short })}</span>` : ''}</div>
+    <p class="vd-tag">${t('car.' + m.id + '.tag')}</p>
+    ${traits.length ? `<div class="vd-traits">${traits.map(x => `<span>${x}</span>`).join('')}</div>` : ''}
+    <div>${statRow(t('sSpeed'), st.top, 500, 700, Math.round(st.top * KMH) + ' ' + t('kmhLow'))}${statRow(t('sAccel'), st.accel, 430, 780, plus(st.accel / 430))}${statRow(t('sGrip'), st.grip, .9, 1.65, plus(+(st.grip).toFixed(2)))}${statRow(t('sBrake'), st.brake, 1, 1.45, plus(+st.brake.toFixed(2)))}</div>
+    ${act}
+    <h3 class="label">${t('tuning')}</h3><div class="tune">${tune}</div>
+    <h3 class="label">${t('paint')}</h3>
+    <div class="swatches">${[m.color, ...PAINTS.filter(c => c !== m.color)].slice(0, 12).map(c => `<button data-paint="${c}" style="background:${c}" aria-label="${c}" aria-pressed="${c === col}"${owned ? '' : ' disabled'}></button>`).join('')}</div>
+    <p class="vd-note">${owned ? t('paintNote') : t('buyFirst')}</p>`;
+  drawCarPreview($('#vdCv'), m);
+}
+function openGarage() { S.gSel = wallet.car; S.gType = null; $('#menu').hidden = true; $('#garage').hidden = false; renderGarage(); $('#garageBack').focus(); }
 function closeGarage() { $('#garage').hidden = true; $('#menu').hidden = false; renderMenuStrip(); resetRace('menu'); }
-$('#cars').addEventListener('click', e => {
-  const b = e.target.closest('button'); if (!b || b.disabled) return;
-  if (b.dataset.buy) {
-    const m = CARS.find(x => x.id === b.dataset.buy); if (!m || wallet.coins < m.price) return;
-    wallet.coins -= m.price; wallet.owned.push(m.id); wallet.car = m.id;
-  } else if (b.dataset.sel) wallet.car = b.dataset.sel;
-  saveWallet(); renderGarage();
+$('#vehTabs').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  S.gType = b.dataset.vt; const first = CARS.find(m => m.type === S.gType && wallet.owned.includes(m.id)) || CARS.find(m => m.type === S.gType);
+  S.gSel = first.id; renderGarage();
 });
+$('#cars').addEventListener('click', e => { const b = e.target.closest('[data-pick]'); if (b) { S.gSel = b.dataset.pick; renderGarage(); } });
+$('#vehDetail').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b || b.disabled) return;
+  const m = CARS.find(x => x.id === S.gSel);
+  if (b.dataset.buy) { if (wallet.coins < m.price) return; wallet.coins -= m.price; wallet.owned.push(m.id); wallet.car = m.id; }
+  else if (b.dataset.sel) wallet.car = m.id;
+  else if (b.dataset.tune) {
+    const tu = tuneOf(m.id), k = b.dataset.tune, price = tunePrice(m, tu[k]);
+    if (tu[k] >= 3 || wallet.coins < price) return;
+    wallet.coins -= price; tu[k]++; wallet.tune[m.id] = tu; bumpStat('tunes');
+  } else if (b.dataset.paint) {
+    const c = b.dataset.paint; if (c === paintOf(m)) return;
+    if (c !== m.color) { if (wallet.coins < 40) return; wallet.coins -= 40; bumpStat('paints'); }
+    wallet.paint[m.id] = c;
+  }
+  saveWallet(); checkAch(); renderGarage();
+});
+
+// ---------- achievements ----------
+const ACH = [
+  { id: 'first_win', stat: 'wins', goal: 1, reward: 100 },
+  { id: 'wins_10', stat: 'wins', goal: 10, reward: 300 },
+  { id: 'hard_win', stat: 'hardWins', goal: 1, reward: 250 },
+  { id: 'cup', stat: 'cups', goal: 1, reward: 400 },
+  { id: 'all_tracks', stat: 'tracksWon', goal: () => MAPS.length, reward: 500 },
+  { id: 'perfect_5', stat: 'perfectStarts', goal: 5, reward: 150 },
+  { id: 'nitro_60', stat: 'nitroTime', goal: 60, reward: 150 },
+  { id: 'drift_120', stat: 'driftTime', goal: 120, reward: 200 },
+  { id: 'oil_5', stat: 'oilHits', goal: 5, reward: 150 },
+  { id: 'cones_20', stat: 'cones', goal: 20, reward: 100 },
+  { id: 'deer_3', stat: 'deer', goal: 3, reward: 100 },
+  { id: 'lava_5', stat: 'lava', goal: 5, reward: 100 },
+  { id: 'clean_lap', stat: 'cleanLaps', goal: 1, reward: 150 },
+  { id: 'speed_250', stat: 'maxSpeed', goal: 250, reward: 200 },
+  { id: 'garage_5', stat: 'owned', goal: 5, reward: 300 },
+  { id: 'tune_max', stat: 'maxTuned', goal: 1, reward: 300 },
+  { id: 'dog_win', stat: 'dogWins', goal: 1, reward: 250 },
+];
+function statVal(k) {
+  if (k === 'owned') return wallet.owned.length;
+  if (k === 'maxTuned') return Object.values(wallet.tune).some(tu => tu.e >= 3 && tu.t >= 3 && tu.b >= 3) ? 1 : 0;
+  if (k === 'tracksWon') return (S.stats.tracks || []).length;
+  return S.stats[k] || 0;
+}
+function bumpStat(k, v = 1) { S.stats[k] = (S.stats[k] || 0) + v; }
+function saveStats() { store.set('turbo-krug-stats', JSON.stringify(S.stats)); store.set('turbo-krug-ach', JSON.stringify(S.ach)); }
+function checkAch() {
+  for (const a of ACH) {
+    if (S.ach[a.id]) continue;
+    const goal = typeof a.goal === 'function' ? a.goal() : a.goal;
+    if (statVal(a.stat) >= goal) { S.ach[a.id] = Date.now(); wallet.coins += a.reward; S.achQ.push(a); }
+  }
+  saveStats(); saveWallet();
+}
+function updAchBanner(dt) {
+  const el = $('#achBanner');
+  if (S.achT > 0) { S.achT -= dt; if (S.achT <= 0) el.hidden = true; return; }
+  const a = S.achQ.shift(); if (!a) return;
+  $('#achName').textContent = t('ach.' + a.id); $('#achReward').textContent = t('achReward', { n: a.reward });
+  el.hidden = false; S.achT = 3.2; tone('triangle', 520, 1040, .3, .06);
+}
+function renderAch() {
+  const done = ACH.filter(a => S.ach[a.id]).length;
+  $('#achSub').textContent = t('achSub', { a: done, b: ACH.length });
+  $('#achList').innerHTML = ACH.map(a => {
+    const goal = typeof a.goal === 'function' ? a.goal() : a.goal, v = Math.min(goal, statVal(a.stat)), ok = !!S.ach[a.id];
+    const shown = a.stat === 'nitroTime' || a.stat === 'driftTime' ? Math.floor(v) : Math.round(v);
+    return `<div class="ach-item${ok ? ' done' : ''}"><i>${ok ? '✓' : ''}</i><div><b>${t('ach.' + a.id)}</b><p>${t('ach.' + a.id + '.d')}</p><div class="bar"><s style="width:${(ok ? 1 : v / goal) * 100}%"></s></div><em>${ok ? t('achReward', { n: a.reward }) : shown + ' / ' + goal}</em></div></div>`;
+  }).join('');
+}
+$('#achBtn').addEventListener('click', () => { $('#menu').hidden = true; $('#achievements').hidden = false; checkAch(); renderAch(); $('#achBack').focus(); });
+$('#achBack').addEventListener('click', () => { $('#achievements').hidden = true; $('#menu').hidden = false; renderMenuStrip(); });
 
 // ---------- input ----------
 const GAME_KEYS = ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space', 'KeyE'];
-const overlayOpen = () => !$('#garage').hidden || !$('#settings').hidden;
+const overlayOpen = () => !$('#garage').hidden || !$('#settings').hidden || !$('#achievements').hidden;
 addEventListener('keydown', e => {
   const code = e.code;
   if (GAME_KEYS.includes(code) && S.mode !== 'menu' && $('#results').hidden && $('#pause').hidden && $('#settings').hidden) e.preventDefault();
@@ -2936,6 +3283,7 @@ addEventListener('keydown', e => {
   if (e.repeat) return;
   if (code === 'Escape' && !$('#settings').hidden) closeSettings();
   else if (code === 'Escape' && !$('#garage').hidden) closeGarage();
+  else if (code === 'Escape' && !$('#achievements').hidden) $('#achBack').click();
   else if (code === 'Escape' || code === 'KeyP') togglePause();
   else if (code === 'Enter') { if (S.mode === 'menu' && !overlayOpen()) { e.preventDefault(); startRace(); } }
   else if (code === 'KeyM' && e.target.tagName !== 'INPUT') setVolume(S.volume > 0 ? 0 : (S.prevVolume || 60));
@@ -3003,6 +3351,7 @@ function frame(now) {
   }
   (G3.ok ? render3D : render)(S.mode === 'paused' ? 0 : dt);
   if (S.mode !== 'menu') { updHud(dt); updHint(dt); }
+  updAchBanner(dt);
   updAudio();
   requestAnimationFrame(frame);
 }
