@@ -257,12 +257,18 @@ body.touchmode .hint{bottom:calc(env(safe-area-inset-bottom,0px) + 190px)}
 .toast.warn b{color:var(--flag)}
 .toast.good b{color:var(--accent)}
 
-.touch{position:fixed;left:0;right:0;bottom:0;z-index:11;display:flex;justify-content:space-between;pointer-events:none;
+.touch{position:fixed;inset:0;z-index:11;pointer-events:none;
   padding:0 max(16px,env(safe-area-inset-right,0px)) calc(env(safe-area-inset-bottom,0px) + 16px) max(16px,env(safe-area-inset-left,0px))}
-.touch div{display:flex;gap:12px}
-.touch button{pointer-events:auto;width:72px;height:72px;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:rgba(12,14,19,.6);font-family:var(--display);font-size:13px;text-transform:uppercase;touch-action:none}
+.joy-zone{position:absolute;left:0;bottom:0;width:50%;height:65%;pointer-events:auto;touch-action:none}
+.joy-base{position:absolute;width:130px;height:130px;margin:-65px 0 0 -65px;border-radius:50%;border:2px solid rgba(255,255,255,.25);background:rgba(12,14,19,.35)}
+.joy-base i{position:absolute;left:50%;top:50%;width:56px;height:56px;margin:-28px 0 0 -28px;border-radius:50%;background:rgba(255,198,41,.55);border:2px solid rgba(255,255,255,.5)}
+.joy-hint{position:absolute;left:max(16px,env(safe-area-inset-left,0px));top:30%;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.45)}
+.tbtns{position:absolute;right:max(14px,env(safe-area-inset-right,0px));bottom:calc(env(safe-area-inset-bottom,0px) + 14px);display:grid;grid-template-columns:66px 86px;grid-template-rows:repeat(3,54px);grid-auto-flow:column;gap:9px}
+.touch button{pointer-events:auto;border-radius:18px;border:1px solid rgba(255,255,255,.2);background:rgba(12,14,19,.6);font-family:var(--display);font-size:12px;text-transform:uppercase;touch-action:none;color:var(--fg)}
+.touch button.gas{grid-column:2;grid-row:1 / span 3;border-radius:24px;background:rgba(43,212,107,.28);font-size:15px}
 .touch button.held{background:rgba(255,198,41,.35)}
-body.touchmode .hud-bl,body.touchmode .mini{bottom:calc(env(safe-area-inset-bottom,0px) + 104px)}
+body.touchmode .mini{bottom:calc(env(safe-area-inset-bottom,0px) + 162px)}
+body.touchmode .hud-bl{bottom:calc(env(safe-area-inset-bottom,0px) + 44px)}
 
 /* Fit any screen: one column on narrow screens, two columns when wide (or wide and short), then shrink with height.
    The main action stays pinned to the bottom edge when a panel still has to scroll. */
@@ -324,11 +330,12 @@ body.touchmode .hud-bl,body.touchmode .mini{bottom:calc(env(safe-area-inset-bott
   .box b{font-size:15px}
   .lights{top:calc(env(safe-area-inset-top,0px) + 58px);padding:8px 12px;gap:8px}
   .lights i{width:26px;height:26px}
-  .touch button{width:60px;height:60px}
-  body.touchmode .hud-bl,body.touchmode .mini{bottom:calc(env(safe-area-inset-bottom,0px) + 88px)}
+  .tbtns{grid-template-columns:56px 72px;grid-template-rows:repeat(3,46px);gap:7px}
+  body.touchmode .mini{display:none}
 }
 
 @media (max-width:720px){
+  body.touchmode .mini{display:none}
   .hint{bottom:calc(env(safe-area-inset-bottom,0px) + 150px)}
   .board{display:none}
   .mini{width:140px;height:96px}
@@ -386,8 +393,13 @@ body.touchmode .hud-bl,body.touchmode .mini{bottom:calc(env(safe-area-inset-bott
 </div>
 
 <div id="touch" class="touch" hidden>
-  <div><button data-k="ArrowLeft" aria-label="Влево" data-ta="aLeft">◀</button><button data-k="ArrowRight" aria-label="Вправо" data-ta="aRight">▶</button></div>
-  <div><button data-k="ShiftLeft" data-t="nitro">Нитро</button><button data-act="item" data-t="item">Предмет</button><button data-k="ArrowDown" data-t="brake">Тормоз</button><button data-k="ArrowUp" data-t="gas">Газ</button></div>
+  <div id="joy" class="joy-zone"><div id="joyBase" class="joy-base" hidden><i id="joyKnob"></i></div><span id="joyHint" class="joy-hint" data-t="joyHint">Руль: ведите пальцем</span></div>
+  <div class="tbtns">
+    <button data-k="ShiftLeft" data-t="nitro">Нитро</button>
+    <button data-k="ArrowUp" class="gas" data-t="gas">Газ</button>
+    <button data-act="item" data-t="item">Предмет</button>
+    <button data-k="ArrowDown" data-t="brake">Тормоз</button>
+  </div>
 </div>
 
 <div id="menu" class="overlay menu">
@@ -457,6 +469,7 @@ body.touchmode .hud-bl,body.touchmode .mini{bottom:calc(env(safe-area-inset-bott
             <li data-th="k2"><b>A / D</b> руль, <b>Пробел</b> ручник</li>
             <li data-th="k3"><b>Shift</b> нитро, <b>E</b> предмет</li>
             <li data-th="k4"><b>R</b> на трассу, <b>Esc</b> пауза, <b>M</b> звук</li>
+            <li id="padHint" data-th="kPad" hidden><b>Геймпад</b>: RT газ, LT тормоз, RB нитро, LB предмет, X ручник</li>
           </ul>
         </div>
       </section>
@@ -538,6 +551,13 @@ body.touchmode .hud-bl,body.touchmode .mini{bottom:calc(env(safe-area-inset-bott
         <div id="gfxSeg" class="seg words">
           <button data-gfx="high" aria-pressed="true" data-t="gfxHigh">Красивая</button>
           <button data-gfx="low" aria-pressed="false" data-t="gfxLow">Быстрая</button>
+        </div>
+      </div>
+      <div class="set" id="tiltSet" hidden>
+        <h3 class="label" data-t="steerMode">Руль на телефоне</h3>
+        <div id="tiltSeg" class="seg words">
+          <button data-tilt="off" aria-pressed="true" data-t="steerJoy">Джойстик</button>
+          <button data-tilt="on" aria-pressed="false" data-t="steerTilt">Наклон</button>
         </div>
       </div>
       <button id="tutReset" class="btn" data-t="tutReset">Показать подсказки заново</button>
@@ -631,6 +651,9 @@ const STR = {
     nitro: 'Нитро', hull: 'Корпус', repair: 'Ремонт', item: 'Предмет',
     conditions: 'Условия', wClear: 'Ясно', wRain: 'Дождь', wFog: 'Туман', wRandom: 'Случайно', nDay: 'День', nNight: 'Ночь', music: 'Музыка',
     'wx.rain': 'Дождь: скользко, лужи', 'wx.fog': 'Туман', 'wx.night': 'Ночь', 'wx.blizzard': 'Метель',
+    joyHint: 'Руль: ведите пальцем', steerMode: 'Руль на телефоне', steerJoy: 'Джойстик', steerTilt: 'Наклон',
+    kPad: '<b>Геймпад</b>: RT газ, LT тормоз, RB нитро, LB предмет, X ручник',
+    'tut.drive.t': 'Левой половиной экрана рулите, справа газ и тормоз. Газ ровно на зелёный даёт рывок.',
     camera: 'Камера', camNear: 'Близко', camFar: 'Далеко', camTop: 'Сверху', gfx: 'Графика', gfxHigh: 'Красивая', gfxLow: 'Быстрая',
     'car.bike': 'Байк', 'car.bike.tag': 'Лёгкий и резкий, ложится в поворот',
     'car.superbike': 'Супербайк', 'car.superbike.tag': 'Ракета на двух колёсах',
@@ -670,7 +693,6 @@ const STR = {
     'tut.item': 'У вас предмет. Нажмите <kbd>E</kbd>, чтобы его использовать.',
     'tut.pit': 'Машина повреждена. Медленно проедьте зону <b>PIT</b> сразу после старта — починитесь.',
     'tut.reset': 'Застряли? <kbd>R</kbd> вернёт на трассу.',
-    'tut.drive.t': 'Справа — газ и тормоз, слева — руль. Газ ровно на зелёный даёт рывок.',
     'tut.drift.t': 'В заносах копится нитро.',
     'tut.nitro.t': 'Нитро набралось. Жмите «Нитро» на прямой.',
     'tut.item.t': 'У вас предмет. Нажмите «Предмет».',
@@ -734,6 +756,9 @@ const STR = {
     nitro: 'Nitro', hull: 'Hull', repair: 'Repair', item: 'Item',
     conditions: 'Conditions', wClear: 'Clear', wRain: 'Rain', wFog: 'Fog', wRandom: 'Random', nDay: 'Day', nNight: 'Night', music: 'Music',
     'wx.rain': 'Rain: slippery, puddles', 'wx.fog': 'Fog', 'wx.night': 'Night', 'wx.blizzard': 'Blizzard',
+    joyHint: 'Steer: drag your thumb', steerMode: 'Phone steering', steerJoy: 'Joystick', steerTilt: 'Tilt',
+    kPad: '<b>Gamepad</b>: RT gas, LT brake, RB nitro, LB item, X handbrake',
+    'tut.drive.t': 'Steer with the left half of the screen, gas and brake on the right. Gas right on green gives a launch boost.',
     camera: 'Camera', camNear: 'Close', camFar: 'Far', camTop: 'High', gfx: 'Graphics', gfxHigh: 'Detailed', gfxLow: 'Fast',
     'car.bike': 'Bike', 'car.bike.tag': 'Light and sharp, leans into corners',
     'car.superbike': 'Superbike', 'car.superbike.tag': 'A rocket on two wheels',
@@ -773,7 +798,6 @@ const STR = {
     'tut.item': 'You picked up an item. Press <kbd>E</kbd> to use it.',
     'tut.pit': 'Your car is damaged. Drive slowly through the <b>PIT</b> zone after the start line to repair.',
     'tut.reset': 'Stuck? <kbd>R</kbd> puts you back on track.',
-    'tut.drive.t': 'Gas and brake on the right, steering on the left. Gas right on green gives a launch boost.',
     'tut.drift.t': 'Drifting fills your nitro.',
     'tut.nitro.t': 'Nitro is ready. Press Nitro on a straight.',
     'tut.item.t': 'You picked up an item. Press Item to use it.',
@@ -1338,10 +1362,81 @@ function ai(c, dt) {
   c.inThrottle = th; c.inSteer = steer; c.inBrake = false;
 }
 function readPlayer(c) {
-  c.inThrottle = ((K.KeyW || K.ArrowUp) ? 1 : 0) - ((K.KeyS || K.ArrowDown) ? 1 : 0);
-  c.inSteer = ((K.KeyD || K.ArrowRight) ? 1 : 0) - ((K.KeyA || K.ArrowLeft) ? 1 : 0);
-  c.inBrake = !!K.Space;
-  c.nitroOn = !!(K.ShiftLeft || K.ShiftRight) && c.nitro > 0 && c.inThrottle >= 0;
+  const P = PAD.state;
+  const kTh = ((K.KeyW || K.ArrowUp) ? 1 : 0) - ((K.KeyS || K.ArrowDown) ? 1 : 0);
+  const kSt = ((K.KeyD || K.ArrowRight) ? 1 : 0) - ((K.KeyA || K.ArrowLeft) ? 1 : 0);
+  c.inThrottle = kTh || (P ? P.gas - P.brake : 0);
+  c.inSteer = kSt || (P && P.steer) || TOUCH.steer || (S.tiltOn ? TOUCH.tilt : 0);
+  c.inBrake = !!K.Space || !!(P && P.hand);
+  c.nitroOn = !!(K.ShiftLeft || K.ShiftRight || (P && P.nitro)) && c.nitro > 0 && c.inThrottle >= 0;
+}
+// ---- gamepad: analog steering and pedals in races, D-pad focus and A/B in menus
+const PAD = { state: null, prev: {}, navT: 0 };
+function pollPad(dt) {
+  const pads = navigator.getGamepads ? navigator.getGamepads() : [], gp = [...pads].find(x => x && x.connected);
+  if (!gp) { PAD.state = null; return; }
+  const b = i => gp.buttons[i] ? gp.buttons[i].value || (gp.buttons[i].pressed ? 1 : 0) : 0, dz = v => Math.abs(v) < .15 ? 0 : (v - Math.sign(v) * .15) / .85;
+  const st = { steer: dz(gp.axes[0] || 0), gas: Math.max(b(7), b(0)), brake: Math.max(b(6), b(1)), hand: b(2) > .5, nitro: b(5) > .5, item: b(4) > .5, reset: b(3) > .5, start: b(9) > .5,
+    up: b(12) > .5 || (gp.axes[1] || 0) < -.6, down: b(13) > .5 || (gp.axes[1] || 0) > .6, left: b(14) > .5 || (gp.axes[0] || 0) < -.6, right: b(15) > .5 || (gp.axes[0] || 0) > .6, a: b(0) > .5, bk: b(1) > .5 };
+  const was = PAD.prev, pressed = k => st[k] && !was[k];
+  PAD.state = st; PAD.prev = st;
+  if (!PAD.seen) { PAD.seen = true; $('#padHint').hidden = false; }
+  if (pressed('start')) togglePause();
+  const racing = S.mode === 'race' || S.mode === 'countdown';
+  if (racing && $('#pause').hidden) {
+    if (st.gas > .5 && !(was.gas > .5)) onThrottlePress();
+    if (pressed('item') && S.mode === 'race') { const p = player(); if (p && !p.finished) useItem(p); }
+    if (pressed('reset') && S.mode === 'race') { const p = player(); if (p && !p.finished && p.respawnT <= 0) { p.respawnT = .4; p.vx = p.vy = 0; } }
+    return;
+  }
+  // menus: move focus between visible buttons, A clicks, B goes back
+  const ov = ['#settings', '#garage', '#achievements', '#pause', '#results', '#menu'].map(id => $(id)).find(el => !el.hidden);
+  if (!ov) return;
+  PAD.navT -= dt;
+  const dir = st.down || st.right ? 1 : st.up || st.left ? -1 : 0;
+  if (dir && PAD.navT <= 0) {
+    PAD.navT = .18;
+    const els = [...ov.querySelectorAll('button:not([disabled]),input')].filter(el => el.offsetParent !== null);
+    const i = els.indexOf(document.activeElement);
+    const nx = els[(i + dir + els.length) % els.length] || els[0];
+    if (nx) { nx.focus(); nx.scrollIntoView({ block: 'nearest' }); }
+  }
+  if (!dir) PAD.navT = 0;
+  if (pressed('a') && document.activeElement && ov.contains(document.activeElement)) { initAudio(); document.activeElement.click(); }
+  if (pressed('bk')) dispatchEvent(new KeyboardEvent('keydown', { code: 'Escape' }));
+}
+// ---- touch: a floating joystick on the left half, optional tilt steering
+const TOUCH = { steer: 0, tilt: 0, id: null, x0: 0, y0: 0 };
+function bindTouch() {
+  const zone = $('#joy'), base = $('#joyBase'), knob = $('#joyKnob');
+  zone.addEventListener('pointerdown', e => {
+    e.preventDefault(); TOUCH.id = e.pointerId; TOUCH.x0 = e.clientX; TOUCH.y0 = e.clientY;
+    base.hidden = false; base.style.left = e.clientX + 'px'; base.style.top = e.clientY + 'px'; knob.style.transform = '';
+    $('#joyHint').hidden = true; try { zone.setPointerCapture(e.pointerId); } catch (_) {}
+  });
+  zone.addEventListener('pointermove', e => {
+    if (e.pointerId !== TOUCH.id) return;
+    const dx = clamp(e.clientX - TOUCH.x0, -60, 60);
+    TOUCH.steer = Math.abs(dx) < 6 ? 0 : dx / 60;
+    knob.style.transform = `translateX(${dx}px)`;
+  });
+  const end = e => { if (e.pointerId !== TOUCH.id) return; TOUCH.id = null; TOUCH.steer = 0; base.hidden = true; };
+  zone.addEventListener('pointerup', end); zone.addEventListener('pointercancel', end); zone.addEventListener('lostpointercapture', end);
+  addEventListener('deviceorientation', e => {
+    const ang = (screen.orientation && screen.orientation.angle) || window.orientation || 0;
+    const v = Math.abs(ang) === 90 || ang === 270 ? (e.beta || 0) * (ang === 90 ? 1 : -1) : (e.gamma || 0);
+    TOUCH.tilt = Math.abs(v) < 3 ? 0 : clamp(v / 24, -1, 1);
+  });
+}
+function setTilt(on) {
+  const apply = ok => {
+    S.tiltOn = ok; store.set('turbo-krug-tilt', ok ? 'on' : 'off');
+    $('#tiltSeg').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String((b.dataset.tilt === 'on') === S.tiltOn)));
+    $('#joy').hidden = S.tiltOn;
+  };
+  if (on && window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === 'function') {
+    DeviceOrientationEvent.requestPermission().then(r => apply(r === 'granted')).catch(() => apply(false));
+  } else apply(!!on);
 }
 const CIRC_OFF = 9;
 function collide() {
@@ -3203,7 +3298,8 @@ function render3D(dt) {
   if (map._lavaTex && !reduceMotion) { map._lavaTex.offset.x = (tm * .025) % 1; map._lavaTex.offset.y = (tm * .015) % 1; }
   // chase camera: follows the heading with a soft lag, no roll
   const P = CAMS3[S.cam3] || CAMS3.near, menu = S.mode === 'menu', small = !menu && (f.type === 'moto' || f.type === 'dog') ? .82 : 1;
-  const dist = menu ? 120 : P[0] * small, hgt = menu ? 52 : P[1] * (small < 1 && S.cam3 !== 'top' ? .85 : 1), ahead = P[2];
+  const tallK = W < H ? 1 + (1 - W / H) * .7 : 1;
+  const dist = (menu ? 120 : P[0] * small) * tallK, hgt = (menu ? 52 : P[1] * (small < 1 && S.cam3 !== 'top' ? .85 : 1)) * (1 + (tallK - 1) * .8), ahead = P[2];
   const k = Math.min(1, dt * (S.cam3 === 'top' ? 2.2 : 3.2));
   if (Math.hypot(c3.x - f.x, c3.z - f.y) > 600) c3.snap = true; // after a respawn or a jump cut
   c3.yaw = c3.snap ? f.angle : c3.yaw + wrapAng(f.angle - c3.yaw) * k;
@@ -3215,7 +3311,8 @@ function render3D(dt) {
   if (S.shake > 0) { sx = (Math.random() - .5) * S.shake * .8; sy = (Math.random() - .5) * S.shake * .8; S.shake = Math.max(0, S.shake - dt * 30); }
   cam.position.set(c3.x + sx, c3.y + sy, c3.z);
   cam.lookAt(f.x + fx * ahead, 8 + (f.air || 0) * .5, f.y + fy * ahead);
-  const fovT = 60 + 9 * Math.min(1, f.speed / BASE) + (f.boosting ? 7 : 0);
+  const asp = W / H, tall = asp < 1 ? 1 - asp : 0; // portrait screens: wider lens, camera pulled back
+  const fovT = Math.min(88, 60 + tall * 36) + 9 * Math.min(1, f.speed / BASE) + (f.boosting ? 7 : 0);
   c3.fov += (fovT - c3.fov) * Math.min(1, dt * 3); cam.fov = c3.fov; cam.updateProjectionMatrix();
   // sun and its shadow box follow the action
   G3.sun.position.set(f.x + 260, 620, f.y + 180); G3.sun.target.position.set(f.x + fx * 150, 0, f.y + fy * 150); G3.sun.target.updateMatrixWorld();
@@ -3717,6 +3814,7 @@ addEventListener('blur', () => { for (const k in K) K[k] = false; if (!S.noAutoP
 document.addEventListener('visibilitychange', () => { if (document.hidden && !S.noAutoPause) togglePause(true); });
 const touchMode = matchMedia('(pointer: coarse)').matches;
 if (touchMode) document.body.classList.add('touchmode');
+bindTouch();
 document.querySelectorAll('#touch button').forEach(b => {
   const k = b.dataset.k;
   if (b.dataset.act === 'item') { b.addEventListener('pointerdown', e => { e.preventDefault(); const p = player(); if (S.mode === 'race' && p && !p.finished) useItem(p); }); return; }
@@ -3747,6 +3845,7 @@ $('#gfxSeg').addEventListener('click', e => { const b = e.target.closest('button
 $('#weatherSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (b) setConditions(b.dataset.w, null); });
 $('#nightSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (b) setConditions(null, b.dataset.n); });
 $('#mvol').addEventListener('input', e => setMusic(+e.target.value));
+$('#tiltSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (b) setTilt(b.dataset.tilt === 'on'); });
 $('#ghostSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (b) setGhost(b.dataset.ghost === 'on'); });
 $('#tutReset').addEventListener('click', () => { S.tut = {}; store.set('turbo-krug-tut', '{}'); $('#tutReset').textContent = t('tutResetDone'); });
 $('#modeSeg').addEventListener('click', e => {
@@ -3769,6 +3868,7 @@ addEventListener('resize', resize);
 let last = performance.now(), accT = 0;
 function frame(now) {
   const dt = Math.min(.05, (now - last) / 1000); last = now; lastFrameAt = performance.now();
+  pollPad(dt);
   if (S.mode !== 'paused') {
     accT += dt;
     while (accT >= DT) { step(DT); accT -= DT; }
@@ -3805,6 +3905,7 @@ function start(data) {
   const v = parseInt(store.get('turbo-krug-vol'), 10); setVolume(v >= 0 && v <= 100 ? v : 60);
   setHaz(store.get('turbo-krug-haz') !== 'off');
   setGhost(store.get('turbo-krug-ghost') !== 'off');
+  $('#tiltSet').hidden = !touchMode; if (touchMode) setTilt(store.get('turbo-krug-tilt') === 'on' && !(window.DeviceOrientationEvent && DeviceOrientationEvent.requestPermission));
   { const mv = parseInt(store.get('turbo-krug-music'), 10); setMusic(mv >= 0 && mv <= 100 ? mv : 45); }
   S.weatherSel = ['clear', 'rain', 'fog', 'random'].includes(store.get('turbo-krug-weather')) ? store.get('turbo-krug-weather') : 'clear';
   S.nightSel = ['day', 'night', 'random'].includes(store.get('turbo-krug-night')) ? store.get('turbo-krug-night') : 'day';
