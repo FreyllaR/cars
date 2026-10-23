@@ -8,10 +8,10 @@ const path = require('path');
 
 const PORT = +process.env.PORT || 4100;
 const DATA = process.env.DATA || path.join(__dirname, 'data');
-const MAPS = ['valley', 'canyon', 'pass', 'city', 'volcano', 'beach', 'jungle', 'space'];
+const MAPS = ['valley', 'canyon', 'pass', 'city', 'volcano', 'beach', 'jungle', 'space', 'meadow', 'autumn', 'farm', 'dunes', 'mesa', 'oasis', 'glacier', 'alpine', 'polar', 'neon', 'harbor', 'raincity', 'ashlands', 'inferno', 'tropic', 'lagoon', 'swamp', 'temple', 'moon', 'mars', 'station', 'haunted']; // keep in sync with MAPS in the game
 const VEHICLES = /^[a-z0-9]{2,16}$/;
 const MAX_PLAYERS = 5;
-const RELAYED = new Set(['s', 'b', 'hz', 'oil', 'fin']);
+const RELAYED = new Set(['s', 'b', 'hz', 'oil', 'fin', 'fx', 'trap']);
 const STATIC = process.env.STATIC ? path.resolve(process.env.STATIC) : null;
 
 // ---------- leaderboard ----------
@@ -220,7 +220,7 @@ function onMessage(c, m) {
     case 'b': case 'hz': // bots and hazards are simulated by the host only
       if (r && r.started && r.host === c) { m.id = c.id; broadcast(r, m, c); }
       return;
-    case 's': case 'oil': case 'fin':
+    case 's': case 'oil': case 'fin': case 'fx': case 'trap': // item effects and dropped traps go to everyone else
       if (r && r.started) { m.id = c.id; broadcast(r, m, c); }
       return;
   }
