@@ -1,5 +1,5 @@
 'use strict';
-// Turbo Lap server: a lap-record leaderboard (HTTP JSON) and online race rooms (WebSocket relay).
+// Tachki game server: a lap-record leaderboard (HTTP JSON) and online race rooms (WebSocket relay).
 // No dependencies. Caddy proxies /api/* and /ws on the game's domain to this process.
 const http = require('http');
 const crypto = require('crypto');

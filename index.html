@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Турбо Круг</title>
+<title>Тачки</title>
 <link rel="stylesheet" href="fonts.css">
 <style>
 /* Layout: the race fills the screen; HUD sits in the four corners; menus dock to the left like a pit-wall board */
@@ -87,11 +87,6 @@ h1 span{color:var(--accent)}
 .btn:disabled{opacity:.45;cursor:default}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-family:var(--display);font-weight:400;letter-spacing:.03em}
 
-.garage-strip{display:grid;grid-template-columns:96px minmax(0,1fr) auto auto;gap:14px;align-items:center;padding:10px 12px 10px 10px;background:var(--panel-2);border:1px solid var(--line);border-radius:10px}
-.garage-strip canvas{width:96px;height:56px;display:block}
-.garage-strip .label{margin:0 0 2px}
-.garage-strip b{font-family:var(--display);font-weight:400;font-size:18px}
-.garage-strip .btn{flex:none;padding:0 20px}
 .coins b{font-family:var(--display);font-weight:400;color:var(--accent);font-variant-numeric:tabular-nums;white-space:nowrap}
 .coins b::before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:inset 0 0 0 2px rgba(0,0,0,.25);margin-right:6px;vertical-align:2px}
 .coins.big b{font-size:26px}
@@ -146,7 +141,6 @@ h1 span{color:var(--accent)}
 .ach-banner .label{margin:0;grid-column:1/-1;color:var(--accent)}
 .ach-banner b{font-family:var(--display);font-weight:400;font-size:18px}
 .ach-banner em{font-style:normal;font-weight:800;color:var(--accent)}
-.menu-links{display:flex;flex-wrap:wrap;gap:8px}
 .text-in{height:40px;padding:0 12px;border-radius:9px;border:1px solid var(--line);background:var(--panel-2);color:var(--fg);font:inherit;font-weight:600;width:100%}
 .text-in:focus{border-color:var(--accent);outline:none}
 .code-in{text-transform:uppercase;letter-spacing:.3em;font-family:var(--display);font-size:20px;text-align:center}
@@ -175,7 +169,6 @@ h1 span{color:var(--accent)}
 .rec-dot{width:10px;height:10px;border-radius:50%;background:var(--flag);box-shadow:0 0 10px var(--flag);animation:blink 1s steps(2) infinite}
 @keyframes blink{50%{opacity:.2}}
 @media (prefers-reduced-motion:reduce){.rec-dot{animation:none}}
-.menu-links .btn{flex:1 1 120px;height:40px}
 .st{display:grid;grid-template-columns:82px minmax(0,1fr) 70px;gap:8px;align-items:center;font-size:12px;color:var(--muted)}
 .st i{height:6px;border-radius:3px;background:#2c313c;overflow:hidden}
 .st s{display:block;height:100%;background:var(--accent);border-radius:3px}
@@ -301,8 +294,6 @@ tr.me td{color:var(--accent)}
 .mp-head .label{margin:0 0 4px}
 .back{flex:none;width:46px;height:46px;border-radius:12px;border:1px solid var(--line);background:var(--panel-2);font-size:22px;line-height:1}
 .back:hover{border-color:#4a5161}
-.home-btns{display:grid;gap:10px}
-.home-btns .cta{height:64px;font-size:24px}
 .quick{display:grid;justify-items:center;gap:0;height:auto;min-height:54px;padding:8px 14px}
 .quick b{font-weight:800}
 .quick span{font-size:12px;color:var(--muted);font-weight:600;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -412,7 +403,6 @@ body.touchmode.steer-btn .hud-bl{bottom:calc(env(safe-area-inset-bottom,0px) + 1
 .menu-panel{--gap:22px;gap:var(--gap)}
 .menu-panel{width:min(560px,100%)}
 .menu-panel[data-page="track"]{width:min(1060px,100%)}
-.menu-panel[data-page="mode"]{width:min(760px,100%)}
 .cta-row,.garage-panel>#garageBack,.ach-panel>#achBack,.ach-panel>#helpBack,.ach-panel>#recBack,.results .btns,#settings #setDone{position:sticky;bottom:0;z-index:2;background:var(--sticky);box-shadow:0 -14px 16px 2px var(--sticky);border-radius:10px}
 .garage-panel>#garageBack,.ach-panel>#achBack,.ach-panel>#helpBack,.ach-panel>#recBack,#settings #setDone{background:var(--accent)}
 @media (min-width:980px),(min-width:700px) and (max-height:600px){
@@ -433,7 +423,6 @@ body.touchmode.steer-btn .hud-bl{bottom:calc(env(safe-area-inset-bottom,0px) + 1
 @media (max-height:660px){
   .lede,.m-note,.c-tag{display:none}
   .modes button{min-height:58px;padding:8px 12px}
-  .home-btns .cta{height:54px;font-size:20px}
   .map{grid-template-columns:52px minmax(0,1fr)}
   .map canvas{width:52px;height:32px}
   .m-side .rec,.map-note{display:none}
@@ -441,8 +430,6 @@ body.touchmode.steer-btn .hud-bl{bottom:calc(env(safe-area-inset-bottom,0px) + 1
   .cta,.cta-row .btn{height:48px}
   .cta{font-size:18px}
   .seg button{height:36px}
-  .garage-strip{grid-template-columns:72px minmax(0,1fr) auto auto;padding:6px 10px 6px 6px}
-  .garage-strip canvas{width:72px;height:42px}
   .car{grid-template-columns:72px minmax(0,1fr) auto}
   .car canvas{width:72px;height:42px}
   .st{font-size:11px}
@@ -498,15 +485,103 @@ body.touchmode.steer-btn .hud-bl{bottom:calc(env(safe-area-inset-bottom,0px) + 1
   .m-side .chip{display:none}
   .m-side .rec{font-size:10px}
   .g-body{grid-template-columns:1fr}
-  .garage-strip{grid-template-columns:72px minmax(0,1fr) auto}
-  .garage-strip canvas{width:72px;height:42px}
-  .garage-strip .btn{grid-column:1/-1}
 }
 @media (max-width:460px){
   .panel{padding:16px}
-  .menu-links .btn{flex-basis:calc(50% - 4px)}
   .cta-row{grid-template-columns:1fr}
 }
+/* ---- main menu: the quick race first, then career and the track of the day, every mode, and your vehicle on the side */
+.menu-panel[data-page="home"]{width:min(1020px,100%)}
+.home-top{display:flex;flex-wrap:wrap;gap:14px 24px;align-items:flex-end;justify-content:space-between}
+.home-top h1{margin-bottom:0}
+.profile{display:flex;gap:8px;margin:0}
+.profile>div{min-width:84px;padding:8px 12px;background:var(--panel-2);border:1px solid var(--line);border-radius:10px}
+.profile dt{font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.profile dd{margin:2px 0 0;font-family:var(--display);font-size:18px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.profile .coins dd{color:var(--accent)}
+.home-grid{display:grid;gap:var(--gap);min-width:0}
+.home-main,.home-side{display:grid;gap:12px;align-content:start;min-width:0}
+.home-main>.label{margin:6px 0 -2px}
+.hero{display:grid;grid-template-columns:150px minmax(0,1fr) auto;gap:16px;align-items:center;padding:12px 16px 12px 12px;text-align:left;border:0;border-radius:14px;
+  background:linear-gradient(100deg,#ffc629,#ffb01f);color:var(--accent-ink);transition:filter .15s,transform .1s}
+.hero:hover{filter:brightness(1.05)}
+.hero:active{transform:scale(.99)}
+.hero canvas{width:150px;height:90px;border-radius:9px;display:block;box-shadow:0 2px 0 rgba(0,0,0,.15)}
+.hero-txt{display:grid;gap:2px;min-width:0}
+.hero-txt .label{margin:0;color:rgba(23,20,10,.65)}
+.hero-txt b{font-family:var(--display);font-weight:400;font-size:clamp(20px,2.6vw,26px);line-height:1.1;text-transform:uppercase;overflow-wrap:anywhere}
+.hero-txt>span{font-size:13px;font-weight:600}
+.hero-rec{opacity:.75}
+.hero-go{display:flex;align-items:center;gap:10px;font-family:var(--display);font-size:20px;text-transform:uppercase;white-space:nowrap}
+.hero-go kbd{background:rgba(0,0,0,.12);border-color:rgba(0,0,0,.2);color:var(--accent-ink)}
+.home-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:12px}
+.card{display:grid;gap:6px;align-content:start;padding:14px;text-align:left;background:var(--panel-2);border:1px solid var(--line);border-radius:12px;transition:border-color .15s,transform .1s}
+.card:hover{border-color:#4a5161}
+.card:active{transform:scale(.99)}
+.card-top{display:flex;align-items:center;gap:10px}
+.card-top i{width:34px;height:34px;display:grid;place-items:center;border-radius:10px;background:#20242e;font-style:normal;font-size:18px}
+.card-top b{font-family:var(--display);font-weight:400;font-size:18px}
+.card-line{font-weight:700}
+.card-sub{margin:0;font-size:13px;color:var(--muted)}
+.card .bar{height:6px;border-radius:3px;background:#2c313c;overflow:hidden}
+.card .bar s{display:block;height:100%;background:var(--accent);border-radius:3px}
+.card.daily{background:linear-gradient(160deg,#241f3a,var(--panel-2) 70%)}
+.modes.compact{grid-template-columns:repeat(auto-fill,minmax(min(100%,190px),1fr));gap:8px}
+.modes.compact button{min-height:62px;padding:10px 12px;grid-template-columns:36px minmax(0,1fr);column-gap:10px}
+.modes.compact i{width:36px;height:36px;font-size:18px;border-radius:10px}
+.modes.compact b{font-size:15px}
+.modes.compact span{font-size:12px;line-height:1.3}
+.modes.compact button[aria-pressed]{border-color:var(--line);background:var(--panel-2)}
+.modes.compact button:hover{border-color:#4a5161}
+.car-card{display:grid;gap:8px;padding:14px;background:var(--panel-2);border:1px solid var(--line);border-radius:12px}
+.car-card .label{margin:0}
+.car-card canvas{width:100%;max-width:320px;aspect-ratio:16/9;height:auto;justify-self:center;display:block}
+.car-card>b{font-family:var(--display);font-weight:400;font-size:22px;line-height:1.1}
+.car-card .stats{display:grid;gap:6px;margin:2px 0 4px}
+.car-card .btn{flex:none;width:100%}
+.home-links{display:grid;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.home-links button{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:52px;padding:8px 14px;text-align:left;background:var(--panel-2);border:0;border-top:1px solid var(--line)}
+.home-links button:first-child{border-top:0}
+.home-links button:hover{background:#222733}
+.home-links span{display:grid;min-width:0}
+.home-links b{font-weight:700}
+.home-links small{font-size:12px;color:var(--muted)}
+.home-links i{font-style:normal;font-size:22px;color:var(--muted)}
+@media (min-width:860px){.home-grid{grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);column-gap:22px}}
+@media (max-width:520px){
+  .hero{grid-template-columns:96px minmax(0,1fr);gap:12px}
+  .hero canvas{width:96px;height:58px}
+  .hero-go{grid-column:1/-1;justify-content:center;padding-top:8px;border-top:1px solid rgba(0,0,0,.12)}
+  .hero-go kbd{display:none}
+  .profile{width:100%}
+  .profile>div{flex:1;min-width:0}
+  .modes.compact{grid-template-columns:1fr}
+  .modes.compact button{min-height:54px}
+  .profile>div{padding:8px 10px}
+  .profile dt{font-size:9px;letter-spacing:.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+}
+/* ---- pause and finish: where you are in the race, as a row of numbers */
+.race-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:8px;margin:0}
+.race-stats>div{padding:8px 12px;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;min-width:0}
+.race-stats dt{font-size:10px;font-weight:800;letter-spacing:.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-transform:uppercase;color:var(--muted)}
+.race-stats dd{margin:2px 0 0;font-family:var(--display);font-size:20px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.race-stats dd small{font-size:13px;color:var(--muted);margin-left:1px}
+.race-stats .acc dd{color:var(--accent)}
+.pause-panel{width:min(500px,100%)}
+.results .panel{width:min(500px,100%)}
+.pause-panel header .label{margin:12px 0 0}
+.pause-panel .res-title{margin-top:2px}
+.pause-panel>.cta{width:100%}
+.pause-panel .btns,.exit-row .btns{display:flex;flex-wrap:wrap;gap:8px}
+.pause-panel .btns .btn{flex:1 1 120px}
+.exit-row{padding-top:14px;border-top:1px solid var(--line)}
+.exit-row .label{margin-bottom:8px}
+.res-head{display:flex;align-items:center;gap:14px}
+.res-place{flex:none;width:58px;height:58px;display:grid;place-items:center;margin-top:8px;border-radius:14px;background:var(--panel-2);border:1px solid var(--line);font-family:var(--display);font-size:30px}
+.res-place.podium{background:#2a2f3c;border-color:#5a6274}
+.res-place.gold{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.res-pts:empty,.res-hint:empty{display:none}
+#resStats{margin-top:12px}
 </style>
 </head>
 <body>
@@ -564,50 +639,78 @@ body.touchmode.steer-btn .hud-bl{bottom:calc(env(safe-area-inset-bottom,0px) + 1
 <div id="menu" class="overlay menu">
   <div class="panel menu-panel">
     <section class="mpage mp-home" data-page="home">
-      <header>
-        <div class="checker" aria-hidden="true"></div>
-        <h1 data-th="title">Турбо <span>Круг</span></h1>
-        <p class="lede" data-t="lede">Пять трасс, мини-гонки, четыре соперника и сюрпризы на дороге.</p>
+      <header class="home-top">
+        <div>
+          <div class="checker" aria-hidden="true"></div>
+          <h1 data-th="title"><span>Тачки</span></h1>
+        </div>
+        <dl class="profile">
+          <div class="coins"><dt data-t="points">Очки</dt><dd id="coinsMenu">0</dd></div>
+          <div><dt data-t="pWins">Победы</dt><dd id="winsMenu">0</dd></div>
+          <div><dt data-t="pAch">Достижения</dt><dd id="achMenu">0</dd></div>
+        </dl>
       </header>
-      <div class="garage-strip">
-        <canvas id="curCarCv" width="192" height="112"></canvas>
-        <div><h2 class="label" data-t="yourCar">Ваш транспорт</h2><b id="curCarName">Старт</b></div>
-        <div class="coins"><h2 class="label" data-t="points">Очки</h2><b id="coinsMenu">0</b></div>
-        <button id="garageBtn" class="btn" data-t="garage">Гараж</button>
-      </div>
-      <div class="home-btns">
-        <button id="playBtn" class="cta"><span data-t="play">Играть</span> <kbd>Enter</kbd></button>
-        <button id="quickBtn" class="btn quick"><b data-t="quick">Быстрый старт</b><span id="quickSub"></span></button>
-        <button id="dailyBtn" class="btn quick daily"><b data-t="daily">🗓 Трасса дня</b><span id="dailySub"></span></button>
-      </div>
-      <div class="menu-links">
-        <button id="recBtn" class="btn" data-t="recTitle">Рекорды</button>
-        <button id="achBtn" class="btn" data-t="achTitle">Достижения</button>
-        <button id="helpBtn" class="btn" data-t="controls">Управление</button>
-        <button id="settingsBtn" class="btn" data-t="settings">Настройки</button>
-      </div>
-    </section>
-
-    <section class="mpage mp-mode" data-page="mode" hidden>
-      <div class="mp-head"><button class="back" data-back="home" data-t-aria="back" aria-label="Назад">←</button><div><p class="label" data-t="step1">Шаг 1 из 2</p><h2 data-t="chooseMode">Выберите режим</h2></div></div>
-      <div id="modeSeg" class="modes">
-        <button data-mode="career" aria-pressed="false"><i aria-hidden="true">🏅</i><b data-t="mCareer">Карьера</b><span data-t="mCareerSub">4 лиги с заданиями и наградами</span></button>
-        <button data-mode="mini" aria-pressed="false"><i aria-hidden="true">🧸</i><b data-t="mMini">Мини-гонки</b><span data-t="mMiniSub">Маленькие машинки в огромном мире</span></button>
-        <button data-mode="race" aria-pressed="true"><i aria-hidden="true">🏁</i><b data-t="mRace">Гонка</b><span data-t="mRaceSub">Одна трасса с ботами</span></button>
-        <button data-mode="cup" aria-pressed="false"><i aria-hidden="true">🏆</i><b data-t="mCup">Чемпионат</b><span data-t="mCupSub">5 трасс подряд, очки за места</span></button>
-        <button data-mode="trial" aria-pressed="false"><i aria-hidden="true">⏱</i><b data-t="mTrial">На время</b><span data-t="mTrialSub">Только вы и секундомер</span></button>
-        <button data-mode="online" aria-pressed="false"><i aria-hidden="true">🌐</i><b data-t="mOnline">Онлайн</b><span data-t="mOnlineSub">С друзьями по коду комнаты</span></button>
-        <button data-mode="duo" aria-pressed="false" id="duoModeBtn"><i aria-hidden="true">👥</i><b data-t="mDuo">Вдвоём</b><span data-t="mDuoSub">Два игрока, один экран</span></button>
+      <div class="home-grid">
+        <div class="home-main">
+          <button id="quickBtn" class="hero">
+            <canvas id="quickCv" width="240" height="144" aria-hidden="true"></canvas>
+            <span class="hero-txt">
+              <small class="label" data-t="quickRace">Быстрая гонка</small>
+              <b id="quickMap">Зелёная долина</b>
+              <span id="quickSub"></span>
+              <span id="quickRec" class="hero-rec"></span>
+            </span>
+            <span class="hero-go"><span data-t="go">Поехали</span> <kbd>Enter</kbd></span>
+          </button>
+          <div class="home-cards">
+            <button id="careerCard" class="card">
+              <span class="card-top"><i aria-hidden="true">🏅</i><b data-t="mCareer">Карьера</b></span>
+              <span id="careerLine" class="card-line"></span>
+              <span class="bar" aria-hidden="true"><s id="careerBar"></s></span>
+              <span id="careerNext" class="card-sub"></span>
+            </button>
+            <button id="dailyBtn" class="card daily">
+              <span class="card-top"><i aria-hidden="true">🗓</i><b data-t="dailyName">Трасса дня</b></span>
+              <span id="dailyMap" class="card-line"></span>
+              <span id="dailySub" class="card-sub"></span>
+            </button>
+          </div>
+          <h2 class="label" data-t="allModes">Все режимы</h2>
+          <div id="modeSeg" class="modes compact">
+            <button data-mode="race"><i aria-hidden="true">🏁</i><b data-t="mRace">Гонка</b><span data-t="mRaceSub">Одна трасса с ботами</span></button>
+            <button data-mode="mini"><i aria-hidden="true">🧸</i><b data-t="mMini">Мини-гонки</b><span data-t="mMiniSub">Маленькие машинки в огромном мире</span></button>
+            <button data-mode="cup"><i aria-hidden="true">🏆</i><b data-t="mCup">Чемпионат</b><span data-t="mCupSub">5 трасс подряд, очки за места</span></button>
+            <button data-mode="trial"><i aria-hidden="true">⏱</i><b data-t="mTrial">На время</b><span data-t="mTrialSub">Только вы и секундомер</span></button>
+            <button data-mode="online"><i aria-hidden="true">🌐</i><b data-t="mOnline">Онлайн</b><span data-t="mOnlineSub">С друзьями по коду комнаты</span></button>
+            <button data-mode="duo" id="duoModeBtn"><i aria-hidden="true">👥</i><b data-t="mDuo">Вдвоём</b><span data-t="mDuoSub">Два игрока, один экран</span></button>
+          </div>
+        </div>
+        <aside class="home-side">
+          <div class="car-card">
+            <h2 class="label" data-t="yourCar">Ваш транспорт</h2>
+            <canvas id="curCarCv" width="320" height="180"></canvas>
+            <b id="curCarName">Старт</b>
+            <p id="curCarTag" class="card-sub"></p>
+            <div id="curCarStats" class="stats"></div>
+            <button id="garageBtn" class="btn" data-t="garageOpen">Гараж и тюнинг</button>
+          </div>
+          <nav class="home-links">
+            <button id="recBtn"><span><b data-t="recTitle">Рекорды</b><small id="homeRecSub"></small></span><i aria-hidden="true">›</i></button>
+            <button id="achBtn"><span><b data-t="achTitle">Достижения</b><small id="homeAchSub"></small></span><i aria-hidden="true">›</i></button>
+            <button id="helpBtn"><span><b data-t="controls">Управление</b><small data-t="helpSub">клавиши, геймпад, экран</small></span><i aria-hidden="true">›</i></button>
+            <button id="settingsBtn"><span><b data-t="settings">Настройки</b><small data-t="setSub">звук, графика, язык</small></span><i aria-hidden="true">›</i></button>
+          </nav>
+        </aside>
       </div>
     </section>
 
     <section class="mpage mp-career" data-page="career" hidden>
-      <div class="mp-head"><button class="back" data-back="mode" data-t-aria="back" aria-label="Назад">←</button><div><p class="label" data-t="mCareerSub">4 лиги с заданиями и наградами</p><h2 data-t="mCareer">Карьера</h2></div></div>
+      <div class="mp-head"><button class="back" data-back="home" data-t-aria="back" aria-label="Назад">←</button><div><p class="label" data-t="mCareerSub">4 лиги с заданиями и наградами</p><h2 data-t="mCareer">Карьера</h2></div></div>
       <div id="careerList" class="career"></div>
     </section>
 
     <section class="mpage mp-track" data-page="track" hidden>
-      <div class="mp-head"><button class="back" data-back="mode" data-t-aria="back" aria-label="Назад">←</button><div><p class="label" data-t="step2">Шаг 2 из 2</p><h2 id="trackHead">Гонка</h2></div></div>
+      <div class="mp-head"><button class="back" data-back="home" data-t-aria="back" aria-label="Назад">←</button><div><p class="label" data-t="raceSetup">Настройка заезда</p><h2 id="trackHead">Гонка</h2></div></div>
       <div class="mp-cols">
         <div class="col">
           <div class="track-head"><h3 class="label" data-t="track">Трасса</h3><button id="randMap" class="btn small" data-t="randMap">🎲 Случайная</button></div>
@@ -673,15 +776,22 @@ body.touchmode.steer-btn .hud-bl{bottom:calc(env(safe-area-inset-bottom,0px) + 1
 </div>
 
 <div id="pause" class="overlay center" hidden>
-  <div class="panel">
+  <div class="panel pause-panel">
     <div class="checker" aria-hidden="true"></div>
-    <h2 class="res-title" data-t="paused">Пауза</h2>
+    <header><p id="pauseWhere" class="label"></p><h2 class="res-title" data-t="paused">Пауза</h2></header>
+    <dl id="pauseStats" class="race-stats"></dl>
+    <button id="resumeBtn" class="cta"><span data-t="resume">Продолжить</span> <kbd>Esc</kbd></button>
     <div class="btns">
-      <button id="resumeBtn" class="btn primary" data-t="resume">Продолжить</button>
       <button id="restartBtn" class="btn" data-t="restart">Заново</button>
       <button id="pauseSetBtn" class="btn" data-t="settings">Настройки</button>
       <button id="photoBtn" class="btn" data-t="photo">📷 Фото</button>
-      <button id="menuBtn" class="btn" data-t="trackSelect">Выбор трассы</button>
+    </div>
+    <div class="exit-row">
+      <p class="label" data-t="leaveRace">Выйти из гонки</p>
+      <div class="btns">
+        <button id="trackBtn" class="btn" data-t="otherTrack">Другая трасса</button>
+        <button id="menuBtn" class="btn" data-t="mainMenu">Главное меню</button>
+      </div>
     </div>
   </div>
 </div>
@@ -758,8 +868,9 @@ body.touchmode.steer-btn .hud-bl{bottom:calc(env(safe-area-inset-bottom,0px) + 1
   <div class="panel">
     <div>
       <div class="checker" aria-hidden="true"></div>
-      <h2 id="resTitle" class="res-title">Финиш</h2>
-      <p id="resSub" class="res-sub"></p>
+      <div class="res-head"><span id="resPlace" class="res-place" hidden></span><div><h2 id="resTitle" class="res-title">Финиш</h2>
+      <p id="resSub" class="res-sub"></p></div></div>
+      <dl id="resStats" class="race-stats"></dl>
       <p id="resRec" class="res-rec" hidden></p>
       <p id="resPts" class="res-pts"></p>
       <p id="resHint" class="res-hint"></p>
@@ -784,7 +895,7 @@ body.touchmode.steer-btn .hud-bl{bottom:calc(env(safe-area-inset-bottom,0px) + 1
       <button id="nextBtn" class="btn" data-t="next">Следующая трасса</button>
       <button id="replayBtn" class="btn" data-t="watchReplay">Повтор финиша</button>
       <button id="lobbyBtn" class="btn primary" data-t="toLobby" hidden>В комнату</button>
-      <button id="resMenuBtn" class="btn" data-t="trackSelect">Выбор трассы</button>
+      <button id="resMenuBtn" class="btn" data-t="mainMenu">Главное меню</button>
     </div>
   </div>
 </div>
@@ -884,7 +995,7 @@ const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 // ---------- text ----------
 const STR = {
   ru: {
-    title: 'Турбо <span>Круг</span>', lede: 'Пять трасс, мини-гонки, четыре соперника и сюрпризы на дороге. Держи газ в пол и финишируй первым.',
+    title: '<span>Тачки</span>', lede: 'Пять трасс, мини-гонки, четыре соперника и сюрпризы на дороге. Держи газ в пол и финишируй первым.',
     story: 'Сюжет', storySub: 'новые главы открываются по ходу карьеры', chapter: 'Глава {n} из {m}', comicNext: 'Далее', comicDone: 'Готово', comicSkip: 'Пропустить',
     mMini: 'Мини-гонки', mMiniSub: 'Маленькие машинки в огромном мире',
     'map.kitchen': 'Кухня', 'map.kitchen.note': 'Между ножками стульев и кружками размером с дом', 'map.kitchen.chip': 'Лужа воды',
@@ -898,6 +1009,13 @@ const STR = {
     daily: '🗓 Трасса дня', dailyDone: 'Трасса дня', yourBest: 'ваш лучший {t}', dailyRank: 'Трасса дня: {n}-е место из {m}', dailyTop: 'лучший — {p}, {t}',
     photo: '📷 Фото', shot: '📸 Снимок', photoHint: 'Тяните, чтобы вращать камеру; колёсико или два пальца — ближе и дальше',
     quickMatch: '🔎 Найти гонку', quickNote: 'Случайная трасса, живые соперники, пустые места займут боты. Или создайте комнату для друзей:', quickTitle: 'Ищем соперников', quickWait: 'Игроков: {n} из 5 · старт через {s} с',
+    quickRace: 'Быстрая гонка', go: 'Поехали', allModes: 'Все режимы', dailyName: 'Трасса дня', pWins: 'Победы', pAch: 'Достижения',
+    garageOpen: 'Гараж и тюнинг', helpSub: 'клавиши, геймпад, сенсор', setSub: 'звук, графика, язык', homeRec: 'рекорды на {n} из {m} трасс',
+    quickLine: '{m} · {laps} · соперники: {d}', quickTrial: '{m} · {laps}', quickRec: 'Ваш рекорд круга: {t}', quickNoRec: 'Рекорда пока нет — самое время поставить',
+    careerLine: 'Лига «{lg}» · пройдено {n} из {m}', careerNext: 'Дальше: {map} — {goal}', careerAll: 'Все задания пройдены. Можно перепройти любое',
+    dailyHint: 'Одна трасса для всех на сегодня', raceSetup: 'Настройка заезда',
+    leaveRace: 'Выйти из гонки', otherTrack: 'Другая трасса', mainMenu: 'Главное меню', toCareer: 'К карьере',
+    sPlace: 'Место', sLap: 'Круг', sTime: 'Время', sBestLap: 'Лучший круг', sEarned: 'Очки', sTotal: 'Всего',
     randMap: '🎲 Случайная', play: 'Играть', quick: 'Быстрый старт', chooseMode: 'Выберите режим', step1: 'Шаг 1 из 2', step2: 'Шаг 2 из 2', back: 'Назад',
     quickSub: '{m} · {map} · кругов: {l}',
     track: 'Трасса', laps: 'Круги', rivals: 'Соперники', controls: 'Управление',
@@ -956,7 +1074,7 @@ const STR = {
     mode: 'Режим', mRace: 'Гонка', mRaceSub: 'Одна трасса с ботами', mCup: 'Чемпионат', mCupSub: '5 трасс подряд, очки за места', mTrial: 'На время', mTrialSub: 'Только вы и секундомер',
     cupNote: 'Чемпионат: 5 трасс подряд, начиная с выбранной', cupStage: 'Чемпионат · этап {a} из {b}', nextStage: 'Следующий этап', newCup: 'Новый чемпионат',
     cupFinal: 'Итоги чемпионата', cupWin: 'Кубок ваш!', cupPlace: '{o} место в чемпионате', cupBonus: 'Бонус за чемпионат: +{n} очков', ptsCol: 'Очки',
-    trialDone: 'Заезд окончен', lapCol: 'Круг', trialSub: '{map} · {laps} · лучший круг {t}', trialPts: '+{n} очков за заезд',
+    trialDone: 'Заезд окончен', lapCol: 'Круг', trialSub: '{map} · {laps}', trialPts: '+{n} очков за заезд',
     tutReset: 'Показать подсказки заново', tutLabel: 'Подсказка', tutResetDone: 'Подсказки появятся в следующей гонке',
     'tut.drive': '<b>W</b> — газ, <b>A</b> и <b>D</b> — руль. Нажмите газ ровно на зелёный — будет рывок.',
     'tut.drift': '<kbd>Пробел</kbd> — ручник. В заносах копится нитро.',
@@ -974,7 +1092,7 @@ const STR = {
     paused: 'Пауза', resume: 'Продолжить', restart: 'Заново', trackSelect: 'Выбор трассы',
     victory: 'Победа!', finish: 'Финиш', place: '{o} место', placeSub: '{o} место · {t}',
     driver: 'Пилот', time: 'Время', best: 'Лучший', again: 'Ещё раз', next: 'Следующая трасса',
-    resSub: '{map} · {laps} · соперники: {diff} · {t}', record: 'Новый рекорд трассы: {t} (+25 очков)', earned: '+{n} очков',
+    resSub: '{map} · {laps} · соперники: {diff}', record: 'Новый рекорд трассы: {t} (+25 очков)', earned: '+{n} очков',
     total: 'Всего {n}. ', topCar: 'Круче машины в гараже нет.', canBuy: 'Хватает на «{car}», загляните в гараж.', needFor: 'До машины «{car}» осталось {n}.',
     lapOf: 'круг {a}/{b}', hLap: 'Круг', hTime: 'Время', hBest: 'Лучший круг', kmh: 'КМ/Ч', boardLap: 'кр. {n}',
     lava: 'Лава!', lavaSub: 'Возвращаем на трассу', wrong: 'Не туда!', wrongSub: 'Разворачивайся',
@@ -1026,7 +1144,7 @@ const STR = {
     'hz.geyser': 'Гейзер!', 'hz.geyser.sub': 'Сейчас выстрелит', 'hz.geyser.hit': 'Подбросило гейзером!',
     'hz.ufo': 'НЛО!', 'hz.ufo.sub': 'Не заезжайте под луч', 'hz.ufo.hit': 'Вас похищают!',
     'hz.lightning': 'Гроза!', 'hz.lightning.sub': 'Объезжайте жёлтый круг', 'hz.lightning.hit': 'Удар молнии!',
-    'hz.train.hit': 'Поезд! Ждите', coinsGot: 'монет: {n}',
+    'hz.train.hit': 'Поезд! Ждите', coinsGot: 'Собрано монет на трассе: {n}',
     'fx.spin': 'Попадание!', 'fx.tiny': 'Вас уменьшили!',
     hItems: 'Предметы из коробок', hFeats: 'На трассах',
     'hz.tide': 'Прилив!', 'hz.tide.sub': 'Волна заходит на трассу', 'hz.tide.hit': 'В воде медленнее!',
@@ -1051,7 +1169,7 @@ const STR = {
     'hit.snowball': 'Полный капот снега', 'hit.bomb': 'Прилетело камнем',
   },
   en: {
-    title: 'Turbo <span>Lap</span>', lede: 'Five tracks, mini races, four rivals and surprises on the road. Keep it floored and finish first.',
+    title: '<span>Tachki</span>', lede: 'Five tracks, mini races, four rivals and surprises on the road. Keep it floored and finish first.',
     story: 'Story', storySub: 'new chapters unlock as your career goes on', chapter: 'Chapter {n} of {m}', comicNext: 'Next', comicDone: 'Done', comicSkip: 'Skip',
     mMini: 'Mini races', mMiniSub: 'Tiny cars in a giant world',
     'map.kitchen': 'Kitchen', 'map.kitchen.note': 'Between chair legs and mugs the size of houses', 'map.kitchen.chip': 'Spilt water',
@@ -1065,6 +1183,13 @@ const STR = {
     daily: '🗓 Track of the day', dailyDone: 'Track of the day', yourBest: 'your best {t}', dailyRank: 'Track of the day: {n} of {m}', dailyTop: 'best — {p}, {t}',
     photo: '📷 Photo', shot: '📸 Take picture', photoHint: 'Drag to orbit the camera; wheel or two fingers to zoom',
     quickMatch: '🔎 Find a race', quickNote: 'A random track with real rivals; bots fill the empty places. Or make a room for friends:', quickTitle: 'Finding rivals', quickWait: 'Players: {n} of 5 · starts in {s} s',
+    quickRace: 'Quick race', go: 'Go', allModes: 'All modes', dailyName: 'Track of the day', pWins: 'Wins', pAch: 'Achievements',
+    garageOpen: 'Garage and tuning', helpSub: 'keys, gamepad, touch', setSub: 'sound, graphics, language', homeRec: 'records on {n} of {m} tracks',
+    quickLine: '{m} · {laps} · {d} rivals', quickTrial: '{m} · {laps}', quickRec: 'Your best lap: {t}', quickNoRec: 'No record yet — go set one',
+    careerLine: '{lg} league · {n} of {m} done', careerNext: 'Next: {map} — {goal}', careerAll: 'Every race done. Replay any of them',
+    dailyHint: 'The same track for everyone today', raceSetup: 'Race setup',
+    leaveRace: 'Leave the race', otherTrack: 'Another track', mainMenu: 'Main menu', toCareer: 'Back to career',
+    sPlace: 'Place', sLap: 'Lap', sTime: 'Time', sBestLap: 'Best lap', sEarned: 'Points', sTotal: 'Total',
     randMap: '🎲 Random', play: 'Play', quick: 'Quick start', chooseMode: 'Choose a mode', step1: 'Step 1 of 2', step2: 'Step 2 of 2', back: 'Back',
     quickSub: '{m} · {map} · {l} laps',
     track: 'Track', laps: 'Laps', rivals: 'Rivals', controls: 'Controls',
@@ -1123,7 +1248,7 @@ const STR = {
     mode: 'Mode', mRace: 'Race', mRaceSub: 'One track against bots', mCup: 'Championship', mCupSub: '5 tracks in a row, points for places', mTrial: 'Time trial', mTrialSub: 'Just you and the clock',
     cupNote: 'Championship: 5 tracks in a row, starting from the one you pick', cupStage: 'Championship · round {a} of {b}', nextStage: 'Next round', newCup: 'New championship',
     cupFinal: 'Championship results', cupWin: 'The cup is yours!', cupPlace: '{o} in the championship', cupBonus: 'Championship bonus: +{n} points', ptsCol: 'Pts',
-    trialDone: 'Run complete', lapCol: 'Lap', trialSub: '{map} · {laps} · best lap {t}', trialPts: '+{n} points for the run',
+    trialDone: 'Run complete', lapCol: 'Lap', trialSub: '{map} · {laps}', trialPts: '+{n} points for the run',
     tutReset: 'Show tips again', tutLabel: 'Tip', tutResetDone: 'Tips will show in your next race',
     'tut.drive': '<b>W</b> is throttle, <b>A</b> and <b>D</b> steer. Hit the throttle right on green for a launch boost.',
     'tut.drift': '<kbd>Space</kbd> is the handbrake. Drifting fills your nitro.',
@@ -1141,7 +1266,7 @@ const STR = {
     paused: 'Paused', resume: 'Resume', restart: 'Restart', trackSelect: 'Track select',
     victory: 'Victory!', finish: 'Finish', place: '{o} place', placeSub: '{o} place · {t}',
     driver: 'Driver', time: 'Time', best: 'Best', again: 'Race again', next: 'Next track',
-    resSub: '{map} · {laps} · {diff} rivals · {t}', record: 'New track record: {t} (+25 points)', earned: '+{n} points',
+    resSub: '{map} · {laps} · {diff} rivals', record: 'New track record: {t} (+25 points)', earned: '+{n} points',
     total: 'Total {n}. ', topCar: 'You already drive the best car.', canBuy: 'You can afford the {car}, visit the garage.', needFor: '{n} more for the {car}.',
     lapOf: 'lap {a}/{b}', hLap: 'Lap', hTime: 'Time', hBest: 'Best lap', kmh: 'KM/H', boardLap: 'L{n}',
     lava: 'Lava!', lavaSub: 'Back to the track', wrong: 'Wrong way!', wrongSub: 'Turn around',
@@ -1193,7 +1318,7 @@ const STR = {
     'hz.geyser': 'Geyser!', 'hz.geyser.sub': 'About to blow', 'hz.geyser.hit': 'Launched by a geyser!',
     'hz.ufo': 'UFO!', 'hz.ufo.sub': 'Stay out of the beam', 'hz.ufo.hit': 'You are being abducted!',
     'hz.lightning': 'Storm!', 'hz.lightning.sub': 'Avoid the yellow circle', 'hz.lightning.hit': 'Struck by lightning!',
-    'hz.train.hit': 'Train! Wait for it', coinsGot: 'coins: {n}',
+    'hz.train.hit': 'Train! Wait for it', coinsGot: 'Coins picked up: {n}',
     'fx.spin': 'Hit!', 'fx.tiny': 'You got shrunk!',
     hItems: 'Items from boxes', hFeats: 'On the tracks',
     'hz.tide': 'High tide!', 'hz.tide.sub': 'A wave is washing over the track', 'hz.tide.hit': 'Slower in the water!',
@@ -3052,6 +3177,7 @@ function cupNext() {
   else showCupFinal();
 }
 function showCupFinal() {
+  $('#resStats').hidden = true; $('#resPlace').hidden = true;
   const st = cupStandings(false), place = st.findIndex(r => r.me) + 1;
   const bonus = place <= 3 ? Math.round(CUP_BONUS[place - 1] * DIFFS[S.diff].pts * LAP_K[S.laps]) : 0;
   wallet.coins += bonus; saveWallet(); S.cup.done = true;
@@ -3246,7 +3372,7 @@ $('#online').addEventListener('click', e => {
 $('#online').addEventListener('keydown', e => { if (e.code === 'Enter' && e.target.id === 'onCode') { e.stopPropagation(); $('#onJoin').click(); } }, true);
 $('#onBack').addEventListener('click', () => {
   if (NET.room) netSend({ t: 'leave' }); NET.room = null; $('#online').hidden = true;
-  S.gameMode = S.offlineMode || 'race'; store.set('turbo-krug-mode', S.gameMode); S.menuPage = 'mode'; // back to the mode list, not stuck on "online"
+  S.gameMode = S.offlineMode || 'race'; store.set('turbo-krug-mode', S.gameMode); S.menuPage = 'home'; // back to the main menu, not stuck on "online"
   toMenu();
 });
 $('#lobbyBtn').addEventListener('click', () => { if (netHost()) netSend({ t: 'lobby' }); S.mode = 'menu'; resetRace('menu'); $('#hud').hidden = true; openOnline(); });
@@ -3321,7 +3447,7 @@ function startRace() {
   $('#touch').hidden = !touchMode;
   resize(); hudTick = 0;
 }
-function toMenu() {
+function toMenu(page) { // page: where to land, the main menu unless told otherwise
   if (NET.room) { netSend({ t: 'leave' }); NET.room = null; } // a host leaving a running race closes the room: the bots ran on the host
   if (S.rp) { S.rp = null; $('#replayBar').hidden = true; $('#cine').hidden = true; }
   setupMap(S.mapIndex);
@@ -3334,12 +3460,21 @@ function toMenu() {
   document.body.classList.remove('duo'); $('#hud2').hidden = true;
   renderMapList(); renderMenuStrip(); syncMode(); setConditions();
   restoreSettings();
-  setMenuPage(['track', 'mode', 'career'].includes(S.menuPage) ? S.menuPage : 'home'); // after a race "track select" lands back where you came from
+  setMenuPage(page === 'track' || page === 'career' ? page : 'home');
 }
 function togglePause(force) {
   if (isOnline()) return; // the race goes on for everyone else
-  if (S.mode === 'race' || S.mode === 'countdown') { if (force === false) return; S.prevMode = S.mode; S.mode = 'paused'; $('#pause').hidden = false; $('#resumeBtn').focus(); }
+  if (S.mode === 'race' || S.mode === 'countdown') { if (force === false) return; S.prevMode = S.mode; S.mode = 'paused'; fillPause(); $('#pause').hidden = false; $('#resumeBtn').focus(); }
   else if (S.mode === 'paused' && force !== true && $('#settings').hidden) { S.mode = S.prevMode; $('#pause').hidden = true; document.activeElement.blur(); }
+}
+function raceStats(rows) { return rows.map(([k, v, cls]) => `<div class="${cls || ''}"><dt>${t(k)}</dt><dd>${v}</dd></div>`).join(''); }
+function fillPause() { // where you are in the race, and the two ways out
+  const p = player(), st = standings(), trial = S.gameMode === 'trial';
+  $('#pauseWhere').textContent = (S.gameMode === 'daily' ? t('dailyName') : modeName(S.gameMode)) + ' · ' + t('map.' + S.map.id);
+  $('#pauseStats').innerHTML = raceStats([...(trial ? [] : [['sPlace', `${st.indexOf(p) + 1}<small>/${S.cars.length}</small>`]]), ['sLap', `${Math.min(S.laps, Math.max(1, p.lapsDone + 1))}<small>/${S.laps}</small>`],
+    ['sTime', fmt(S.prevMode === 'countdown' ? 0 : S.time)], ['sBestLap', fmt(p.best)]]);
+  $('#trackBtn').hidden = S.gameMode === 'daily';
+  $('#trackBtn').textContent = S.gameMode === 'career' ? t('toCareer') : t('otherTrack');
 }
 function onPlayerFinish(c) {
   c.auto = true;
@@ -3373,6 +3508,7 @@ function onPlayerFinish(c) {
 }
 function showResults(keepFocus) {
   const p = player(), trial = S.gameMode === 'trial', cup = S.gameMode === 'cup' && S.cup;
+  $('#resStats').hidden = true; $('#resPlace').hidden = true; // only a normal finish shows the place badge and the numbers
   if (cup && S.cup.done) { showCupFinal(); return; }
   $('#lobbyBtn').hidden = S.gameMode !== 'online' || !NET.room;
   if (S.gameMode === 'online') { $('#againBtn').hidden = true; $('#nextBtn').hidden = true; $('#replayBtn').hidden = true; }
@@ -3389,14 +3525,18 @@ function showResults(keepFocus) {
   $('#resSub').textContent = trial ? t('trialSub', { map: t('map.' + S.map.id), laps: lapsWord(S.laps), t: fmt(p.best) })
     : t('resSub', { map: t('map.' + S.map.id), laps: lapsWord(S.laps), diff: t('diff' + S.diff).toLowerCase(), t: fmt(p.finishTime) });
   $('#podium').hidden = true; $('#resTable').hidden = false;
+  const rp = $('#resPlace'); rp.hidden = trial; rp.textContent = p.place; rp.className = 'res-place' + (p.place === 1 ? ' gold' : p.place <= 3 ? ' podium' : '');
+  $('#resStats').hidden = false;
+  $('#resStats').innerHTML = raceStats([['sTime', fmt(trial ? p.finishTime || S.time : p.finishTime)], ['sBestLap', fmt(p.best)], ['sEarned', '+' + S.earned, 'acc'], ['sTotal', wallet.coins]]);
+  $('#resMenuBtn').textContent = S.gameMode === 'career' ? t('toCareer') : t('mainMenu');
   $('#cupBox').hidden = !cup;
   if (cup) $('#cupTitle').textContent = t('cupStage', { a: S.cup.round + 1, b: S.cup.order.length });
   $('#cupNextBtn').hidden = !cup; $('#newCupBtn').hidden = true; $('#replayBtn').hidden = trial || S.rbuf.length < 10 || S.gameMode === 'online';
   $('#againBtn').hidden = !!cup || S.gameMode === 'online'; $('#nextBtn').hidden = !!cup || S.gameMode === 'online';
   const rr2 = $('#resRec'); rr2.hidden = !S.newRecord; rr2.textContent = t('record', { t: fmt(p.best) });
-  $('#resPts').textContent = (trial ? t('trialPts', { n: S.earned }) : t('earned', { n: S.earned })) + (S.coinsGot ? ' · ' + t('coinsGot', { n: S.coinsGot }) : '');
+  $('#resPts').textContent = S.coinsGot ? t('coinsGot', { n: S.coinsGot }) : '';
   const nxt = CARS.find((m, i) => i > CARS.indexOf(curModel()) && !wallet.owned.includes(m.id));
-  $('#resHint').textContent = t('total', { n: wallet.coins }) + (!nxt ? t('topCar')
+  $('#resHint').textContent = (!nxt ? t('topCar')
     : wallet.coins >= nxt.price ? t('canBuy', { car: carName(nxt) }) : t('needFor', { car: carName(nxt), n: nxt.price - wallet.coins }));
   $('#nextBtn').textContent = t('next');
   if (S.gameMode === 'career' && S.careerRes) { // the goal, and the way on
@@ -5778,21 +5918,39 @@ function closeSettings() {
 }
 
 // ---------- menu ----------
-// The menu is three pages: home (vehicle, play, quick start), mode, then track and race options.
+// The menu: home (quick race, career, track of the day, every mode, your vehicle), then the race setup or the career page.
 function setMenuPage(pg) {
   S.menuPage = pg; $('.menu-panel').dataset.page = pg;
   document.querySelectorAll('#menu .mpage').forEach(el => { el.hidden = el.dataset.page !== pg; });
   $('#menu').scrollTop = 0;
-  if (pg === 'home') updQuick();
+  if (pg === 'home') renderHome();
   if (pg === 'career') { renderCareer(); const ch = pendingChapter(); if (ch >= 0) setTimeout(() => { if (S.menuPage === 'career' && !$('#menu').hidden) openComic(ch); }, 250); }
-  const f = { home: '#playBtn', mode: '#modeSeg button[aria-pressed="true"]', track: '#startBtn' }[pg];
+  const f = { home: '#quickBtn', track: '#startBtn' }[pg];
   if (!touchMode) { const el = $(f); if (el) el.focus({ preventScroll: true }); }
 }
 function modeName(m) { return t({ race: 'mRace', cup: 'mCup', trial: 'mTrial', duo: 'mDuo', online: 'mOnline', career: 'mCareer', daily: 'mRace', mini: 'mMini' }[m] || 'mRace'); }
-function updQuick() {
-  const qm = S.gameMode === 'career' || S.gameMode === 'daily' ? 'race' : S.gameMode;
-  $('#quickSub').textContent = t('quickSub', { m: modeName(qm), map: t('map.' + MAPS[S.mapIndex].id), l: S.laps });
+function quickMode() { return ['career', 'daily', 'online'].includes(S.gameMode) ? (S.map && S.map.mini ? 'mini' : 'race') : S.gameMode; }
+function updQuick() { // the quick race repeats your last setup: mode, track, laps, rivals
+  const qm = quickMode(), m = MAPS[S.mapIndex], r = getRecord(m);
+  $('#quickMap').textContent = t('map.' + m.id);
+  $('#quickSub').textContent = qm === 'trial' ? t('quickTrial', { m: modeName(qm), laps: lapsWord(S.laps) }) : t('quickLine', { m: modeName(qm), laps: lapsWord(S.laps), d: t('diff' + S.diff).toLowerCase() });
+  $('#quickRec').textContent = isFinite(r) ? t('quickRec', { t: fmt(r) }) : t('quickNoRec');
+  drawPreview($('#quickCv'), m);
   updDailyBtn();
+}
+function careerNow() { // the first open league with a race still to win, and that race
+  for (let l = 0; l < CAREER.length; l++) if (leagueOpen(l)) { const e = CAREER[l].ev.findIndex((_, k) => !career.done[evKey(l, k)]); if (e >= 0) return { l, e }; }
+  return null;
+}
+function renderHome() {
+  updQuick(); renderMenuStrip();
+  const now = careerNow(), done = CAREER.reduce((n, _, l) => n + leagueDone(l), 0), all = CAREER.length * 4, L = CAREER[now ? now.l : CAREER.length - 1];
+  $('#careerLine').textContent = t('careerLine', { lg: t('lg.' + L.id), n: done, m: all });
+  $('#careerBar').style.width = Math.round(done / all * 100) + '%';
+  $('#careerNext').textContent = now ? t('careerNext', { map: t('map.' + L.ev[now.e][0]), goal: t('goal.' + L.ev[now.e][1]).toLowerCase() }) : t('careerAll');
+  const recs = MAPS.filter(m => isFinite(getRecord(m))).length, ach = ACH.filter(a => S.ach[a.id]).length;
+  $('#winsMenu').textContent = (S.stats && S.stats.wins) || 0; $('#achMenu').textContent = ach + '/' + ACH.length;
+  $('#homeRecSub').textContent = t('homeRec', { n: recs, m: MAPS.length }); $('#homeAchSub').textContent = t('achSub', { a: ach, b: ACH.length });
 }
 function ensureGroup() { // switching between the main and the mini section moves to a track of that section
   const mini = S.gameMode === 'mini';
@@ -6056,7 +6214,8 @@ function dailyInfo() {
 function dailyBest() { try { const d = JSON.parse(store.get('turbo-krug-daily') || 'null'), i = dailyInfo(); return d && d.date === i.date && d.map === i.map.id ? d.best : Infinity; } catch (e) { return Infinity; } }
 function updDailyBtn() {
   const d = dailyInfo(), best = dailyBest(), cond = [d.weather !== 'clear' ? t(d.weather === 'rain' ? 'wRain' : 'wFog').toLowerCase() : '', d.night ? t('nNight').toLowerCase() : ''].filter(Boolean).join(', ');
-  $('#dailySub').textContent = t('map.' + d.map.id) + (cond ? ' · ' + cond : '') + (isFinite(best) ? ' · ' + t('yourBest', { t: fmt(best) }) : '');
+  $('#dailyMap').textContent = t('map.' + d.map.id) + (cond ? ' · ' + cond : '');
+  $('#dailySub').textContent = isFinite(best) ? t('yourBest', { t: fmt(best) }) : t('dailyHint');
 }
 function startDaily() {
   const d = dailyInfo(); keepSettings();
@@ -6118,7 +6277,7 @@ let DL = null;
 if (inClaude) window.claude.use('downloads').then(d => { DL = d; if (!d) $('#shotBtn').hidden = true; }).catch(() => { $('#shotBtn').hidden = true; });
 function takeShot() {
   render3D(0); // draw now, then read the picture before the browser clears it
-  const name = 'turbo-krug-' + Date.now() + '.png';
+  const name = 'tachki-' + Date.now() + '.png';
   G3.r.domElement.toBlob(b => {
     if (!b) return;
     if (inClaude) { if (DL) DL.save({ filename: name, data: b }).catch(() => {}); return; } // the viewer confirms; a "no" is fine
@@ -6151,8 +6310,10 @@ function bindPhoto() {
 
 // ---------- garage ----------
 function renderMenuStrip() {
-  const m = curModel();
+  const m = curModel(), st = vehStats(m);
   $('#curCarName').textContent = carName(m); $('#coinsMenu').textContent = wallet.coins;
+  $('#curCarTag').textContent = t('car.' + m.id + '.tag');
+  $('#curCarStats').innerHTML = statRow(t('sSpeed'), st.top, 500, 700, Math.round(st.top * KMH) + ' ' + t('kmhLow')) + statRow(t('sAccel'), st.accel, 430, 780, plus(st.accel / 430)) + statRow(t('sGrip'), st.grip, .9, 1.65, plus(+(st.grip).toFixed(2)));
   drawCarPreview($('#curCarCv'), m);
 }
 function syncDiff() {
@@ -6306,9 +6467,9 @@ addEventListener('keydown', e => {
   else if (code === 'Escape' && !$('#records').hidden) $('#recBack').click();
   else if (code === 'Escape' && !$('#help').hidden) $('#helpBack').click();
   else if (code === 'Escape' && !$('#online').hidden) $('#onBack').click();
-  else if (code === 'Escape' && S.mode === 'menu' && !$('#menu').hidden && S.menuPage && S.menuPage !== 'home') setMenuPage(S.menuPage === 'track' || S.menuPage === 'career' ? 'mode' : 'home');
+  else if (code === 'Escape' && S.mode === 'menu' && !$('#menu').hidden && S.menuPage && S.menuPage !== 'home') setMenuPage('home');
   else if (code === 'Escape' || code === 'KeyP') togglePause();
-  else if (code === 'Enter' && S.mode === 'menu') { if (!overlayOpen() && !(document.activeElement && document.activeElement.tagName === 'BUTTON' && $('#menu').contains(document.activeElement))) { e.preventDefault(); if (S.menuPage === 'track') startRace(); else if (S.menuPage === 'mode') setMenuPage('track'); else setMenuPage('mode'); } }
+  else if (code === 'Enter' && S.mode === 'menu') { if (!overlayOpen() && !(document.activeElement && document.activeElement.tagName === 'BUTTON' && $('#menu').contains(document.activeElement))) { e.preventDefault(); if (S.menuPage === 'track') startRace(); else if (S.menuPage === 'home') $('#quickBtn').click(); } }
   else if (code === 'KeyM' && e.target.tagName !== 'INPUT') setVolume(S.volume > 0 ? 0 : (S.prevVolume || 60));
   else if (code === 'KeyW' || code === 'ArrowUp' && !S.duo) onThrottlePress();
   else if (code === 'ArrowUp' && S.duo) onThrottlePress(true);
@@ -6362,14 +6523,14 @@ $('#modeSeg').addEventListener('click', e => {
   if (b.dataset.mode === 'online' && S.gameMode !== 'online') S.offlineMode = S.gameMode;
   S.gameMode = b.dataset.mode; store.set('turbo-krug-mode', S.gameMode); S.cup = null; syncMode();
   if (S.gameMode === 'online') { initAudio(); openOnline(); return; } // rooms have their own screen
-  setMenuPage(S.gameMode === 'career' ? 'career' : 'track');
+  setMenuPage('track');
 });
-$('#playBtn').addEventListener('click', () => setMenuPage('mode'));
+$('#careerCard').addEventListener('click', () => { S.gameMode = 'career'; S.cup = null; syncMode(); setMenuPage('career'); });
 $('#randMap').addEventListener('click', () => { // pick another track at random and scroll it into view
   const pool = groupIdx(S.gameMode === 'mini'); let i = S.mapIndex; while (i === S.mapIndex && pool.length > 1) i = pool[Math.floor(Math.random() * pool.length)];
   setupMap(i); resetRace('menu'); renderMapList(); syncMode(); const b = $('#map-' + MAPS[i].id); if (b) b.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
 });
-$('#quickBtn').addEventListener('click', () => { if (['online', 'career', 'daily'].includes(S.gameMode)) { S.gameMode = S.map && S.map.mini ? 'mini' : 'race'; syncMode(); } startRace(); });
+$('#quickBtn').addEventListener('click', () => { if (S.gameMode !== quickMode()) { S.gameMode = quickMode(); syncMode(); } startRace(); });
 $('#dailyBtn').addEventListener('click', startDaily);
 $('#comicNext').addEventListener('click', comicNext);
 $('#comicSkip').addEventListener('click', closeComic);
@@ -6387,13 +6548,14 @@ $('#newCupBtn').addEventListener('click', startCup);
 $('#pauseBtn').addEventListener('click', () => togglePause());
 $('#resumeBtn').addEventListener('click', () => togglePause());
 $('#restartBtn').addEventListener('click', startRace);
-$('#menuBtn').addEventListener('click', toMenu);
+$('#menuBtn').addEventListener('click', () => toMenu('home'));
+$('#trackBtn').addEventListener('click', () => toMenu(S.gameMode === 'career' ? 'career' : 'track'));
 $('#againBtn').addEventListener('click', startRace);
 $('#nextBtn').addEventListener('click', () => {
   if (S.gameMode === 'career' && S.career) { const { l, e } = S.career; if (e + 1 < 4) startCareer(l, e + 1); else if (CAREER[l + 1]) startCareer(l + 1, 0); return; }
   const pool = groupIdx(!!S.map.mini); S.mapIndex = pool[(pool.indexOf(S.mapIndex) + 1) % pool.length]; startRace();
 });
-$('#resMenuBtn').addEventListener('click', () => { S.menuPage = S.gameMode === 'career' ? 'career' : S.gameMode === 'daily' ? 'home' : S.menuPage; toMenu(); });
+$('#resMenuBtn').addEventListener('click', () => toMenu(S.gameMode === 'career' ? 'career' : 'home'));
 addEventListener('resize', resize);
 
 // ---------- loop ----------
