@@ -537,6 +537,7 @@ body.touchmode.steer-btn .hud-bl{bottom:calc(env(safe-area-inset-bottom,0px) + 1
 .car-card .label{margin:0}
 .car-card canvas{width:100%;max-width:320px;aspect-ratio:16/9;height:auto;justify-self:center;display:block}
 .car-card>b{font-family:var(--display);font-weight:400;font-size:22px;line-height:1.1}
+.ride-note{margin:0;padding:6px 10px;font-size:12px;border-radius:8px;background:#20242e;color:var(--fg)}
 .car-card .stats{display:grid;gap:6px;margin:2px 0 4px}
 .car-card .btn{flex:none;width:100%}
 .home-links{display:grid;border:1px solid var(--line);border-radius:12px;overflow:hidden}
@@ -547,7 +548,7 @@ body.touchmode.steer-btn .hud-bl{bottom:calc(env(safe-area-inset-bottom,0px) + 1
 .home-links b{font-weight:700}
 .home-links small{font-size:12px;color:var(--muted)}
 .home-links i{font-style:normal;font-size:22px;color:var(--muted)}
-@media (min-width:860px){.home-grid{grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);column-gap:22px}}
+@media (min-width:700px){.home-grid{grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);column-gap:22px}}
 @media (max-width:520px){
   .hero{grid-template-columns:96px minmax(0,1fr);gap:12px}
   .hero canvas{width:96px;height:58px}
@@ -582,6 +583,125 @@ body.touchmode.steer-btn .hud-bl{bottom:calc(env(safe-area-inset-bottom,0px) + 1
 .res-place.gold{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .res-pts:empty,.res-hint:empty{display:none}
 #resStats{margin-top:12px}
+/* ---- the main menu fits on one screen: tighter on desktop, compact tiles on phones, three columns in landscape */
+.mp-home{gap:14px}
+.mp-home .home-top h1{margin:8px 0 0;font-size:clamp(30px,4vw,44px)}
+.mp-home .home-grid{gap:14px}
+.mp-home .home-main,.mp-home .home-side{gap:10px}
+.mp-home .car-card canvas{max-height:120px;width:auto;max-width:100%}
+.mp-home .home-links{grid-template-columns:1fr 1fr}
+.mp-home .home-links button{border-top:0;border-left:1px solid var(--line);min-height:48px}
+.mp-home .home-links button:nth-child(odd){border-left:0}
+.mp-home .home-links button:nth-child(n+3){border-top:1px solid var(--line)}
+.mp-home .modes.compact{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-height:640px){
+  .mp-home .modes.compact b{font-size:13px}
+  .mp-home .hero-txt b{font-size:20px}
+  .mp-home .car-card .stats,.mp-home .home-main>.label{display:none}
+  .mp-home .home-links button{min-height:40px}
+}
+@media (max-height:760px){
+  .mp-home .card-sub,.mp-home .modes.compact span,.mp-home .home-links small,.mp-home .hero-rec,#curCarTag{display:none}
+  .mp-home .modes.compact button{min-height:48px;padding:8px 10px}
+  .mp-home .hero canvas{width:120px;height:72px}
+  .mp-home .hero{grid-template-columns:120px minmax(0,1fr) auto;padding:10px 14px 10px 10px}
+  .mp-home .card{padding:10px 12px;gap:4px}
+  .mp-home .car-card{padding:10px 12px;gap:6px}
+  .mp-home .car-card canvas{max-height:90px}
+  .mp-home .profile>div{padding:6px 10px}
+}
+@media (min-width:521px) and (max-width:1000px) and (min-height:521px){ /* small windows and tablets: the quick race card stacks */
+  .mp-home .hero{grid-template-columns:96px minmax(0,1fr);gap:6px 12px;padding:10px}
+  .mp-home .hero canvas{width:96px;height:58px}
+  .mp-home .hero-go{grid-column:1/-1;justify-content:center;padding-top:6px;border-top:1px solid rgba(0,0,0,.12);font-size:17px}
+  .mp-home .hero-go kbd{display:none}
+  .mp-home .hero-txt b{font-size:19px}
+  .mp-home .home-cards{grid-template-columns:1fr 1fr;gap:8px}
+  #careerNext{display:none}
+}
+@media (max-width:520px){ /* portrait phones: everything as small tiles */
+  .menu-panel[data-page="home"]{padding:14px;gap:10px}
+  .mp-home{gap:10px}
+  .mp-home .home-top{flex-wrap:nowrap;align-items:center;gap:10px}
+  .mp-home .home-top .checker{height:8px;background-size:8px 8px}
+  .mp-home .home-top h1{font-size:26px;margin-top:6px}
+  .mp-home .profile{width:auto;gap:6px}
+  .mp-home .profile>div{padding:4px 8px;min-width:0;flex:none}
+  .mp-home .profile dd{font-size:14px}
+  .mp-home .home-grid,.mp-home .home-main,.mp-home .home-side{gap:8px}
+  .mp-home .hero{grid-template-columns:88px minmax(0,1fr);gap:4px 10px;padding:8px}
+  .mp-home .hero canvas{width:88px;height:54px}
+  .mp-home .hero-txt b{font-size:18px}
+  .mp-home .hero-txt>span{font-size:12px}
+  .mp-home .hero-rec{display:none}
+  .mp-home .hero-go{padding-top:6px;font-size:17px}
+  .mp-home .home-cards{grid-template-columns:1fr 1fr;gap:8px}
+  .mp-home .card{padding:8px 10px;gap:4px}
+  .mp-home .card-top i{width:26px;height:26px;font-size:14px;border-radius:8px}
+  .mp-home .card-top b{font-size:14px}
+  .mp-home .card-line{font-size:12px;line-height:1.3}
+  .mp-home .card-sub{font-size:11px;line-height:1.3}
+  #careerNext{display:none}
+  .mp-home .home-main>.label{display:none}
+  .mp-home .modes.compact{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+  .mp-home .modes.compact button{grid-template-columns:1fr;grid-template-rows:auto auto;justify-items:center;text-align:center;min-height:0;padding:6px 4px;row-gap:2px}
+  .mp-home .modes.compact i{grid-row:auto;width:28px;height:28px;font-size:16px}
+  .mp-home .modes.compact b{font-size:12px;line-height:1.15}
+  .mp-home .modes.compact span{display:none}
+  .mp-home .car-card{grid-template-columns:96px minmax(0,1fr) auto;align-items:center;column-gap:10px;row-gap:0;padding:8px 10px}
+  .mp-home .car-card .label,.mp-home .car-card .stats,#curCarTag{display:none}
+  .mp-home .car-card canvas{grid-row:span 2;width:96px;height:54px;max-height:none}
+  .mp-home .car-card>b{font-size:17px}
+  .mp-home .car-card .ride-note{grid-column:2;padding:2px 0;background:none;color:var(--muted);font-size:11px}
+  .mp-home .car-card .btn{grid-column:3;grid-row:1/span 2;width:auto;height:40px;padding:0 12px;font-size:13px}
+  .mp-home .home-links{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .mp-home .home-links button{border-top:0!important;border-left:1px solid var(--line);justify-content:center;text-align:center;min-height:40px;padding:4px}
+  .mp-home .home-links button:first-child{border-left:0}
+  .mp-home .home-links b{font-size:11px;font-weight:700;line-height:1.2}
+  .mp-home .home-links small,.mp-home .home-links i{display:none}
+}
+@media (max-height:520px) and (min-width:560px){ /* phones held sideways: three columns */
+  .menu-panel[data-page="home"]{width:100%;padding:10px 14px;gap:8px}
+  .mp-home{gap:8px}
+  .mp-home .home-top{flex-wrap:nowrap;align-items:center}
+  .mp-home .home-top .checker{display:none}
+  .mp-home .home-top h1{font-size:24px;margin:0}
+  .mp-home .profile>div{padding:3px 8px;min-width:0}
+  .mp-home .profile dt{font-size:9px}
+  .mp-home .profile dd{font-size:14px}
+  .mp-home .home-grid{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr) minmax(0,.85fr);gap:8px}
+  .mp-home .home-main,.mp-home .home-side{display:contents}
+  #quickBtn{grid-column:1;grid-row:1}
+  .mp-home .home-cards{grid-column:1;grid-row:2;grid-template-columns:1fr 1fr;gap:8px}
+  .mp-home #modeSeg{grid-column:2;grid-row:1/span 2;align-content:start}
+  .mp-home .car-card{grid-column:3;grid-row:1}
+  .mp-home .home-links{grid-column:3;grid-row:2;align-self:start}
+  .mp-home .home-main>.label{display:none}
+  .mp-home .hero{grid-template-columns:72px minmax(0,1fr);gap:4px 8px;padding:8px}
+  .mp-home .hero canvas{width:72px;height:44px}
+  .mp-home .hero-txt b{font-size:15px}
+  .mp-home .hero-txt>span{font-size:11px}
+  .mp-home .hero-go{grid-column:1/-1;justify-content:center;padding-top:4px;border-top:1px solid rgba(0,0,0,.12);font-size:15px}
+  .mp-home .hero-go kbd{display:none}
+  .mp-home .card{padding:6px 8px;gap:3px}
+  .mp-home .card-top i{width:22px;height:22px;font-size:12px;border-radius:6px}
+  .mp-home .card-top b{font-size:13px}
+  .mp-home .card-line{font-size:11px;line-height:1.25}
+  .mp-home .card-sub{display:none}
+  .mp-home .modes.compact{grid-template-columns:1fr 1fr;gap:6px}
+  .mp-home .modes.compact button{grid-template-columns:1fr;justify-items:center;text-align:center;padding:6px 4px;min-height:0;row-gap:2px}
+  .mp-home .modes.compact i{grid-row:auto;width:24px;height:24px;font-size:14px}
+  .mp-home .modes.compact b{font-size:12px}
+  .mp-home .car-card{padding:6px 8px;gap:2px}
+  .mp-home .car-card .label,.mp-home .car-card .stats,#curCarTag{display:none}
+  .mp-home .car-card canvas{max-height:58px}
+  .mp-home .car-card>b{font-size:14px}
+  .mp-home .car-card .ride-note{font-size:10px;padding:2px 6px}
+  .mp-home .car-card .btn{height:32px;font-size:12px}
+  .mp-home .home-links button{min-height:32px;padding:4px 8px}
+  .mp-home .home-links b{font-size:11px}
+  .mp-home .home-links small,.mp-home .home-links i{display:none}
+}
 </style>
 </head>
 <body>
@@ -691,6 +811,7 @@ body.touchmode.steer-btn .hud-bl{bottom:calc(env(safe-area-inset-bottom,0px) + 1
             <canvas id="curCarCv" width="320" height="180"></canvas>
             <b id="curCarName">Старт</b>
             <p id="curCarTag" class="card-sub"></p>
+            <p id="curCarNote" class="ride-note" hidden></p>
             <div id="curCarStats" class="stats"></div>
             <button id="garageBtn" class="btn" data-t="garageOpen">Гараж и тюнинг</button>
           </div>
@@ -1013,7 +1134,7 @@ const STR = {
     garageOpen: 'Гараж и тюнинг', helpSub: 'клавиши, геймпад, сенсор', setSub: 'звук, графика, язык', homeRec: 'рекорды на {n} из {m} трасс',
     quickLine: '{m} · {laps} · соперники: {d}', quickTrial: '{m} · {laps}', quickRec: 'Ваш рекорд круга: {t}', quickNoRec: 'Рекорда пока нет — самое время поставить',
     careerLine: 'Лига «{lg}» · пройдено {n} из {m}', careerNext: 'Дальше: {map} — {goal}', careerAll: 'Все задания пройдены. Можно перепройти любое',
-    dailyHint: 'Одна трасса для всех на сегодня', raceSetup: 'Настройка заезда',
+    dailyHint: 'Одна трасса для всех на сегодня', rideHere: 'На трассе «{map}» поедете на: {c}', raceSetup: 'Настройка заезда',
     leaveRace: 'Выйти из гонки', otherTrack: 'Другая трасса', mainMenu: 'Главное меню', toCareer: 'К карьере',
     sPlace: 'Место', sLap: 'Круг', sTime: 'Время', sBestLap: 'Лучший круг', sEarned: 'Очки', sTotal: 'Всего',
     randMap: '🎲 Случайная', play: 'Играть', quick: 'Быстрый старт', chooseMode: 'Выберите режим', step1: 'Шаг 1 из 2', step2: 'Шаг 2 из 2', back: 'Назад',
@@ -1187,7 +1308,7 @@ const STR = {
     garageOpen: 'Garage and tuning', helpSub: 'keys, gamepad, touch', setSub: 'sound, graphics, language', homeRec: 'records on {n} of {m} tracks',
     quickLine: '{m} · {laps} · {d} rivals', quickTrial: '{m} · {laps}', quickRec: 'Your best lap: {t}', quickNoRec: 'No record yet — go set one',
     careerLine: '{lg} league · {n} of {m} done', careerNext: 'Next: {map} — {goal}', careerAll: 'Every race done. Replay any of them',
-    dailyHint: 'The same track for everyone today', raceSetup: 'Race setup',
+    dailyHint: 'The same track for everyone today', rideHere: 'On {map} you will ride the {c}', raceSetup: 'Race setup',
     leaveRace: 'Leave the race', otherTrack: 'Another track', mainMenu: 'Main menu', toCareer: 'Back to career',
     sPlace: 'Place', sLap: 'Lap', sTime: 'Time', sBestLap: 'Best lap', sEarned: 'Points', sTotal: 'Total',
     randMap: '🎲 Random', play: 'Play', quick: 'Quick start', chooseMode: 'Choose a mode', step1: 'Step 1 of 2', step2: 'Step 2 of 2', back: 'Back',
@@ -6309,10 +6430,11 @@ function bindPhoto() {
 }
 
 // ---------- garage ----------
-function renderMenuStrip() {
-  const m = curModel(), st = vehStats(m);
+function renderMenuStrip() { // the vehicle you picked in the garage; a note when the track behind the menu needs another one
+  const m = CARS.find(x => x.id === wallet.car && wallet.owned.includes(x.id)) || CARS[0], ride = curModel(), st = vehStats(m);
   $('#curCarName').textContent = carName(m); $('#coinsMenu').textContent = wallet.coins;
   $('#curCarTag').textContent = t('car.' + m.id + '.tag');
+  const note = $('#curCarNote'); note.hidden = !S.map || ride.id === m.id; if (S.map) note.textContent = t('rideHere', { map: t('map.' + S.map.id), c: carName(ride) });
   $('#curCarStats').innerHTML = statRow(t('sSpeed'), st.top, 500, 700, Math.round(st.top * KMH) + ' ' + t('kmhLow')) + statRow(t('sAccel'), st.accel, 430, 780, plus(st.accel / 430)) + statRow(t('sGrip'), st.grip, .9, 1.65, plus(+(st.grip).toFixed(2)));
   drawCarPreview($('#curCarCv'), m);
 }
