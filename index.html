@@ -2420,12 +2420,20 @@ function buildMini3D(map, g) {
     m.rotation.y = r() * 6.28; m.renderOrder = 1; break;
   }
   // big props around the track
-  const P = MINI_PROPS[map.id] || { big: [], near: [] };
-  for (const [kind, n, rad] of P.big) for (let i = 0; i < n; i++) for (let tries = 0; tries < 50; tries++) {
-    const x = x0 + r() * (x1 - x0), z = z0 + r() * (z1 - z0);
-    if (nearDist(tr, x, z) < lim + rad + 120) continue;
-    if (placed.some(q => Math.hypot(q[0] - x, q[1] - z) < q[2] + rad)) continue;
-    put(kind, x, z, rad); break;
+  const useM = MINI_MDL[map.id] && (MDL_FOR[map.id] || []).every(n => MDL.done[n]), mi = {};
+  const P = useM ? MINI_MDL[map.id] : MINI_PROPS[map.id] || { big: [], near: [] };
+  const putM = (name, k, x, z, rad) => { (mi[name] = mi[name] || []).push([x, z, r() * 6.28, k]); placed.push([x, z, rad]); shadows.push([x, z, rad * .8]); };
+  for (const [kind, n, v] of P.big) {
+    const m = kind.startsWith('m:') && kind.slice(2);
+    if (m && !MDL.lib[m]) continue;
+    const rad = m ? mdlSize(m) * v / 2 : v;
+    for (let i = 0; i < n; i++) for (let tries = 0; tries < 50; tries++) {
+      const x = x0 + r() * (x1 - x0), z = z0 + r() * (z1 - z0);
+      if (nearDist(tr, x, z) < lim + rad + 120) continue;
+      if (placed.some(q => Math.hypot(q[0] - x, q[1] - z) < q[2] + rad)) continue;
+      if (m) putM(m, v, x, z, rad); else put(kind, x, z, rad);
+      break;
+    }
   }
   // small clutter right along the kerbs, so the camera always has something nearby
   const step = Math.round(70 / tr.SP);
@@ -2434,8 +2442,10 @@ function buildMini3D(map, g) {
     const p = tr.pts[i], d = lim + 10 + r() * 160, x = p.x + p.nx * sg * d + p.tx * (r() - .5) * 40, z = p.y + p.ny * sg * d + p.ty * (r() - .5) * 40;
     if (nearDist(tr, x, z) < lim) continue;
     if (placed.some(q => Math.hypot(q[0] - x, q[1] - z) < q[2] + 40)) continue;
-    put(P.near[(r() * P.near.length) | 0], x, z, 40);
+    const it = P.near[(r() * P.near.length) | 0];
+    if (Array.isArray(it)) { if (MDL.lib[it[0].slice(2)]) putM(it[0].slice(2), it[1], x, z, 40); } else put(it, x, z, 40);
   }
+  for (const name in mi) mdlInst(g, name, mi[name], (dm, q) => { dm.position.set(q[0], 0, q[1]); dm.rotation.y = q[2]; dm.scale.setScalar(q[3]); });
   // soft contact shadows under everything that stands on the floor
   const blobTex = G3.blobTex || (G3.blobTex = cTex(64, 64, (x, w, h) => { const gr = x.createRadialGradient(32, 32, 0, 32, 32, 32); gr.addColorStop(0, 'rgba(0,0,0,.55)'); gr.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = gr; x.fillRect(0, 0, w, h); }, false));
   if (shadows.length) {
@@ -3682,7 +3692,7 @@ function rideShape(g, m, color, steer) {
 }
 const PREV = {};
 function preview3D(m, color) { // renders a vehicle once into a small offscreen canvas and keeps the picture
-  const key = m.id + color; if (PREV[key]) return PREV[key];
+  const key = m.id + color + (MDL.lib[carMdlName(m)] ? 'k' : ''); if (PREV[key]) return PREV[key];
   if (!PREV.r) {
     const cv = document.createElement('canvas'); cv.width = 480; cv.height = 280;
     PREV.r = new THREE.WebGLRenderer({ canvas: cv, antialias: true, alpha: true, preserveDrawingBuffer: true }); PREV.r.setClearColor(0x000000, 0);
@@ -4036,8 +4046,227 @@ function skyTex(top, bot) {
     x.fillStyle = g; x.fillRect(0, 0, w, h);
   }, false);
 }
+// ---------- detailed models from the Kenney CC0 kits (kenney.nl), packed into models/*.tkz ----------
+// A bundle is gzip'd: 'TKM1', a JSON index, then for every part int16 positions, int8 normals, rgb colours and uint16
+// indices. Triangles are sorted by material class: 0 plain, 1 paint (cars; stored as a shade) or glow, 2 glass.
+// Bundles load per track in the background; until they arrive, or if they can't, the procedural shapes stand in.
+const MDL = { lib: {}, geo: {}, wait: {}, done: {} };
+const MDL_FOR = { valley: ['nature', 'race'], pass: ['nature', 'race'], city: ['city', 'race'], volcano: ['nature', 'race'], space: ['space', 'race'],
+  kitchen: ['home'], room: ['home', 'cars'], street: ['nature', 'cars', 'home'], billiard: [] };
+function mdlLoad(name) {
+  if (!MDL.wait[name]) MDL.wait[name] = !window.DecompressionStream || !window.fetch ? Promise.resolve(false)
+    : fetch('models/' + name + '.tkz').then(r => { if (!r.ok) throw new Error(r.status); return new Response(r.body.pipeThrough(new DecompressionStream('gzip'))).arrayBuffer(); })
+      .then(buf => {
+        const jl = new DataView(buf).getUint32(4, true), meta = JSON.parse(new TextDecoder().decode(new Uint8Array(buf, 8, jl)));
+        for (const k in meta) MDL.lib[k] = Object.assign(meta[k], { buf, base: 8 + jl });
+        MDL.done[name] = true; return true;
+      }).catch(e => { console.warn('models', name, e); return false; });
+  return MDL.wait[name];
+}
+const mdlHas = (...names) => names.every(n => MDL.lib[n]);
+function mdlNeed(map) { // starts loading what this track needs; rebuilds the track when it arrives (not in the middle of a race)
+  const want = MDL_FOR[map.id] || [];
+  if (!want.length || map._mdl) return;
+  map._mdl = Promise.all(want.map(mdlLoad)).then(ok => {
+    if (!ok.some(Boolean) || !map._g3 || map._g3full) return; // built before the models came: build again
+    map._g3stale = true;
+    if (S.map === map && S.mode !== 'race' && S.mode !== 'countdown' && S.mode !== 'paused' && S.mode !== 'photo') show3DMap(map);
+  });
+}
+function mdlGeo(name, pi = 0, tint) { // one part as a BufferGeometry with vertex colours and class groups; tint(c, ny, cls) recolours a variant
+  const key = name + ':' + pi + (tint ? ':' + tint.key : '');
+  if (MDL.geo[key]) return MDL.geo[key];
+  const M = MDL.lib[name], p = M.p[pi], B = M.buf, o = p.o.map(x => x + M.base), n = p.v, nt = p.t[0] + p.t[1] + p.t[2];
+  const qp = new Int16Array(B, o[0], n * 3), qn = new Int8Array(B, o[1], n * 3), qc = new Uint8Array(B, o[2], n * 3), qi = new Uint16Array(B, o[3], nt * 3);
+  const pos = new Float32Array(n * 3), nor = new Float32Array(n * 3), col = new Float32Array(n * 3), k = p.q / 32767, cls = new Uint8Array(n);
+  for (let i = 0; i < n * 3; i++) { pos[i] = qp[i] * k; nor[i] = qn[i] / 127; col[i] = qc[i] / 255; }
+  for (let i = p.t[0] * 3; i < (p.t[0] + p.t[1]) * 3; i++) cls[qi[i]] = 1;
+  for (let i = (p.t[0] + p.t[1]) * 3; i < nt * 3; i++) cls[qi[i]] = 2;
+  const c = [0, 0, 0];
+  for (let v = 0; v < n; v++) {
+    if (p.s && cls[v] === 1) { for (let j = 0; j < 3; j++) col[v * 3 + j] *= 1.6; continue; } // paint shade, multiplied by the paint colour
+    if (!tint) continue;
+    c[0] = col[v * 3]; c[1] = col[v * 3 + 1]; c[2] = col[v * 3 + 2]; tint(c, nor[v * 3 + 1], cls[v], pos[v * 3 + 1] / (M.b[4] - M.b[1] || 1));
+    col[v * 3] = c[0]; col[v * 3 + 1] = c[1]; col[v * 3 + 2] = c[2];
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('normal', new THREE.BufferAttribute(nor, 3)); g.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  g.setIndex(new THREE.BufferAttribute(new Uint16Array(qi), 1));
+  let s = 0; p.t.forEach((t, ci) => { if (t) g.addGroup(s * 3, t * 3, ci); s += t; });
+  g.computeBoundingSphere();
+  return (MDL.geo[key] = g);
+}
+function mdlMats(kind = 'day') { // [plain, glow, glass], shared; 'night' makes the glow class shine on its own
+  const k = 'mdl' + kind;
+  if (!MATS[k + 0]) {
+    const lava = kind === 'lava';
+    MATS[k + 0] = new THREE.MeshPhongMaterial({ vertexColors: true, shininess: 14, specular: 0x161616, emissive: lava ? 0x2a0a04 : 0 });
+    MATS[k + 1] = kind === 'night' || kind === 'crystal' ? new THREE.MeshBasicMaterial({ vertexColors: true }) : new THREE.MeshPhongMaterial({ vertexColors: true, shininess: 50, specular: 0x333333 });
+    MATS[k + 2] = new THREE.MeshPhongMaterial({ vertexColors: true, shininess: 120, specular: 0x8899aa });
+  }
+  return [MATS[k + 0], MATS[k + 1], MATS[k + 2]];
+}
+const mdlSize = (name, ax) => { const b = MDL.lib[name] ? MDL.lib[name].b : [0, 0, 0, 1, 1, 1]; return ax === 'y' ? b[4] - b[1] : ax === 'x' ? b[3] - b[0] : ax === 'z' ? b[5] - b[2] : Math.max(b[3] - b[0], b[5] - b[2]); };
+function mdlInst(g, name, list, set, o = {}) { // every item of list as one instanced draw; set(dummy, item, i) places each
+  if (!list.length || !MDL.lib[name]) return null;
+  const dm = new THREE.Object3D(), im = new THREE.InstancedMesh(mdlGeo(name, 0, o.tint), o.mats || mdlMats(), list.length);
+  list.forEach((d, i) => { dm.position.set(0, 0, 0); dm.rotation.set(0, 0, 0); dm.scale.set(1, 1, 1); set(dm, d, i); dm.updateMatrix(); im.setMatrixAt(i, dm.matrix); if (o.color) im.setColorAt(i, o.color(d, i)); });
+  if (im.instanceColor) im.instanceColor.needsUpdate = true;
+  im.castShadow = o.shadow !== false; im.receiveShadow = true; g.add(im);
+  return im;
+}
+function mdlMesh(name, k, mats, tint) { // a single scaled model
+  const m = new THREE.Mesh(mdlGeo(name, 0, tint), mats || mdlMats()); m.scale.setScalar(k); m.castShadow = m.receiveShadow = true; return m;
+}
+// colour variants
+const T_SNOW = Object.assign((c, ny, cls, h) => { const k = clamp((ny - .35) * 2.2, 0, 1) * (h > .12 ? 1 : 0); for (let j = 0; j < 3; j++) c[j] += (.95 - c[j]) * k; }, { key: 'snow' }); // snow settles on what faces up
+const T_BASALT = Object.assign((c, ny) => { const l = (c[0] * .3 + c[1] * .59 + c[2] * .11); const v = .1 + l * .22; c[0] = v * 1.25; c[1] = v * .9; c[2] = v * .8; if (ny > .6) { c[0] = .2; c[1] = .1; c[2] = .07; } }, { key: 'basalt' });
+const T_WINDOWS = Object.assign((c, ny, cls) => { if (cls === 1) { c[0] = 1; c[1] = .84; c[2] = .48; } else { c[0] *= .55; c[1] *= .55; c[2] *= .7; } }, { key: 'win' }); // lit windows on dusky walls
+
+// ---- cars: the Kenney car kit, painted in the car's colour
+const CAR_MDL = { start: 'sedan', sprint: 'hatchback-sports', groza: 'sedan-sports', raketa: 'race', legenda: 'race-future' };
+const BOT_MDL = ['sedan-sports', 'hatchback-sports', 'race', 'race-future', 'sedan'];
+function carMdlName(m, di) { return CAR_MDL[m.id] || (di != null ? BOT_MDL[di % BOT_MDL.length] : null); }
+function modelCar3D(name, m, color, ghost) {
+  const M = MDL.lib[name], g = new THREE.Group(); g.rotation.order = 'YXZ';
+  const op = ghost ? { transparent: true, opacity: .35, depthWrite: false } : {};
+  const paint = new THREE.MeshPhongMaterial(Object.assign({ color: col3(color), vertexColors: true, shininess: 90, specular: 0x666666 }, op));
+  const plain = new THREE.MeshPhongMaterial(Object.assign({ vertexColors: true, shininess: 24, specular: 0x222222 }, op));
+  const glass = new THREE.MeshPhongMaterial(Object.assign({ vertexColors: true, shininess: 140, specular: 0x99aabb }, op));
+  const mats = [plain, paint, glass], k = m.L / (M.b[3] - M.b[0]);
+  const wheels = [], front = [];
+  M.p.forEach((p, pi) => {
+    const mesh = new THREE.Mesh(mdlGeo(name, pi), mats);
+    if (p.n === 'body') { mesh.scale.setScalar(k); g.add(mesh); return; }
+    const piv = new THREE.Group(); piv.position.set(p.c[0] * k, p.c[1] * k, p.c[2] * k); g.add(piv);
+    mesh.scale.setScalar(k); piv.add(mesh); wheels.push(mesh);
+    if (p.c[0] > 0) front.push(piv);
+  });
+  const W = (M.b[5] - M.b[2]) * k, H = (M.b[4] - M.b[1]) * k;
+  const tailM = new THREE.MeshBasicMaterial(Object.assign({ color: 0xff2a2a }, op)), brake = new THREE.Group();
+  for (const sz of [-1, 1]) part('box', tailM, .6, 1.6, W * .2, M.b[0] * k - .2, H * .42, sz * W * .3, brake);
+  brake.visible = false; g.add(brake);
+  const flame = new THREE.Mesh(GEO.flame, new THREE.MeshBasicMaterial({ color: 0xff9a1f, transparent: true, opacity: .85, blending: THREE.AdditiveBlending, depthWrite: false }));
+  flame.position.set(M.b[0] * k - 7, H * .35, 0); flame.scale.set(14, 3.5, 3.5); flame.visible = false; g.add(flame);
+  const shield = new THREE.Mesh(GEO.sph, new THREE.MeshPhongMaterial({ color: 0x5ad2ff, transparent: true, opacity: .22, shininess: 120, emissive: 0x0a3040, depthWrite: false }));
+  shield.scale.set(m.L * .8, 16, 22); shield.position.y = 9; shield.visible = false; g.add(shield);
+  const beam = new THREE.Mesh(GEO.beam, new THREE.MeshBasicMaterial({ color: 0xfff1c8, transparent: true, opacity: .1, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide }));
+  beam.scale.set(-180, 50, 70); beam.position.set(M.b[3] * k, 7, 0); beam.visible = false; g.add(beam);
+  if (!ghost) { g.traverse(o => { if (o.isMesh && o !== flame && o !== shield && o !== beam) o.castShadow = true; }); addBlob(g, m.L * .62, W * .8); }
+  g.userData = { paint, tail: { color: new THREE.Color() }, brake, wheels, front, flame, shield, beam, base: col3(color), spin: 0, mats: [paint, plain, glass, tailM, flame.material, shield.material, beam.material], kenney: true };
+  return g;
+}
+// ---- scenery on the five main tracks: each simple shape's place gets a kit model
+const fr = (d, s = 0) => { const v = Math.sin(d.x * 12.9898 + d.y * 78.233 + s * 37.719) * 43758.5453; return v - Math.floor(v); }; // a steady random number per item
+function mdlDecor(map, g, by) {
+  const th = TH(map), groups = {};
+  const add = (name, d, k, o = {}) => { if (!MDL.lib[name]) return false; (groups[name + '|' + (o.tint ? o.tint.key : '') + '|' + (o.mats || '')] = groups[name + '|' + (o.tint ? o.tint.key : '') + '|' + (o.mats || '')] || { name, o, list: [] }).list.push({ d, k, sx: o.sx, sz: o.sz, sy: o.sy, rot: o.rot != null ? o.rot : fr(d, 1) * 6.28, y: o.y || 0 }); return true; };
+  const pick = (d, arr, s) => arr[Math.floor(fr(d, s) * arr.length) % arr.length];
+  const each = (k, fn) => { if (!by[k]) return; const rest = by[k].filter(d => !fn(d)); by[k] = rest.length ? rest : null; };
+  const fit = (name, d, sz) => sz / mdlSize(name);
+  // a racing venue at the start: a light gantry over the line, grandstands behind the left wall, flags and tents
+  const tr = map._track, hw = map.width / 2, lim = hw + map.margin + 8, p0 = tr.pts[0], keep = [];
+  if (mdlHas('overheadLights', 'grandStandCovered')) {
+    const gk = (map.width + 40) / mdlSize('overheadLights', 'z'), gm = mdlMesh('overheadLights', gk, mdlMats());
+    gm.position.set(p0.x, 0, p0.y); gm.rotation.y = -p0.ang; g.add(gm);
+    const sk = 120 / mdlSize('grandStandCovered', 'x'), step = Math.max(1, Math.round(124 / tr.SP));
+    for (let j = -2; j <= 2; j++) {
+      const q = tr.pts[(tr.N + j * step) % tr.N], lat = -(lim + 90);
+      const x = q.x + q.nx * lat, y = q.y + q.ny * lat;
+      add('grandStandCovered', { x, y }, sk, { rot: -q.ang - Math.PI / 2 }); keep.push([x, y, 110]);
+    }
+    for (const [j, nm] of [[-4, 'bannerTowerRed'], [4, 'bannerTowerGreen'], [-3, 'flagCheckers'], [3, 'flagCheckers']]) {
+      const q = tr.pts[(tr.N + j * step) % tr.N], lat = -(lim + 26), x = q.x + q.nx * lat, y = q.y + q.ny * lat;
+      add(nm, { x, y }, 70 / mdlSize(nm, 'y'), { rot: -q.ang - Math.PI / 2 }); keep.push([x, y, 30]);
+    }
+    for (const j of [3, 5, 7]) {
+      const q = tr.pts[Math.round((PIT_A + (PIT_B - PIT_A) * (j - 3) / 4) / tr.SP) % tr.N], lat = lim + 70, x = q.x + q.nx * lat, y = q.y + q.ny * lat;
+      add(j === 5 ? 'tentClosed' : 'tent', { x, y }, 90 / mdlSize('tent', 'x'), { rot: -q.ang + Math.PI / 2 }); keep.push([x, y, 80]);
+    }
+    for (const k in by) if (by[k] && k !== 'pond') by[k] = by[k].filter(d => !keep.some(q => Math.hypot(q[0] - d.x, q[1] - d.y) < q[2] + (d.rad || 30)));
+  }
+  if (th === 'valley') {
+    each('tree', d => {
+      const f = fr(d, 2);
+      if (f < .05) { const n = pick(d, ['rock_tallA', 'stone_tallB']); return add(n, d, fit(n, d, d.s * 1.6)); }
+      if (f < .08) return add('stump_roundDetailed', d, d.s * 1.4);
+      if (f < .1) return add('log_large', d, d.s * 1.2);
+      const name = pick(d, ['tree_oak', 'tree_detailed', 'tree_default', 'tree_fat', 'tree_oak', 'tree_tall', 'tree_detailed', 'tree_oak_fall', 'tree_oak', 'tree_detailed_fall']);
+      return add(name, d, d.s * 2.2);
+    });
+    each('bush', d => add(pick(d, ['plant_bushDetailed', 'plant_bushLarge', 'plant_bush', 'plant_bushDetailed']), d, d.s * 2.6 / .5));
+  }
+  if (th === 'pass') {
+    each('pine', d => add(pick(d, ['tree_pineTallA_detailed', 'tree_pineTallB_detailed', 'tree_pineRoundC', 'tree_pineDefaultA', 'tree_pineSmallB', 'tree_pineTallA_detailed']), d, d.s * 2.3, { tint: T_SNOW }));
+    each('rock', d => { const n = pick(d, ['stone_tallB', 'rock_tallA', 'stone_largeB', 'rock_largeC']); return add(n, d, fit(n, d, d.s * 2.2), { tint: T_SNOW }); });
+  }
+  if (th === 'volcano') {
+    each('rock', d => { const n = pick(d, ['rock_tallA', 'stone_tallB', 'stone_tallG', 'rock_largeC', 'stone_largeB', 'rock_tallE']); return add(n, d, fit(n, d, d.s * 2.2), { tint: T_BASALT, mats: 'lava' }); });
+  }
+  if (th === 'city') {
+    each('bld', d => {
+      const deep = Math.max(d.w, d.h) / Math.min(d.w, d.h) > 1.45;
+      const name = deep ? 'building-e' : d.tone >= 8 ? pick(d, ['building-skyscraper-a', 'building-skyscraper-b', 'building-skyscraper-d']) : pick(d, ['building-a', 'building-c', 'building-h']);
+      if (!MDL.lib[name]) return false;
+      const mx = mdlSize(name, 'x'), mz = mdlSize(name, 'z'), same = (d.w >= d.h) === (mx >= mz);
+      const sx = (same ? d.w : d.h) / mx, sz = (same ? d.h : d.w) / mz, sy = (sx + sz) / 2 * (.85 + fr(d, 3) * .35);
+      if (d.neon) { const n = part('box', basic(d.neon), d.w + 2, 4, d.h + 2, d.x, mdlSize(name, 'y') * sy * .45, d.y, g); n.scale.y = 3; }
+      return add(name, d, 1, { sx, sy, sz, rot: (same ? 0 : Math.PI / 2) + (fr(d, 4) < .5 ? 0 : Math.PI), tint: T_WINDOWS, mats: 'night' });
+    });
+  }
+  if (th === 'space') {
+    const sp = { mats: 'crystal' };
+    each('rocket', d => { // a rocket stacked from the kit's stages
+      const k = d.s * 2, B = fr(d, 5) < .5;
+      let y = 0, ok = true;
+      for (const n of B ? ['rocket_baseB', 'rocket_fuelB', 'rocket_fuelA', 'rocket_topB'] : ['rocket_baseA', 'rocket_fuelA', 'rocket_sidesA', 'rocket_topA']) { ok = add(n, d, k, Object.assign({ y, rot: 0 }, sp)) && ok; y += mdlSize(n, 'y') * k * .98; }
+      return ok;
+    });
+    each('dish', d => add(pick(d, ['satelliteDish_large', 'satelliteDish_detailed']), d, d.s * 2.6 / .8, sp));
+    each('beacon', d => add('machine_wireless', d, 36 / .6, sp));
+    each('hangar', d => {
+      const name = pick(d, ['hangar_largeA', 'hangar_smallA', 'hangar_roundA'], 6);
+      if (!MDL.lib[name]) return false;
+      const mx = mdlSize(name, 'x'), mz = mdlSize(name, 'z'), same = (d.w >= d.h) === (mx >= mz), sx = (same ? d.w : d.h) / mx, sz = (same ? d.h : d.w) / mz;
+      return add(name, d, 1, Object.assign({ sx, sz, sy: Math.min(sx, sz) * 1.1, rot: same ? 0 : Math.PI / 2 }, sp));
+    });
+    each('rock', d => {
+      const f = fr(d, 7);
+      if (f < .07) return add('rover', d, 34 / .39, sp);
+      if (f < .12) return add('astronautA', d, 24 / .79, sp);
+      if (f < .17) return add('barrels', d, 22 / .35, sp);
+      if (f < .21) return add(pick(d, ['craft_cargoA', 'craft_speederA']), d, 110 / 2.3, sp);
+      if (f < .25) return add(pick(d, ['structure_detailed', 'machine_generatorLarge', 'turret_double']), d, 60, sp);
+      if (f < .32) return add('craterLarge', d, d.s * 3 / .89, sp);
+      const n = f < .55 ? pick(d, ['rock_crystalsLargeA', 'rock_crystalsLargeB']) : f < .7 ? 'meteor_detailed' : pick(d, ['rock_largeA', 'rock_largeB']);
+      return add(n, d, d.s * 2.2 / mdlSize(n), sp);
+    });
+  }
+  for (const key in groups) {
+    const { name, o, list } = groups[key];
+    mdlInst(g, name, list, (dm, it) => { dm.position.set(it.d.x, it.y, it.d.y); dm.rotation.y = it.rot; dm.scale.set(it.k * (it.sx || 1), it.k * (it.sy || 1), it.k * (it.sz || 1)); },
+      { tint: o.tint, mats: mdlMats(o.mats || 'day'), color: name.startsWith('tree') || name.startsWith('plant') ? it => new THREE.Color().setScalar(.88 + fr(it.d, 8) * .24) : null });
+  }
+}
+// ---- giant household things on the mini tracks. 'm:name' entries are kit models at a scale (track px per model unit),
+// the rest are the hand-made props from prop() with their footprint radius
+const MINI_MDL = {
+  kitchen: { big: [['m:kitchenFridgeLarge', 1, 1630], ['m:kitchenStove', 1, 1630], ['m:kitchenSink', 1, 1630], ['m:kitchenCabinetDrawer', 1, 1630], ['m:table', 1, 1630], ['m:chairCushion', 3, 1630],
+    ['m:kitchenBlender', 1, 1630], ['m:toaster', 1, 1630], ['m:plate-dinner', 3, 1000], ['m:cake', 1, 1000], ['m:pizza', 1, 1000], ['m:watermelon', 1, 1000], ['m:cup-coffee', 3, 1000], ['m:mug', 3, 1000],
+    ['m:apple', 4, 1000], ['m:orange', 3, 1000], ['m:banana', 3, 1000], ['m:loaf', 2, 1000], ['m:cheese', 1, 1000], ['m:donut-sprinkles', 3, 1000], ['m:cupcake', 2, 1000], ['m:croissant', 2, 1000],
+    ['m:frying-pan', 1, 1000], ['m:pot', 1, 1000], ['m:cutting-board', 1, 1000], ['m:bottle-ketchup', 2, 1000], ['m:carton', 2, 1000], ['m:honey', 1, 1000], ['m:burger', 1, 1000], ['m:lemon', 2, 1000], ['m:strawberry', 3, 1000]],
+    near: ['sugar', 'crumb', 'crumb', ['m:utensil-fork', 1000], ['m:utensil-spoon', 1000], ['m:utensil-knife', 1000], ['m:cookie-chocolate', 1000]] },
+  room: { big: [['m:bedDouble', 1, 1630], ['m:bookcaseOpenLow', 1, 1630], ['m:loungeSofa', 1, 1630], ['m:tableCoffee', 1, 1630], ['m:cabinetTelevision', 1, 1630], ['m:speaker', 2, 1630], ['m:lampRoundFloor', 1, 1630],
+    ['m:pottedPlant', 2, 1630], ['m:cardboardBoxOpen', 2, 1630], ['m:desk', 1, 1630], ['m:chairDesk', 1, 1630], ['m:bear', 2, 1630], ['m:trashcan', 1, 1630], ['m:radio', 1, 1630], ['m:laptop', 1, 1630], ['m:pillowBlue', 2, 1630],
+    ['m:firetruck', 1, 150], ['m:truck', 1, 150], ['m:police', 1, 150], ['block', 8, 120], ['ball', 3, 230], ['pencil', 3, 500], ['books', 3, 260]],
+    near: ['brick', 'brick', 'brick', 'crayon', 'crayon'] },
+  street: { big: [['m:cone', 2, 1300], ['m:wheel-truck', 1, 850], ['m:debris-tire', 1, 850], ['m:soda-can', 4, 700], ['m:soda-bottle', 2, 700], ['m:stump_roundDetailed', 1, 2400], ['m:log_large', 1, 1400],
+    ['m:rock_largeA', 4, 600], ['m:rock_smallA', 10, 300], ['m:grass_large', 10, 2000], ['m:flower_yellowA', 6, 2200], ['m:flower_redB', 4, 2000], ['m:flower_purpleA', 3, 2000], ['m:mushroom_redGroup', 3, 1600],
+    ['m:box', 2, 500], ['leaf', 16, 170]],
+    near: ['pebble', 'cap', 'acorn', 'coin', 'leaf', 'snail'] },
+};
 function buildMap3D(map) {
-  if (map._g3) return map._g3;
+  if (map._g3 && !map._g3stale) return map._g3;
   const tr = map._track, g = new THREE.Group(), hw = map.width / 2, C = map.c, sk = skyOf(map);
   const cx = (tr.minX + tr.maxX) / 2, cy = (tr.minY + tr.maxY) / 2, size = Math.max(tr.maxX - tr.minX, tr.maxY - tr.minY) + 7000;
   // ground
@@ -4152,7 +4381,8 @@ function buildMap3D(map) {
   }
   buildDecor3D(map, g);
   buildFeats3D(map, g);
-  map._g3 = g;
+  g.traverse(o => { if (o.isInstancedMesh) o.frustumCulled = false; }); // r128 culls instances by the first one's bounds, which sits at the origin
+  map._g3 = g; map._g3stale = false; map._g3full = (MDL_FOR[map.id] || []).every(n => MDL.done[n]);
   map._sky = skyTex(sk.sky[0], sk.sky[1]);
   if (TH(map) === 'space' && !map.sky3) map._sky = cTex(1024, 512, (x, w, h) => { // starfield and a ringed planet
     const gr = x.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, sk.sky[0]); gr.addColorStop(1, sk.sky[1]); x.fillStyle = gr; x.fillRect(0, 0, w, h);
@@ -4166,6 +4396,7 @@ function buildDecor3D(map, g) {
   if (map.mini) { buildMini3D(map, g); return; }
   const by = {}, dummy = new THREE.Object3D();
   for (const d of map._decor) (by[d.k] = by[d.k] || []).push(d);
+  mdlDecor(map, g, by); // kit models take the places they can; the simple shapes below fill the rest
   const inst = (geo, mat, list, set, color, shadow = true) => {
     if (!list || !list.length) return null;
     const im = new THREE.InstancedMesh(GEO[geo], mat, list.length);
@@ -4346,6 +4577,7 @@ function buildCity3D(map, list, g) {
 const skyCache = {};
 function show3DMap(map) {
   if (!G3.ok) return;
+  mdlNeed(map);
   const sk = skyOf(map), night = isNight(), w = S.weatherNow;
   G3.world.clear(); G3.world.add(buildMap3D(map));
   if (night && !map.night) G3.world.add(buildLamps3D(map));
@@ -4375,6 +4607,27 @@ function buildPuddles3D() {
 }
 
 // ---- vehicles
+function limb(mat, a, b, r, parent) { // a round bar from point a to point b
+  const d = new THREE.Vector3(b[0] - a[0], b[1] - a[1], b[2] - a[2]), len = d.length(), m = new THREE.Mesh(GEO.cyl24 || GEO.cyl, mat);
+  m.scale.set(r, len, r); m.position.set((a[0] + b[0]) / 2, (a[1] + b[1]) / 2, (a[2] + b[2]) / 2); m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), d.normalize());
+  parent.add(m); return m;
+}
+function rider3D(g, paint, suit, op, o) { // a rider in leathers: torso leaning toward the bars, arms to the grips, knees in, boots on the pegs, a helmet in the vehicle's colour
+  const visor = new THREE.MeshPhongMaterial(Object.assign({ color: 0x0c1018, shininess: 160, specular: 0x99bbee }, op)), glove = lam('#16171b');
+  const [hx, hy] = o.hip, sa = Math.sin(o.lean), ca = Math.cos(o.lean), at = k => [hx + sa * k, hy + ca * k];
+  const [cx, cy] = at(5), [sx, sy] = at(10), [nx, ny] = at(15.4);
+  part('sph24', suit, 4.4, 7, 4.6, cx, cy, 0, g).rotation.z = -o.lean; // torso
+  part('sph24', suit, 3.6, 3.2, 4.4, hx, hy, 0, g); // hips
+  part('sph24', paint, 4.5, 4.5, 4.5, nx + 1, ny, 0, g); // helmet
+  part('sph24', visor, 2.4, 2.2, 3.5, nx + 3.6, ny + .2, 0, g);
+  for (const z of [-1, 1]) {
+    const sh = [sx, sy, z * 4], hand = [o.bar[0], o.bar[1], z * o.bar[2]], el = [(sx + hand[0]) / 2 - .5, (sy + hand[1]) / 2 - 1.5, z * (o.bar[2] + 1.2)];
+    limb(suit, sh, el, 1.5, g); limb(suit, el, hand, 1.3, g); part('sph24', suit, 1.6, 1.6, 1.6, ...el, g); part('sph24', glove, 1.5, 1.4, 1.5, ...hand, g);
+    const hp = [hx, hy - 1, z * 2.8], kn = [o.knee[0], o.knee[1], z * o.knee[2]], ft = [o.foot[0], o.foot[1], z * o.foot[2]];
+    limb(suit, hp, kn, 2, g); limb(suit, kn, ft, 1.6, g); part('sph24', suit, 2, 2, 2, ...kn, g);
+    part('sph24', glove, 2.6, 1.6, 1.6, ft[0] + 1, ft[1] - .4, ft[2], g); // boot
+  }
+}
 function makeRide3D(m, color, ghost) {
   const g = new THREE.Group(); g.rotation.order = 'YXZ';
   const op = ghost ? { transparent: true, opacity: .35, depthWrite: false } : {}, L = m.L, Wd = m.W;
@@ -4386,28 +4639,56 @@ function makeRide3D(m, color, ghost) {
   const headM = new THREE.MeshBasicMaterial(Object.assign({ color: 0xfff1c4 }, op));
   const lean = new THREE.Group(); g.add(lean);
   const u = { paint, tail, wheels: [], front: [], lean, base: col3(color), spin: 0, mats: [paint, black, suit, stripe, tail, headM] };
+  if (m.type === 'moto' || m.type === 'sled') smoothGeo();
+  const chrome = new THREE.MeshPhongMaterial(Object.assign({ color: 0xc9ced8, shininess: 130, specular: 0xbbbbbb }, op));
+  const glassM = new THREE.MeshPhongMaterial({ color: 0x9fd4ff, transparent: true, opacity: ghost ? .2 : .45, shininess: 140, specular: 0xffffff, depthWrite: false });
+  u.mats.push(chrome, glassM);
   if (m.type === 'moto') {
-    for (const sx of [1, -1]) { const w = new THREE.Mesh(GEO.wheel, black); w.scale.set(6, 6, 3); w.position.set(sx * L * .38, 6, 0); lean.add(w); u.wheels.push(w); }
-    part('box', paint, L * .55, 6, 5, 0, 12, 0, lean); part('box', paint, L * .25, 5, 7, L * .08, 15, 0, lean);
-    part('box', black, L * .3, 2, 6, -L * .16, 16, 0, lean); part('box', stripe, L * .5, .6, 5.4, 0, 15.2, 0, lean);
-    part('box', lam('#9aa0aa'), 1.5, 14, 1.5, L * .34, 12, 0, lean).rotation.z = -.35;
-    part('box', lam('#9aa0aa'), 1.5, 1.5, 14, L * .28, 19, 0, lean);
-    const rider = new THREE.Group(); rider.position.y = 14; lean.add(rider); u.rider = rider;
-    part('box', suit, 9, 12, 7, -L * .1, 8, 0, rider).rotation.z = -.45;
-    part('sph', paint, 4.8, 4.8, 4.8, L * .05, 15, 0, rider); part('box', lam('#10141c'), 3, 3, 6, L * .05 + 3.5, 15, 0, rider);
-    part('box', suit, 2.5, 2.5, 9, L * .15, 8, 0, rider);
-    part('box', suit, 3, 8, 3, -L * .02, 2, 4, rider); part('box', suit, 3, 8, 3, -L * .02, 2, -4, rider);
-    part('box', headM, 1, 3, 3, L * .42, 14, 0, lean); part('box', tail, 1, 2.5, 4, -L * .42, 13, 0, lean);
+    const wx = L * .38;
+    for (const sx of [1, -1]) { // tyre, rim, spokes and a brake disc, all turning together
+      const w = new THREE.Group(); w.position.set(sx * wx, 5.8, 0); lean.add(w); u.wheels.push(w);
+      const t = new THREE.Mesh(GEO.tire || (GEO.tire = new THREE.TorusGeometry(1, .32, 10, 26)), black); t.scale.setScalar(4.4); w.add(t);
+      const rim = new THREE.Mesh(GEO.disc || (GEO.disc = new THREE.CylinderGeometry(1, 1, 1, 22).rotateX(Math.PI / 2)), lam('#2a2d35')); rim.scale.set(3.4, 3.4, 1.2); w.add(rim);
+      for (let i = 0; i < 3; i++) part('box', stripe, .7, 6.4, 1.4, 0, 0, 0, w).rotation.z = i * Math.PI / 3;
+      part('disc', chrome, 2.4, 2.4, .4, 0, 0, 1.1, w); part('disc', chrome, 1, 1, 2, 0, 0, 0, w);
+    }
+    part('sph24', paint, 7.5, 4, 4.6, 2.5, 16.6, 0, lean); // tank
+    part('box', stripe, 9, .5, 1.8, 2.5, 20.5, 0, lean);
+    part('sph24', paint, 7.5, 6, 5, wx - 3, 14, 0, lean); // fairing
+    const scr = part('sph24', glassM, 3, 4.4, 3.6, wx - 1.4, 19.6, 0, lean); scr.rotation.z = -.6;
+    part('sph24', black, 6.5, 1.6, 4, -4.5, 16.4, 0, lean); // seat
+    part('cone24', paint, 3, 10, 3.4, -10.5, 16.2, 0, lean).rotation.z = Math.PI / 2; // tail
+    part('box', lam('#3a3d45'), 9, 7, 5, 0, 9, 0, lean); // engine
+    for (const z of [-1.4, 1.4]) part('cyl24', lam('#55595f'), 1.8, 5, 1.8, 2.5, 13, z, lean).rotation.z = -.3;
+    limb(chrome, [-1, 6.5, 3], [-11, 9.5, 3.2], .9, lean); part('cyl24', chrome, 1.7, 6, 1.7, -13.5, 10.3, 3.2, lean).rotation.z = Math.PI / 2 - .25; // exhaust
+    limb(lam('#2a2d35'), [0, 8, 0], [-wx, 5.8, 0], 1.1, lean); // swingarm
+    for (const z of [-2.6, 2.6]) limb(chrome, [wx - 4, 19, z], [wx, 5.8, z], .8, lean); // fork
+    limb(lam('#2a2d35'), [wx - 4, 20.5, -6], [wx - 4, 20.5, 6], .55, lean); // handlebar
+    part('sph24', headM, 1, 1.8, 2, wx + 3, 14.6, 0, lean); part('box', tail, .8, 1.6, 3, -15.6, 16.4, 0, lean);
+    const rider = new THREE.Group(); rider.position.y = 14; lean.add(rider); u.rider = rider; // hangs off a little in turns, pivoting at the seat
+    rider3D(rider, paint, suit, op, { hip: [-4.5, 4], lean: .75, bar: [wx - 4, 6.5, 5.5], knee: [3.5, .5, 5.6], foot: [-2.5, -5.5, 4.6] });
   } else if (m.type === 'sled') {
-    for (const sz of [-1, 1]) { part('box', black, L * .45, 1.4, 3, L * .3, 1.2, sz * Wd * .38, lean); part('box', black, 2, 8, 2, L * .32, 5, sz * Wd * .3, lean); }
-    part('box', black, L * .48, 6, Wd * .66, -L * .27, 4, 0, lean);
+    for (const sz of [-1, 1]) { // skis with curled tips on sprung struts
+      const z = sz * Wd * .38;
+      part('box', black, L * .5, .8, 3.2, L * .28, 1, z, lean); part('box', black, 5, .8, 3.2, L * .28 + L * .25 + 1.6, 2.2, z, lean).rotation.z = .5;
+      limb(lam('#2a2d35'), [L * .3, 1.4, z], [L * .2, 8, sz * Wd * .24], .8, lean); limb(chrome, [L * .27, 2, z], [L * .17, 7.5, sz * Wd * .26], .5, lean);
+      part('box', black, L * .42, .8, 3, -L * .06, 7.2, sz * Wd * .43, lean); // running board
+      part('box', stripe, L * .44, 1.4, .4, -L * .02, 10.4, sz * Wd * .41, lean);
+    }
+    part('box', black, L * .48, 6, Wd * .66, -L * .27, 4, 0, lean); // track tunnel
     const tread = []; for (let i = 0; i < 5; i++) tread.push(part('box', lam('#2b2f38'), 2, 1, Wd * .68, -L * .48 + i * 4.4, 7.4, 0, lean)); u.tread = tread;
-    part('box', paint, L * .62, 8, Wd * .78, L * .08, 9, 0, lean); part('box', paint, L * .25, 5, Wd * .7, L * .36, 7, 0, lean);
-    part('box', stripe, L * .5, .6, 3, L * .05, 13.4, 0, lean);
-    part('box', new THREE.MeshPhongMaterial(Object.assign({ color: 0x9fd4ff, transparent: true, opacity: .5, shininess: 120 }, ghost ? { opacity: .2 } : {})), 1, 6, Wd * .6, L * .26, 16, 0, lean).rotation.z = -.5;
-    part('box', black, L * .3, 3, Wd * .45, -L * .12, 14.5, 0, lean);
-    part('box', suit, 8, 11, 8, -L * .08, 21, 0, lean); part('sph', paint, 4.8, 4.8, 4.8, -L * .04, 29, 0, lean); part('box', lam('#10141c'), 3, 3, 6, -L * .04 + 3.5, 29, 0, lean);
-    part('box', headM, 1, 2.5, 5, L * .48, 8, 0, lean); part('box', tail, 1, 2, 6, -L * .5, 8, 0, lean);
+    part('sph24', black, L * .36, 4.5, Wd * .4, L * .05, 6.4, 0, lean); // belly pan
+    part('box', paint, L * .42, 5, Wd * .8, -L * .02, 9.4, 0, lean);
+    part('sph24', paint, L * .3, 6.6, Wd * .42, L * .2, 9.6, 0, lean); // rounded hood
+    part('box', paint, L * .36, 3, Wd * .62, -L * .32, 10.4, 0, lean); // rear deck
+    for (const z of [-3.2, 3.2]) part('sph24', headM, .8, 1.3, 1.7, L * .47, 10, z, lean);
+    const scr = part('sph24', glassM, 2.6, 5.6, Wd * .36, L * .16, 16.2, 0, lean); scr.rotation.z = -.5;
+    limb(lam('#2a2d35'), [L * .06, 17.4, -6.5], [L * .06, 17.4, 6.5], .55, lean);
+    part('sph24', black, L * .22, 2.4, Wd * .26, -L * .14, 14.2, 0, lean); // seat
+    for (const z of [-1, 1]) limb(chrome, [-L * .3, 12, z * Wd * .3], [-L * .5, 12.6, z * Wd * .3], .5, lean); // rear rack
+    limb(chrome, [-L * .5, 12.6, -Wd * .3], [-L * .5, 12.6, Wd * .3], .5, lean);
+    part('box', tail, .8, 1.6, 5, -L * .5, 10, 0, lean);
+    rider3D(lean, paint, suit, op, { hip: [-L * .13, 16], lean: .32, bar: [L * .06, 17.4, 6], knee: [L * .04, 15, 7.4], foot: [-L * .06, 8.2, Wd * .42] });
   } else { // dogs: a mutt with floppy ears, or a slim greyhound
     const grey = m.id === 'greyhound', legH = grey ? 15 : 11, top = legH + 4;
     const mat = c => new THREE.MeshPhongMaterial(Object.assign({ color: c, shininess: 12, specular: 0x111111 }, op));
@@ -4483,8 +4764,10 @@ function makeRide3D(m, color, ghost) {
   g.userData = u;
   return g;
 }
-function makeCar3D(m, color, ghost) {
+function makeCar3D(m, color, ghost, di) {
   if (m.type && m.type !== 'car') return makeRide3D(m, color, ghost);
+  const kn = carMdlName(m, di);
+  if (kn && MDL.lib[kn]) return modelCar3D(kn, m, color, ghost);
   const g = new THREE.Group(); g.rotation.order = 'YXZ';
   const L = m.L, Wd = m.W, op = ghost ? { transparent: true, opacity: .35, depthWrite: false } : {};
   const paint = new THREE.MeshPhongMaterial(Object.assign({ color: col3(color), shininess: 90, specular: 0x555555 }, op));
@@ -4576,6 +4859,7 @@ function updCar3D(c, dt, tm) {
   for (const w of u.wheels) w.rotation.z = -u.spin;
   for (const f of u.front) f.rotation.y = -c.inSteer * .45;
   u.tail.color.setHex(c.inThrottle < 0 || c.inBrake ? 0xff2a2a : 0x6a0a0a);
+  if (u.brake) u.brake.visible = c.inThrottle < 0 || !!c.inBrake;
   if (u.type !== 'dog') u.paint.color.copy(u.base).lerp(dark3(), c.damage * .45);
   u.flame.visible = !!c.boosting; if (c.boosting) { u.flame.material.color.setHex(c.nitroOn ? 0x4fc8ff : 0xff9a1f); u.flame.scale.x = 12 + Math.random() * 8; }
   u.shield.visible = c.shieldT > 0; if (c.shieldT > 0) u.shield.material.opacity = c.shieldT < 1.5 && Math.sin(tm * 20) < 0 ? .08 : .22;
@@ -4819,7 +5103,7 @@ function sync3DObjects(dt, tm) {
   // cars
   if (G3.carsRef !== S.cars) {
     for (const m of G3.carMeshes || []) { G3.dyn.remove(m); disposeCar3D(m); }
-    G3.carMeshes = S.cars.map(c => { c.m3 = makeCar3D(c.model, c.color); if (S.map && S.map.mini) addAntenna(c); G3.dyn.add(c.m3); return c.m3; });
+    G3.carMeshes = S.cars.map(c => { c.m3 = makeCar3D(c.model, c.color, false, c.di); if (S.map && S.map.mini) addAntenna(c); G3.dyn.add(c.m3); return c.m3; });
     G3.carsRef = S.cars;
   }
   for (const c of S.cars) updCar3D(c, dt, tm);
@@ -6171,6 +6455,7 @@ window.__tk = {
   audioState: () => audio ? audio.ac.state : 'none',
   menuPage: pg => setMenuPage(pg),
   tick: dt => tick(dt),
+  mdl: MDL, g3: G3,
   screenPos: () => { const p = player(); if (!p || !G3.ok || !p.m3) return null; const v = p.m3.position.clone().project(G3.cam); return [v.x, v.y, G3.cam.position.x, G3.cam.position.z]; },
   audioGain: () => audio ? audio.m.gain.value : null,
   audioProbe: () => { if (!audio) return null; const t0 = performance.now(), out = {}; for (const k in ENG) { const b = engLoop(ENG[k], Math.round(ENG[k].red * .72)), d = b.getChannelData(0); let rms = 0; for (let i = 0; i < d.length; i++) rms += d[i] * d[i]; out[k] = +Math.sqrt(rms / d.length).toFixed(3); } out.ms = Math.round(performance.now() - t0); out.voices = ['pv', 'pv2', 'rv'].filter(k => audio[k]).map(k => k + ':' + audio[k].sp.k + ':' + Math.round(audio[k].rpm)); return out; },
@@ -6220,6 +6505,13 @@ function start(data) {
   const sl = store.get('turbo-krug-lang');
   setLang(sl || ((navigator.language || 'ru').toLowerCase().startsWith('ru') ? 'ru' : 'en'));
   toMenu();
+  if (G3.ok) { // car models first, then the scenery packs one by one in the background
+    mdlLoad('cars').then(ok => {
+      if (!ok) return;
+      G3.carsRef = null; renderMenuStrip(); if (!$('#garage').hidden) renderGarage();
+      ['nature', 'race', 'home', 'city', 'space'].reduce((p, n) => p.then(() => mdlLoad(n)), Promise.resolve());
+    });
+  }
   requestAnimationFrame(tt => { last = tt; frame(tt); });
 }
 window.claude?.hot?.snapshot?.(() => ({ mapIndex: S.mapIndex, laps: S.laps, diff: S.diff }));
