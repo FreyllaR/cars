@@ -748,7 +748,7 @@ const STR = {
     joyHint: 'Руль: ведите пальцем', steerMode: 'Руль на телефоне', steerJoy: 'Джойстик', steerTilt: 'Наклон',
     kPad: '<b>Геймпад</b>: RT газ, LT тормоз, RB нитро, LB предмет, X ручник',
     'tut.drive.t': 'Левой половиной экрана рулите, справа газ и тормоз. Газ ровно на зелёный даёт рывок.',
-    p1: 'Игрок 1', p2: 'Игрок 2', 'drv.you2': 'Игрок 2', mDuo: 'Вдвоём', mDuoSub: 'Два игрока, один экран', p2Ride: 'Транспорт игрока 2', change: 'Сменить',
+    duoLeft: 'У второго игрока {n} секунд', p1: 'Игрок 1', p2: 'Игрок 2', 'drv.you2': 'Игрок 2', mDuo: 'Вдвоём', mDuoSub: 'Два игрока, один экран', p2Ride: 'Транспорт игрока 2', change: 'Сменить',
     duoWin: '{p} впереди!', kDuo: '<b>Игрок 2</b>: стрелки, <b>правый Shift</b> нитро, <b>Enter</b> предмет, <b>/</b> ручник',
     hKeyboard: 'Клавиатура', hPad: 'Геймпад', hPhone: 'Телефон',
     kPadFull: '<b>RT</b> или <b>A</b> — газ, <b>LT</b> или <b>B</b> — тормоз, левый стик — руль, <b>RB</b> — нитро, <b>LB</b> — предмет, <b>X</b> — ручник, <b>Y</b> — на трассу, <b>Start</b> — пауза. В меню — крестовина и <b>A</b>. В игре вдвоём геймпад управляет игроком 2.',
@@ -866,7 +866,7 @@ const STR = {
     joyHint: 'Steer: drag your thumb', steerMode: 'Phone steering', steerJoy: 'Joystick', steerTilt: 'Tilt',
     kPad: '<b>Gamepad</b>: RT gas, LT brake, RB nitro, LB item, X handbrake',
     'tut.drive.t': 'Steer with the left half of the screen, gas and brake on the right. Gas right on green gives a launch boost.',
-    p1: 'Player 1', p2: 'Player 2', 'drv.you2': 'Player 2', mDuo: 'Two players', mDuoSub: 'Split screen, one keyboard', p2Ride: 'Player 2 ride', change: 'Change',
+    duoLeft: 'The other player has {n} seconds', p1: 'Player 1', p2: 'Player 2', 'drv.you2': 'Player 2', mDuo: 'Two players', mDuoSub: 'Split screen, one keyboard', p2Ride: 'Player 2 ride', change: 'Change',
     duoWin: '{p} wins!', kDuo: '<b>Player 2</b>: arrows, <b>right Shift</b> nitro, <b>Enter</b> item, <b>/</b> handbrake',
     hKeyboard: 'Keyboard', hPad: 'Gamepad', hPhone: 'Phone',
     kPadFull: '<b>RT</b> or <b>A</b> gas, <b>LT</b> or <b>B</b> brake, left stick steers, <b>RB</b> nitro, <b>LB</b> item, <b>X</b> handbrake, <b>Y</b> back on track, <b>Start</b> pause. Menus: D-pad and <b>A</b>. In two-player races the gamepad drives player 2.',
@@ -1336,7 +1336,7 @@ function resetRace(mode) {
     : S.gameMode === 'trial' && mode !== 'menu' ? [newCar(0, 0)] : (S.duo ? GRID_DUO : GRID).map((di, slot) => newCar(di, slot));
   buildPuddles(); if (G3.ok) show3DMap(S.map);
   S.haz = []; S.hazT = mode === 'menu' ? 3 : 6; S.slicks = []; S.boxes = buildBoxes(); S.placeT = 0; S.pressAt = null;
-  S.rbuf = []; S.recT = 0; S.closeFinish = false; S.replayed = false;
+  S.rbuf = []; S.recT = 0; S.closeFinish = false; S.replayed = false; S.duoDeadline = 0;
   S.time = 0; S.finishCount = 0; S.parts = []; markHead = 0; markCount = 0; S.resultsT = -1; S.newRecord = false;
   const f = followCar(); S.cam.x = f.x; S.cam.y = f.y;
 }
@@ -2165,6 +2165,11 @@ function step(dt) {
   collide();
   for (const c of S.cars) effects(c, dt);
   if (S.mode === 'race' || S.mode === 'results') { S.recT += dt; if (S.recT >= 1 / 30) { S.recT -= 1 / 30; recFrame(); } }
+  if (S.duo && S.duoDeadline && S.mode === 'race' && S.time > S.duoDeadline) {
+    S.duoDeadline = 0;
+    for (const c of S.cars) if ((c.isPlayer || c.isP2) && !c.finished) { c.finished = true; c.dnf = true; c.finishTime = Infinity; c.place = ++S.finishCount; c.auto = true; }
+    S.mode = 'results'; S.resultsT = .8; S.finishT = S.time; S.earned = 0;
+  }
   if (S.resultsT > 0) {
     S.resultsT -= dt;
     if (S.resultsT <= 0) {
@@ -2471,6 +2476,7 @@ function startRace() {
   resize(); hudTick = 0;
 }
 function toMenu() {
+  if (S.rp) { S.rp = null; $('#replayBar').hidden = true; $('#cine').hidden = true; }
   setupMap(S.mapIndex);
   resetRace('menu');
   for (const id of ['#hud', '#touch', '#pause', '#results', '#garage', '#settings', '#hint', '#achievements', '#records', '#online', '#help']) $(id).hidden = true;
@@ -2490,7 +2496,8 @@ function onPlayerFinish(c) {
   c.auto = true;
   if (S.duo) { // both players have to cross the line before the results
     toast((c.isP2 ? t('p2') : t('p1')) + ' · ' + t('finish'), t('placeSub', { o: ord(c.place), t: fmt(c.finishTime) }), 'good'); beep(880, .2);
-    if (S.cars.filter(x => x.isPlayer || x.isP2).every(x => x.finished)) { S.mode = 'results'; S.resultsT = 1.4; S.finishT = S.time; S.closeFinish = false; S.earned = 0; }
+    if (S.cars.filter(x => x.isPlayer || x.isP2).every(x => x.finished)) { S.mode = 'results'; S.resultsT = 1.4; S.finishT = S.time; S.closeFinish = false; S.earned = 0; S.duoDeadline = 0; }
+    else { S.duoDeadline = S.time + 30; setTimeout(() => toast(t('duoLeft', { n: 30 }), '', ''), 1800); } // the other player gets 30 seconds
     return;
   }
   S.finishT = S.time;
@@ -2557,7 +2564,7 @@ function fillResults() {
 }
 function standings() {
   return S.cars.slice().sort((a, b) => {
-    if (a.finished && b.finished) return a.finishTime - b.finishTime;
+    if (a.finished && b.finished) return (a.finishTime === b.finishTime ? 0 : a.finishTime - b.finishTime) || b.total - a.total;
     if (a.finished) return -1; if (b.finished) return 1;
     return b.total - a.total;
   });
@@ -4306,6 +4313,7 @@ window.__tk = {
   audioState: () => audio ? audio.ac.state : 'none',
   spawn: k => spawnHazard(k),
   run: sec => { for (let tt = 0; tt < sec; tt += DT) step(DT); },
+  draw: dt => { (G3.ok ? render3D : render)(dt); updHud(dt); },
   sim(mapIndex, seconds, diff) {
     setupMap(mapIndex); S.simDiff = diff == null ? null : diff; resetRace('menu'); S.simDiff = null; S.stat = { resets: 0 };
     let off = 0, n = 0;
