@@ -4055,7 +4055,11 @@ const MDL_FOR = { valley: ['nature', 'race'], pass: ['nature', 'race'], city: ['
   kitchen: ['home'], room: ['home', 'cars'], street: ['nature', 'cars', 'home'], billiard: [] };
 function mdlLoad(name) {
   if (!MDL.wait[name]) MDL.wait[name] = !window.DecompressionStream || !window.fetch ? Promise.resolve(false)
-    : fetch('models/' + name + '.tkz').then(r => { if (!r.ok) throw new Error(r.status); return new Response(r.body.pipeThrough(new DecompressionStream('gzip'))).arrayBuffer(); })
+    : fetch('models/' + name + (inClaude ? '.txt' : '.tkz')).then(async r => { // claude.ai serves no binary files, so the artifact gets them as base64 text
+      if (!r.ok) throw new Error(r.status);
+      const body = inClaude ? new Blob([Uint8Array.from(atob((await r.text()).trim()), c => c.charCodeAt(0))]).stream() : r.body;
+      return new Response(body.pipeThrough(new DecompressionStream('gzip'))).arrayBuffer();
+    })
       .then(buf => {
         const jl = new DataView(buf).getUint32(4, true), meta = JSON.parse(new TextDecoder().decode(new Uint8Array(buf, 8, jl)));
         for (const k in meta) MDL.lib[k] = Object.assign(meta[k], { buf, base: 8 + jl });
