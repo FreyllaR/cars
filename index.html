@@ -3015,7 +3015,7 @@ function render(dt) {
   const baseZ = clamp(Math.min(W, H) / 480, .8, 2);
   S.cam.z += (baseZ * (1 - .06 * Math.min(1, f.speed / BASE)) - S.cam.z) * Math.min(1, dt);
   const z = S.cam.z, la = Math.min(.5, .22 * Math.min(W, H) / z / Math.max(f.speed, 1));
-  const k = Math.min(1, dt * 4);
+  const k = 1 - Math.exp(-dt * 4);
   S.cam.x += (f.x + f.vx * la - S.cam.x) * k; S.cam.y += (f.y + f.vy * la - S.cam.y) * k;
   let sx = 0, sy = 0;
   if (S.shake > 0) { sx = (Math.random() - .5) * S.shake; sy = (Math.random() - .5) * S.shake; S.shake = Math.max(0, S.shake - dt * 30); }
@@ -3744,7 +3744,7 @@ function updCar3D(c, dt, tm) {
   g.rotation.z = c.air > 0 ? clamp((c.vz || 0) * .0009, -.35, .35) : c.rampY > 0 ? .3 : wheelie;
   if (u.lean) { // bikes lean into the turn like a real rider (angle = atan(lateral g)), sleds a little, the dog runs
     const want = u.type === 'moto' ? clamp(Math.atan(la * 1.1), -.8, .8) : u.type === 'sled' ? clamp(la * .2, -.15, .15) : 0;
-    u.lean.rotation.x += (want - u.lean.rotation.x) * Math.min(1, dt * 7);
+    u.lean.rotation.x += (want - u.lean.rotation.x) * (1 - Math.exp(-dt * 7));
     if (u.rider) u.rider.rotation.x = u.lean.rotation.x * .35; // the rider hangs off a bit further
   }
   if (u.legs) {
@@ -3988,12 +3988,12 @@ function camFollow(cam, c3, f, dt, vw, vh, shake) { // chase camera: follows the
   const P = CAMS3[S.cam3] || CAMS3.near, menu = S.mode === 'menu', small = !menu && (f.type === 'moto' || f.type === 'dog') ? .82 : 1;
   const tallK = vw < vh ? 1 + (1 - vw / vh) * .7 : 1;
   const dist = (menu ? 120 : P[0] * small) * tallK, hgt = (menu ? 52 : P[1] * (small < 1 && S.cam3 !== 'top' ? .85 : 1)) * (1 + (tallK - 1) * .8), ahead = P[2];
-  const k = Math.min(1, dt * (S.cam3 === 'top' ? 2.2 : 3.2));
+  const k = 1 - Math.exp(-dt * (S.cam3 === 'top' ? 2.2 : 3.2)); // exact exponential smoothing: the same lag at any frame rate
   if (Math.hypot(c3.x - f.x, c3.z - f.y) > 600) c3.snap = true; // after a respawn or a jump cut
   c3.yaw = c3.snap ? f.angle : c3.yaw + wrapAng(f.angle - c3.yaw) * k;
   const fx = Math.cos(c3.yaw), fy = Math.sin(c3.yaw);
   const tx = f.x - fx * dist, tz = f.y - fy * dist, ty = hgt + (f.air || 0) * .6;
-  const kp = c3.snap ? 1 : Math.min(1, dt * 9);
+  const kp = c3.snap ? 1 : 1 - Math.exp(-dt * 9);
   c3.x += (tx - c3.x) * kp; c3.z += (tz - c3.z) * kp; c3.y += (ty - c3.y) * kp; c3.snap = false;
   let sx = 0, sy = 0;
   if (shake && S.shake > 0) { sx = (Math.random() - .5) * S.shake * .8; sy = (Math.random() - .5) * S.shake * .8; S.shake = Math.max(0, S.shake - dt * 30); }
@@ -4001,7 +4001,7 @@ function camFollow(cam, c3, f, dt, vw, vh, shake) { // chase camera: follows the
   cam.lookAt(f.x + fx * ahead, 8 + (f.air || 0) * .5, f.y + fy * ahead);
   const asp = vw / vh, tall = asp < 1 ? 1 - asp : 0; // portrait views: wider lens, camera pulled back
   const fovT = Math.min(88, 60 + tall * 36) + 9 * Math.min(1, f.speed / BASE) + (f.boosting ? 7 : 0);
-  c3.fov += (fovT - c3.fov) * Math.min(1, dt * 3); cam.fov = c3.fov; cam.aspect = asp; cam.updateProjectionMatrix();
+  c3.fov += (fovT - c3.fov) * (1 - Math.exp(-dt * 3)); cam.fov = c3.fov; cam.aspect = asp; cam.updateProjectionMatrix();
   return { fx, fy };
 }
 function aimLights(f, fx, fy) {
@@ -4814,18 +4814,54 @@ addEventListener('resize', resize);
 
 // ---------- loop ----------
 let last = performance.now(), accT = 0;
+// Smooth motion: physics runs in fixed 1/120 s steps, but a display frame can land 0, 1, 2 or 3 steps after the last one.
+// Drawing the raw state makes cars and the world judder against the smoothly moving camera, so each frame draws
+// moving things blended between the previous and the latest step, then puts the real state back.
+function snapPrev() {
+  for (const c of S.cars) { c._px = c.x; c._py = c.y; c._pa = c.angle; c._pz = c.air || 0; }
+  for (const h of S.haz) { h._px = h.x; h._py = h.y; }
+}
+function blendIn(a) {
+  const saved = { time: S.time, clock: S.clock, cars: [], haz: [] };
+  const back = (1 - a) * DT;
+  if (S.mode === 'race') S.time = Math.max(0, S.time - back);
+  S.clock -= back;
+  for (const c of S.cars) {
+    if (c._px == null) continue;
+    const dx = c.x - c._px, dy = c.y - c._py;
+    if (dx * dx + dy * dy > 3600) continue; // a respawn or teleport: no blending across it
+    saved.cars.push([c, c.x, c.y, c.angle, c.air]);
+    c.x = c._px + dx * a; c.y = c._py + dy * a; c.angle = c._pa + wrapAng(c.angle - c._pa) * a;
+    if (c.air != null) c.air = c._pz + ((c.air || 0) - c._pz) * a;
+  }
+  for (const h of S.haz) {
+    if (h._px == null || h.x == null) continue;
+    const dx = h.x - h._px, dy = h.y - h._py; if (dx * dx + dy * dy > 3600) continue;
+    saved.haz.push([h, h.x, h.y]); h.x = h._px + dx * a; h.y = h._py + dy * a;
+  }
+  return saved;
+}
+function blendOut(sv) {
+  S.time = sv.time; S.clock = sv.clock;
+  for (const [c, x, y, ang, air] of sv.cars) { c.x = x; c.y = y; c.angle = ang; c.air = air; }
+  for (const [h, x, y] of sv.haz) { h.x = x; h.y = y; }
+}
 function frame(now) {
   requestAnimationFrame(frame); // scheduled first, so one bad frame never stops the game
   const dt = Math.min(.05, (now - last) / 1000); last = now; lastFrameAt = performance.now();
+  tick(dt);
+}
+function tick(dt) {
   try {
     pollPad(dt);
     if (S.mode === 'replay') updReplay(dt);
     else if (S.mode !== 'paused') {
       accT += dt;
-      let n = 0; while (accT >= DT && n++ < 12) { step(DT); accT -= DT; }
+      let n = 0; while (accT >= DT && n++ < 12) { snapPrev(); step(DT); accT -= DT; }
       if (accT > DT) accT = 0;
     }
-    (G3.ok ? render3D : render)(S.mode === 'paused' ? 0 : dt);
+    const blend = !S.noBlend && S.mode !== 'replay' && S.mode !== 'paused' && S.cars.length ? blendIn(clamp(accT / DT, 0, 1)) : null;
+    try { (G3.ok ? render3D : render)(S.mode === 'paused' ? 0 : dt); } finally { if (blend) blendOut(blend); }
     perfWatch(dt);
     if (S.mode !== 'menu' && S.mode !== 'replay') { updHud(dt); updHint(dt); }
     updAchBanner(dt);
@@ -4838,6 +4874,8 @@ window.__tk = {
   S, MAPS,
   audioState: () => audio ? audio.ac.state : 'none',
   menuPage: pg => setMenuPage(pg),
+  tick: dt => tick(dt),
+  screenPos: () => { const p = player(); if (!p || !G3.ok || !p.m3) return null; const v = p.m3.position.clone().project(G3.cam); return [v.x, v.y, G3.cam.position.x, G3.cam.position.z]; },
   audioGain: () => audio ? audio.m.gain.value : null,
   audioProbe: () => { if (!audio) return null; const t0 = performance.now(), out = {}; for (const k in ENG) { const b = engLoop(ENG[k], Math.round(ENG[k].red * .72)), d = b.getChannelData(0); let rms = 0; for (let i = 0; i < d.length; i++) rms += d[i] * d[i]; out[k] = +Math.sqrt(rms / d.length).toFixed(3); } out.ms = Math.round(performance.now() - t0); out.voices = ['pv', 'pv2', 'rv'].filter(k => audio[k]).map(k => k + ':' + audio[k].sp.k + ':' + Math.round(audio[k].rpm)); return out; },
   spawn: k => spawnHazard(k),
