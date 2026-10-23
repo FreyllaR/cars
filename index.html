@@ -251,8 +251,6 @@ tr.me td{color:var(--accent)}
 .item-slot .emo{font-size:30px;line-height:1;display:block;filter:drop-shadow(0 2px 2px rgba(0,0,0,.4))}
 .item-slot .ic-n{position:absolute;left:-6px;top:-6px;min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:var(--accent);color:var(--accent-ink);font:800 11px/18px var(--body);font-style:normal;text-align:center}
 #flash{position:fixed;inset:0;z-index:9;pointer-events:none;background:#fff;opacity:0;transition:opacity .08s}
-#ink{position:fixed;inset:0;z-index:9;pointer-events:none;opacity:0;transition:opacity .25s;
-  background:radial-gradient(circle at 30% 40%,rgba(20,6,34,.95) 0 9%,transparent 10%),radial-gradient(circle at 62% 55%,rgba(20,6,34,.95) 0 13%,transparent 14%),radial-gradient(circle at 48% 30%,rgba(20,6,34,.9) 0 6%,transparent 7%),radial-gradient(circle at 70% 25%,rgba(20,6,34,.9) 0 5%,transparent 6%),radial-gradient(circle at 25% 70%,rgba(20,6,34,.9) 0 7%,transparent 8%)}
 .modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:10px}
 .modes button{display:grid;grid-template-columns:44px minmax(0,1fr);grid-template-rows:auto auto;column-gap:12px;row-gap:2px;align-items:center;min-height:76px;padding:12px 14px;text-align:left;background:var(--panel-2);border:1px solid var(--line);border-radius:12px;transition:border-color .15s,background .15s,transform .1s}
 .modes button:hover{border-color:#4a5161}
@@ -503,7 +501,7 @@ body.touchmode.steer-btn .hud-bl{bottom:calc(env(safe-area-inset-bottom,0px) + 1
   <div id="hint" class="hint" hidden><span class="label" data-t="tutLabel">Подсказка</span><p id="hintText"></p></div>
 </div>
 
-<div id="flash" aria-hidden="true"></div><div id="ink" aria-hidden="true"></div>
+<div id="flash" aria-hidden="true"></div>
 <div id="touch" class="touch" hidden>
   <div id="joy" class="joy-zone">
     <div id="joyBase" class="joy-base" hidden><i id="joyKnob"></i></div>
@@ -934,33 +932,13 @@ const STR = {
     'item.boost': 'Ускорение', 'item.boost.d': 'Рывок вперёд',
     'item.shield': 'Щит', 'item.shield.d': 'Защищает от одного удара',
     'item.oil': 'Масло', 'item.oil.d': 'Лужа позади: соперников закрутит',
-    'item.triple': 'Тройное ускорение', 'item.triple.d': 'Три рывка подряд',
-    'item.repair': 'Ремонт', 'item.repair.d': 'Корпус снова целый',
     'item.peel': 'Банан', 'item.peel.d': 'Кожура позади',
-    'item.spikes': 'Шипы', 'item.spikes.d': 'Тормозят и царапают тех, кто сзади',
-    'item.glue': 'Клей', 'item.glue.d': 'Липкая лужа: вязнут все, кто заедет',
-    'item.mine': 'Мина', 'item.mine.d': 'Взрывается, когда кто-то подъедет',
-    'item.icepatch': 'Ледяная лужа', 'item.icepatch.d': 'Скользко: соперники теряют сцепление',
-    'item.fakebox': 'Ложная коробка', 'item.fakebox.d': 'Похожа на настоящую, но закручивает',
-    'item.cones': 'Конусы', 'item.cones.d': 'Три конуса поперёк дороги позади',
-    'item.ink': 'Чернила', 'item.ink.d': 'Облако каракатицы: кто заедет — ничего не видит',
     'item.rocket': 'Ракета', 'item.rocket.d': 'Летит прямо и сбивает первого на пути',
     'item.homing': 'Самонаводящаяся ракета', 'item.homing.d': 'Сама находит того, кто впереди',
-    'item.freeze': 'Заморозка', 'item.freeze.d': 'Ледяной луч в машину впереди',
     'item.lightning': 'Молния', 'item.lightning.d': 'Уменьшает всех, кто впереди',
-    'item.emp': 'ЭМИ-волна', 'item.emp.d': 'Гасит нитро и ускорения у всех рядом',
-    'item.tornado': 'Смерч', 'item.tornado.d': 'Пускает смерч вперёд по трассе',
-    'item.slowmo': 'Замедление', 'item.slowmo.d': 'Все соперники едут медленнее 3 секунды',
-    'item.horn': 'Гудок', 'item.horn.d': 'Расталкивает всех вокруг',
-    'item.magnet': 'Магнит', 'item.magnet.d': 'Тянет к машине впереди',
-    'item.swap': 'Обмен', 'item.swap.d': 'Меняет вас местами с тем, кто впереди',
-    'item.teleport': 'Телепорт', 'item.teleport.d': 'Перенос на 300 метров вперёд',
-    'item.jump': 'Прыжок', 'item.jump.d': 'Высокий прыжок: над лужами и ловушками',
     'item.ghost': 'Призрак', 'item.ghost.d': 'Проезжаете сквозь машины и ловушки',
     'item.star': 'Звезда', 'item.star.d': 'Неуязвимость и скорость на 5 секунд',
     'item.mega': 'Гриб-великан', 'item.mega.d': 'Вы огромный и всех расталкиваете',
-    'item.grip': 'Цепкие шины', 'item.grip.d': 'Идеальное сцепление и без потерь на траве',
-    'item.coins': 'Мешок монет', 'item.coins.d': '+15 очков',
     'feat.ramp': 'Трамплин', 'feat.ramp.d': 'Прыжок на скорости',
     'feat.boost': 'Ускоритель', 'feat.boost.d': 'Жёлтые стрелки на асфальте',
     'feat.mud': 'Грязь', 'feat.mud.d': 'Вязнешь и скользишь',
@@ -982,20 +960,19 @@ const STR = {
     'hz.ufo': 'НЛО!', 'hz.ufo.sub': 'Не заезжайте под луч', 'hz.ufo.hit': 'Вас похищают!',
     'hz.lightning': 'Гроза!', 'hz.lightning.sub': 'Объезжайте жёлтый круг', 'hz.lightning.hit': 'Удар молнии!',
     'hz.train.hit': 'Поезд! Ждите', coinsGot: 'монет: {n}',
-    'fx.spin': 'Попадание!', 'fx.freeze': 'Заморожен!', 'fx.tiny': 'Вас уменьшили!', 'fx.emp': 'ЭМИ: нитро погасло', 'fx.slow': 'Вас замедлили!',
-    'fx.swap': 'С вами поменялись местами!', 'fx.spikes': 'Шипы!', 'fx.ink': 'Чернила! Ничего не видно',
+    'fx.spin': 'Попадание!', 'fx.tiny': 'Вас уменьшили!',
     hItems: 'Предметы из коробок', hFeats: 'На трассах',
     'map.meadow': 'Цветочный луг', 'map.meadow.note': 'Ускорители на прямых, коровы на дороге', 'map.meadow.chip': 'Коровы',
     'map.autumn': 'Осенний лес', 'map.autumn.note': 'Листопад, грязь в поворотах и тюки сена', 'map.autumn.chip': 'Грязь',
     'map.farm': 'Ферма', 'map.farm.note': 'Лежачие полицейские и тюки на обочине', 'map.farm.chip': 'Тюки сена',
-    'map.dunes': 'Барханы', 'map.dunes.note': 'Песок в поворотах, ветер и смерчи', 'map.dunes.chip': 'Смерчи',
+    'map.dunes': 'Барханы', 'map.dunes.note': 'Песок в поворотах, трамплины и смерчи', 'map.dunes.chip': 'Смерчи',
     'map.mesa': 'Красные скалы', 'map.mesa.note': 'Трамплины-площадки и удары молний', 'map.mesa.chip': 'Молнии',
     'map.oasis': 'Оазис', 'map.oasis.note': 'Брод через ручей и горячие гейзеры', 'map.oasis.chip': 'Гейзеры',
     'map.glacier': 'Ледник', 'map.glacier.note': 'Ледяные участки и марш пингвинов', 'map.glacier.chip': 'Пингвины',
     'map.alpine': 'Альпийский серпантин', 'map.alpine.note': 'Шлагбаум с поездом и лёд на спусках', 'map.alpine.chip': 'Поезд',
     'map.polar': 'Полярная ночь', 'map.polar.note': 'Северное сияние, лёд и йети в темноте', 'map.polar.chip': 'Ночь',
     'map.neon': 'Неоновое шоссе', 'map.neon.note': 'Широкие проспекты, ускорители и НЛО', 'map.neon.chip': 'НЛО',
-    'map.harbor': 'Ночной порт', 'map.harbor.note': 'Бочки, лужи и товарный поезд', 'map.harbor.chip': 'Бочки',
+    'map.harbor': 'Ночной порт', 'map.harbor.note': 'Бочки у поворотов и товарный поезд', 'map.harbor.chip': 'Бочки',
     'map.raincity': 'Дождливый мегаполис', 'map.raincity.note': 'Всегда дождь: лужи и молнии', 'map.raincity.chip': 'Ливень',
     'map.ashlands': 'Пепельные равнины', 'map.ashlands.note': 'Лава за краем, бомбы и гейзеры', 'map.ashlands.chip': 'Лава',
     'map.inferno': 'Огненное кольцо', 'map.inferno.note': 'Трамплины над лавой и потоки огня', 'map.inferno.chip': 'Трамплины',
@@ -1133,33 +1110,13 @@ const STR = {
     'item.boost': 'Boost', 'item.boost.d': 'A quick burst forward',
     'item.shield': 'Shield', 'item.shield.d': 'Blocks one hit',
     'item.oil': 'Oil', 'item.oil.d': 'A slick behind you spins rivals out',
-    'item.triple': 'Triple boost', 'item.triple.d': 'Three bursts in a row',
-    'item.repair': 'Repair', 'item.repair.d': 'Your hull is whole again',
     'item.peel': 'Banana', 'item.peel.d': 'A peel behind you',
-    'item.spikes': 'Spikes', 'item.spikes.d': 'Slow and scratch whoever is behind',
-    'item.glue': 'Glue', 'item.glue.d': 'A sticky puddle that bogs cars down',
-    'item.mine': 'Mine', 'item.mine.d': 'Goes off when someone comes close',
-    'item.icepatch': 'Ice puddle', 'item.icepatch.d': 'Slippery: rivals lose grip',
-    'item.fakebox': 'Fake box', 'item.fakebox.d': 'Looks like an item box, spins you out',
-    'item.cones': 'Cones', 'item.cones.d': 'Three cones across the road behind you',
-    'item.ink': 'Ink', 'item.ink.d': 'A squid cloud: drive in and you see nothing',
     'item.rocket': 'Rocket', 'item.rocket.d': 'Flies straight and hits the first car',
     'item.homing': 'Homing rocket', 'item.homing.d': 'Finds the car ahead by itself',
-    'item.freeze': 'Freeze', 'item.freeze.d': 'An ice beam at the car ahead',
     'item.lightning': 'Lightning', 'item.lightning.d': 'Shrinks everyone ahead of you',
-    'item.emp': 'EMP wave', 'item.emp.d': 'Kills nitro and boosts nearby',
-    'item.tornado': 'Twister', 'item.tornado.d': 'Sends a twister down the track',
-    'item.slowmo': 'Slow-mo', 'item.slowmo.d': 'All rivals drive slower for 3 seconds',
-    'item.horn': 'Horn', 'item.horn.d': 'Shoves everyone around you',
-    'item.magnet': 'Magnet', 'item.magnet.d': 'Pulls you toward the car ahead',
-    'item.swap': 'Swap', 'item.swap.d': 'Swaps places with the car ahead',
-    'item.teleport': 'Teleport', 'item.teleport.d': 'Warps you 300 m down the road',
-    'item.jump': 'Jump', 'item.jump.d': 'A high jump over puddles and traps',
     'item.ghost': 'Ghost', 'item.ghost.d': 'Drive through cars and traps',
     'item.star': 'Star', 'item.star.d': 'Invincible and faster for 5 seconds',
     'item.mega': 'Mega mushroom', 'item.mega.d': 'You are huge and shove everyone',
-    'item.grip': 'Sticky tyres', 'item.grip.d': 'Perfect grip, no grass slowdown',
-    'item.coins': 'Bag of coins', 'item.coins.d': '+15 points',
     'feat.ramp': 'Ramp', 'feat.ramp.d': 'Jump at speed',
     'feat.boost': 'Boost pad', 'feat.boost.d': 'Yellow arrows on the road',
     'feat.mud': 'Mud', 'feat.mud.d': 'Sticky and slippery',
@@ -1181,20 +1138,19 @@ const STR = {
     'hz.ufo': 'UFO!', 'hz.ufo.sub': 'Stay out of the beam', 'hz.ufo.hit': 'You are being abducted!',
     'hz.lightning': 'Storm!', 'hz.lightning.sub': 'Avoid the yellow circle', 'hz.lightning.hit': 'Struck by lightning!',
     'hz.train.hit': 'Train! Wait for it', coinsGot: 'coins: {n}',
-    'fx.spin': 'Hit!', 'fx.freeze': 'Frozen!', 'fx.tiny': 'You got shrunk!', 'fx.emp': 'EMP: nitro is out', 'fx.slow': 'You got slowed!',
-    'fx.swap': 'Someone swapped places with you!', 'fx.spikes': 'Spikes!', 'fx.ink': 'Ink! You cannot see',
+    'fx.spin': 'Hit!', 'fx.tiny': 'You got shrunk!',
     hItems: 'Items from boxes', hFeats: 'On the tracks',
     'map.meadow': 'Flower Meadow', 'map.meadow.note': 'Boost pads on the straights, cows on the road', 'map.meadow.chip': 'Cows',
     'map.autumn': 'Autumn Forest', 'map.autumn.note': 'Falling leaves, mud in the bends and hay bales', 'map.autumn.chip': 'Mud',
     'map.farm': 'The Farm', 'map.farm.note': 'Speed bumps and bales along the edge', 'map.farm.chip': 'Hay bales',
-    'map.dunes': 'Sand Dunes', 'map.dunes.note': 'Sand in the corners, wind and twisters', 'map.dunes.chip': 'Twisters',
+    'map.dunes': 'Sand Dunes', 'map.dunes.note': 'Sand in the corners, ramps and twisters', 'map.dunes.chip': 'Twisters',
     'map.mesa': 'Red Rocks', 'map.mesa.note': 'Jump pads and lightning strikes', 'map.mesa.chip': 'Lightning',
     'map.oasis': 'The Oasis', 'map.oasis.note': 'A water crossing and hot geysers', 'map.oasis.chip': 'Geysers',
     'map.glacier': 'Glacier', 'map.glacier.note': 'Ice patches and marching penguins', 'map.glacier.chip': 'Penguins',
     'map.alpine': 'Alpine Hairpins', 'map.alpine.note': 'A level crossing with a train and icy descents', 'map.alpine.chip': 'Train',
     'map.polar': 'Polar Night', 'map.polar.note': 'Northern lights, ice and a yeti in the dark', 'map.polar.chip': 'Night',
     'map.neon': 'Neon Highway', 'map.neon.note': 'Wide avenues, boost pads and a UFO', 'map.neon.chip': 'UFO',
-    'map.harbor': 'Night Harbour', 'map.harbor.note': 'Barrels, puddles and a freight train', 'map.harbor.chip': 'Barrels',
+    'map.harbor': 'Night Harbour', 'map.harbor.note': 'Barrels by the corners and a freight train', 'map.harbor.chip': 'Barrels',
     'map.raincity': 'Rainy Metropolis', 'map.raincity.note': 'It always rains: puddles and lightning', 'map.raincity.chip': 'Downpour',
     'map.ashlands': 'Ash Plains', 'map.ashlands.note': 'Lava past the edge, bombs and geysers', 'map.ashlands.chip': 'Lava',
     'map.inferno': 'Ring of Fire', 'map.inferno.note': 'Ramps over lava and rivers of fire', 'map.inferno.chip': 'Ramps',
@@ -1302,53 +1258,53 @@ const DIFFS = [
 const PLACE_PTS = [100, 60, 35, 20, 10], LAP_K = { 1: .5, 3: 1, 5: 1.6 };
 
 const MAPS = [
-  { id: 'valley', feats: ['boost', 'coins'], grip: 10, offMul: .5, offDrag: 1.4, width: 170, margin: 95, aLat: 820, deco: 'valley', seed: 11,
+  { id: 'valley', feats: ['boost'], grip: 10, offMul: .5, offDrag: 1.4, width: 170, margin: 95, aLat: 820, deco: 'valley', seed: 11,
     c: { ground: '#3e7a34', speck: '#4a8a3e', speck2: '#356d2d', barrier: '#ece6d6', barrier2: '#c8342b', asphalt: '#3b3e45', curbA: '#d6352b', curbB: '#f3efe6', line: 'rgba(255,255,255,.5)', skid: 'rgba(18,18,20,.32)', dust: '120,90,50' },
     pts: [[400,1200],[400,600],[700,350],[1200,400],[1500,700],[1900,500],[2400,500],[2700,800],[2600,1300],[2100,1450],[1700,1300],[1300,1550],[800,1650]] },
-  { id: 'canyon', feats: ['sand', 'jump'], grip: 7.5, offMul: .55, offDrag: 1.2, width: 170, margin: 105, aLat: 720, deco: 'desert', seed: 23,
+  { id: 'canyon', feats: ['sand'], grip: 7.5, offMul: .55, offDrag: 1.2, width: 170, margin: 105, aLat: 720, deco: 'desert', seed: 23,
     c: { ground: '#d1a463', speck: '#c49553', speck2: '#ddb676', barrier: '#7d5230', barrier2: '#f0e2c4', asphalt: '#4a4440', curbA: '#c2452d', curbB: '#f1e6cf', line: 'rgba(255,240,210,.55)', skid: 'rgba(40,25,15,.32)', dust: '214,176,112' },
     pts: [[1500,300],[2800,300],[3000,500],[2800,700],[1200,800],[1000,1000],[1200,1200],[2800,1250],[3000,1500],[2800,1750],[400,1750],[200,1500],[200,500],[300,300]] },
-  { id: 'pass', feats: ['coins', 'wind'], grip: 2.6, offMul: .5, offDrag: 1.5, width: 180, margin: 95, aLat: 420, deco: 'snow', seed: 37,
+  { id: 'pass', feats: ['coins'], grip: 2.6, offMul: .5, offDrag: 1.5, width: 180, margin: 95, aLat: 420, deco: 'snow', seed: 37,
     c: { ground: '#e4ecf2', speck: '#d3dee7', speck2: '#f6fafc', barrier: '#3f6f9a', barrier2: '#f6fafc', asphalt: '#5d6a76', curbA: '#2f6fb0', curbB: '#f6fafc', line: 'rgba(255,255,255,.6)', skid: 'rgba(30,45,60,.26)', dust: '240,246,250' },
     pts: [[500,400],[1100,250],[1700,450],[2000,900],[2600,1000],[2800,1500],[2300,1900],[1600,1700],[1200,1250],[700,1500],[350,1100]] },
-  { id: 'city', feats: ['boost', 'bumps'], grip: 11, offMul: .6, offDrag: 1.2, width: 160, margin: 26, aLat: 880, deco: 'city', night: true, seed: 41,
+  { id: 'city', feats: ['boost'], grip: 11, offMul: .6, offDrag: 1.2, width: 160, margin: 26, aLat: 880, deco: 'city', night: true, seed: 41,
     c: { ground: '#0c0f1c', speck: '#11152a', speck2: '#090b16', barrier: '#2d2650', barrier2: '#ff3fb4', shoulder: '#1c2134', asphalt: '#252a3e', curbA: '#16d6ff', curbB: '#1b2034', line: 'rgba(255,214,110,.6)', skid: 'rgba(0,0,0,.45)', dust: '120,130,160' },
     pts: [[400,1500],[400,800],[400,500],[500,400],[900,400],[1300,400],[1400,500],[1400,900],[1500,1000],[1850,1000],[2200,1000],[2300,900],[2300,450],[2400,350],[2900,350],[3000,450],[3000,1100],[3000,1700],[2900,1800],[1700,1800],[500,1800],[400,1700]] },
-  { id: 'volcano', feats: ['jump', 'boost'], grip: 9, offMul: .6, offDrag: 1.3, width: 165, margin: 34, aLat: 760, deco: 'volcano', lava: true, seed: 53,
+  { id: 'volcano', feats: ['jump'], grip: 9, offMul: .6, offDrag: 1.3, width: 165, margin: 34, aLat: 760, deco: 'volcano', lava: true, seed: 53,
     c: { ground: '#b5321a', speck: '#ff7a1f', speck2: '#6e180b', barrier: 'rgba(255,190,80,.5)', shoulder: '#2a2120', asphalt: '#38302e', curbA: '#ffb02a', curbB: '#2a2120', line: 'rgba(255,190,90,.45)', skid: 'rgba(0,0,0,.4)', dust: '255,140,40' },
     pts: [[600,300],[1400,250],[1800,600],[1500,1000],[1900,1300],[2600,1100],[2900,1500],[2500,1950],[1600,1900],[1000,1600],[500,1800],[250,1300],[500,900]] },
-  { id: 'beach', feats: ['water', 'coins'], grip: 9, offMul: .6, offDrag: 1.2, width: 175, margin: 100, aLat: 800, deco: 'beach', seed: 61,
+  { id: 'beach', feats: ['water'], grip: 9, offMul: .6, offDrag: 1.2, width: 175, margin: 100, aLat: 800, deco: 'beach', seed: 61,
     c: { ground: '#efd8a0', speck: '#e3c98a', speck2: '#f7e6b8', barrier: '#ffffff', barrier2: '#2e7cf6', asphalt: '#4b4d55', curbA: '#2e9cf6', curbB: '#ffffff', line: 'rgba(255,255,255,.6)', skid: 'rgba(60,40,20,.3)', dust: '230,205,150' },
     pts: [[500,1300],[400,800],[600,400],[1100,300],[1600,450],[2000,350],[2600,400],[2900,750],[2800,1200],[2400,1500],[1800,1450],[1400,1700],[900,1700]] },
-  { id: 'jungle', feats: ['mud', 'jump'], grip: 8.5, offMul: .45, offDrag: 1.7, width: 165, margin: 85, aLat: 760, deco: 'jungle', seed: 71,
+  { id: 'jungle', feats: ['mud'], grip: 8.5, offMul: .45, offDrag: 1.7, width: 165, margin: 85, aLat: 760, deco: 'jungle', seed: 71,
     c: { ground: '#2f5a2a', speck: '#3a6b30', speck2: '#244a20', barrier: '#6b4526', barrier2: '#8a5a30', asphalt: '#4a4640', curbA: '#e0b020', curbB: '#2a2a2a', line: 'rgba(255,230,150,.5)', skid: 'rgba(20,15,10,.35)', dust: '90,70,40' },
     pts: [[500,400],[1000,300],[1400,550],[1300,950],[1700,1200],[2200,1000],[2500,600],[2900,700],[3000,1200],[2700,1700],[2100,1850],[1500,1650],[1000,1850],[500,1650],[300,1100]] },
-  { id: 'space', feats: ['lowg', 'coins'], grip: 10, offMul: .55, offDrag: 1.3, width: 175, margin: 60, aLat: 820, deco: 'space', seed: 83, gravity: 520, ramps: [.13, .43, .68],
+  { id: 'space', feats: [], grip: 10, offMul: .55, offDrag: 1.3, width: 175, margin: 60, aLat: 820, deco: 'space', seed: 83, gravity: 520, ramps: [.13, .43, .68],
     c: { ground: '#2a2f3e', speck: '#323849', speck2: '#22263a', barrier: '#c9ced8', barrier2: '#ff6a1f', shoulder: '#1c2030', asphalt: '#3a3f52', curbA: '#ff6a1f', curbB: '#e8ecf4', line: 'rgba(140,200,255,.65)', skid: 'rgba(0,0,0,.4)', dust: '170,190,230' },
     pts: [[600,400],[1600,350],[2600,400],[3000,800],[2900,1300],[2400,1650],[1600,1700],[800,1650],[350,1300],[300,800]] },
   // 22 more tracks: each borrows one of the eight looks (th) and changes palette, sky, trees, weather and what happens on it
-  {id: 'meadow', th: 'valley', deco: 'valley', grip: 10, offMul: 0.5, offDrag: 1.4, width: 170, margin: 95, aLat: 820, seed: 100, hz: ['cows','ducks'], feats: ['boost','coins','jump'], flowers: true, c: {ground: '#4f8a3a', speck: '#f2d14b', speck2: '#e57aa8', barrier: '#ece6d6', barrier2: '#c8342b', asphalt: '#3b3e45', curbA: '#e5372b', curbB: '#f3efe6', line: 'rgba(255,255,255,.5)', skid: 'rgba(18,18,20,.32)', dust: '120,90,50'}, pts: [[1243,270],[510,306],[331,510],[254,1205],[349,1706],[630,1913],[971,1999],[1379,2031],[1566,1705],[1587,1597],[1878,1375],[2215,1383],[2588,1420],[2861,1265],[2872,1120],[2587,928],[2448,827],[2215,578],[2180,522],[1921,350]]},
-  {id: 'autumn', th: 'valley', deco: 'valley', grip: 10, offMul: 0.5, offDrag: 1.4, width: 170, margin: 95, aLat: 820, seed: 107, hz: ['deer','boar'], feats: ['mud','coins','bales'], leaf: ['#d9822b','#c0461f','#e2b23a'], sky3: {sky: ['#e8a35c','#fbe2c0'], fog: 15782568, sun: 16767392}, hzc: {c: '#8a6a3a', top: '#b0823c'}, c: {ground: '#7a7a36', speck: '#c8742a', speck2: '#9a5a22', barrier: '#ece6d6', barrier2: '#c8342b', asphalt: '#3b3e45', curbA: '#d6352b', curbB: '#f3efe6', line: 'rgba(255,255,255,.5)', skid: 'rgba(18,18,20,.32)', dust: '120,90,50'}, pts: [[1523,1917],[2539,1936],[2858,1703],[2907,1458],[2832,1088],[2583,849],[2410,840],[2249,1099],[2210,1197],[2017,1476],[1585,1388],[1213,1350],[961,1101],[925,888],[994,563],[737,272],[554,233],[297,530],[362,1127],[269,1781],[516,1991]]},
-  {id: 'farm', th: 'valley', deco: 'farm', grip: 10, offMul: 0.5, offDrag: 1.4, width: 170, margin: 95, aLat: 820, seed: 114, hz: ['cows','ducks'], feats: ['bales','mud','bumps'], c: {ground: '#6a9a3e', speck: '#c9b46a', speck2: '#5a8a34', barrier: '#f3efe6', barrier2: '#8a5a30', asphalt: '#3b3e45', curbA: '#c8342b', curbB: '#f3efe6', line: 'rgba(255,255,255,.5)', skid: 'rgba(18,18,20,.32)', dust: '120,90,50'}, pts: [[1308,1481],[2000,1474],[2154,1594],[2200,1723],[2431,1919],[2905,2019],[3276,2002],[3474,1709],[3521,1433],[3480,1119],[3259,904],[3068,902],[2895,684],[2803,529],[2607,314],[1557,349],[605,306],[319,610],[267,902],[348,1229],[494,1461]]},
-  {id: 'dunes', th: 'canyon', deco: 'desert', grip: 7.5, offMul: 0.55, offDrag: 1.2, width: 170, margin: 105, aLat: 720, seed: 121, hz: ['tumble','tornado'], feats: ['sand','ramps','wind'], sky3: {sky: ['#d9a15a','#fbe8c4'], fog: 16047276}, c: {ground: '#e4c07c', speck: '#d7b06a', speck2: '#efd296', barrier: '#7d5230', barrier2: '#f0e2c4', asphalt: '#4a4440', curbA: '#c2452d', curbB: '#f1e6cf', line: 'rgba(255,240,210,.55)', skid: 'rgba(40,25,15,.32)', dust: '214,176,112'}, pts: [[1633,1969],[587,1976],[237,1656],[248,1470],[280,1140],[589,890],[751,900],[946,1149],[973,1234],[1164,1464],[1588,1392],[1943,1454],[2154,1132],[2193,825],[2209,521],[2432,331],[2883,265],[3271,265],[3522,573],[3485,851],[3441,1099],[3241,1364],[3109,1423],[2883,1635],[2797,1704],[2617,1926]], ramps: [0.35,0.72]},
-  {id: 'mesa', th: 'canyon', deco: 'desert', grip: 7.5, offMul: 0.55, offDrag: 1.2, width: 170, margin: 105, aLat: 720, seed: 128, hz: ['boulder','lightning'], feats: ['jump','sand','boost'], rock: ['#8a3e22','#b45a36'], sky3: {sky: ['#c8603a','#f8c89a'], fog: 15247480}, hzc: {c: '#9a3e22', top: '#c4643a'}, c: {ground: '#b85a34', speck: '#a44a28', speck2: '#cc7448', barrier: '#5a2e1a', barrier2: '#f0e2c4', asphalt: '#4a3a36', curbA: '#c2452d', curbB: '#f1e6cf', line: 'rgba(255,240,210,.55)', skid: 'rgba(40,25,15,.32)', dust: '214,176,112'}, pts: [[1920,236],[1195,337],[962,533],[912,685],[697,858],[520,867],[353,1135],[269,1485],[363,1718],[581,2007],[1216,2026],[1948,2038],[2167,1784],[2288,1602],[2420,1445],[2589,1353],[2901,1141],[2845,908],[2837,562],[2531,309]]},
-  {id: 'oasis', th: 'canyon', deco: 'oasis', grip: 7.5, offMul: 0.55, offDrag: 1.2, width: 170, margin: 105, aLat: 720, seed: 135, hz: ['tumble','geyser'], feats: ['water','boost','coins'], c: {ground: '#dcbc7c', speck: '#7aa04a', speck2: '#e8cf98', barrier: '#7d5230', barrier2: '#f0e2c4', asphalt: '#4a4440', curbA: '#c2452d', curbB: '#f1e6cf', line: 'rgba(255,240,210,.55)', skid: 'rgba(40,25,15,.32)', dust: '214,176,112'}, pts: [[1885,236],[3174,336],[3437,540],[3550,926],[3434,1160],[3194,1418],[2800,1358],[2518,1356],[2278,1193],[2210,1042],[2012,808],[1895,818],[1559,1163],[1543,1475],[1579,1741],[1316,2025],[920,2042],[604,1956],[358,1696],[321,1163],[231,615],[563,311]]},
-  {id: 'glacier', th: 'pass', deco: 'snow', grip: 3.2, offMul: 0.5, offDrag: 1.5, width: 180, margin: 95, aLat: 460, seed: 142, hz: ['penguins','snowball'], feats: ['ice','jump','coins'], c: {ground: '#d8ecf6', speck: '#bfe0f0', speck2: '#f4fbff', barrier: '#3f6f9a', barrier2: '#f6fafc', asphalt: '#6a7a88', curbA: '#3aa0d8', curbB: '#f6fafc', line: 'rgba(255,255,255,.6)', skid: 'rgba(30,45,60,.26)', dust: '240,246,250'}, pts: [[1870,1988],[524,2030],[265,1805],[330,1607],[628,1406],[876,1358],[1368,1431],[1577,1096],[1595,863],[1630,509],[1870,314],[2495,328],[3212,315],[3482,474],[3495,608],[3254,792],[3144,829],[2872,1090],[2856,1194],[3048,1381],[3311,1405],[3515,1665],[3484,1801],[3225,2036]]},
-  {id: 'alpine', th: 'pass', deco: 'snow', grip: 4, offMul: 0.5, offDrag: 1.5, width: 180, margin: 95, aLat: 520, seed: 149, hz: ['yeti','cows'], feats: ['ice','bumps','train'], c: {ground: '#e8eef2', speck: '#d3dee7', speck2: '#f6fafc', barrier: '#3f6f9a', barrier2: '#f6fafc', asphalt: '#5d6a76', curbA: '#d6352b', curbB: '#f6fafc', line: 'rgba(255,255,255,.6)', skid: 'rgba(30,45,60,.26)', dust: '240,246,250'}, pts: [[1936,1935],[1167,1930],[957,1774],[929,1665],[739,1446],[543,1443],[260,1217],[302,920],[268,586],[540,315],[1218,341],[1940,257],[2217,539],[2228,848],[2180,1229],[2460,1396],[2623,1400],[2844,1632],[2879,1756],[2655,2038]]},
-  {id: 'polar', th: 'pass', deco: 'snow', grip: 3.4, offMul: 0.5, offDrag: 1.5, width: 180, margin: 95, aLat: 470, seed: 156, hz: ['penguins','yeti'], feats: ['ice','boost','ramps'], dark: true, aurora: true, c: {ground: '#cfdcea', speck: '#b8c8da', speck2: '#f6fafc', barrier: '#3f6f9a', barrier2: '#f6fafc', asphalt: '#4a5866', curbA: '#7a5cff', curbB: '#f6fafc', line: 'rgba(255,255,255,.6)', skid: 'rgba(30,45,60,.26)', dust: '240,246,250'}, pts: [[2246,1957],[1202,2009],[908,1723],[910,1606],[1241,1412],[1546,1446],[1930,1403],[2193,1266],[2185,1118],[2020,891],[1770,906],[1561,685],[1539,559],[1902,293],[2542,342],[3247,299],[3561,490],[3468,1126],[3487,1783],[3193,2027]], ramps: [0.35,0.72]},
-  {id: 'neon', th: 'city', deco: 'city', grip: 11, offMul: 0.6, offDrag: 1.2, width: 180, margin: 32, aLat: 880, night: true, seed: 163, hz: ['courier','ufo'], feats: ['boost','ramps','coins'], c: {ground: '#0a0618', speck: '#140a2a', speck2: '#090b16', barrier: '#2d2650', barrier2: '#16d6ff', asphalt: '#252a3e', curbA: '#ff3fb4', curbB: '#16d6ff', line: 'rgba(255,63,180,.7)', skid: 'rgba(0,0,0,.45)', dust: '120,130,160', shoulder: '#1c2134'}, pts: [[2220,1980],[1200,1980],[940,1756],[940,1644],[1196,1420],[1324,1420],[1580,1160],[1580,860],[1580,560],[1840,300],[2540,300],[3240,300],[3500,524],[3500,636],[3244,860],[3116,860],[2860,1084],[2860,1196],[3116,1420],[3244,1420],[3500,1644],[3500,1756],[3240,1980]], ramps: [0.35,0.72]},
-  {id: 'harbor', th: 'city', deco: 'city', grip: 11, offMul: 0.6, offDrag: 1.2, width: 160, margin: 26, aLat: 880, night: true, seed: 170, hz: ['cones','courier'], feats: ['bales','train','water'], barrels: true, c: {ground: '#0e1620', speck: '#142030', speck2: '#090b16', barrier: '#2d2650', barrier2: '#ffb21e', asphalt: '#252a3e', curbA: '#ffb21e', curbB: '#1b2430', line: 'rgba(255,214,110,.6)', skid: 'rgba(0,0,0,.45)', dust: '120,130,160', shoulder: '#1c2134'}, pts: [[2220,300],[3240,300],[3500,524],[3500,636],[3244,860],[3116,860],[2860,1120],[2860,1420],[2860,1720],[2600,1980],[2220,1980],[1840,1980],[1580,1720],[1580,1420],[1580,1120],[1324,860],[1196,860],[940,636],[940,524],[1200,300]]},
-  {id: 'raincity', th: 'city', deco: 'city', grip: 11, offMul: 0.6, offDrag: 1.2, width: 160, margin: 26, aLat: 880, night: true, seed: 177, hz: ['cones','lightning'], feats: ['water','boost','bumps'], wx: 'rain', c: {ground: '#10141c', speck: '#11152a', speck2: '#090b16', barrier: '#2d2650', barrier2: '#7cff6b', asphalt: '#252a3e', curbA: '#7cff6b', curbB: '#1b2034', line: 'rgba(255,214,110,.6)', skid: 'rgba(0,0,0,.45)', dust: '120,130,160', shoulder: '#1c2134'}, pts: [[2220,1980],[3240,1980],[3500,1756],[3500,1644],[3244,1420],[3116,1420],[2860,1196],[2860,1084],[3116,860],[3244,860],[3500,636],[3500,524],[3240,300],[2220,300],[1200,300],[940,560],[940,1140],[940,1720],[1200,1980]]},
-  {id: 'ashlands', th: 'volcano', deco: 'volcano', grip: 9, offMul: 0.6, offDrag: 1.3, width: 165, margin: 34, aLat: 760, lava: true, seed: 184, hz: ['bomb','geyser'], feats: ['boost','jump'], sky3: {sky: ['#2a1a18','#6a3a2a'], fog: 4860448}, c: {ground: '#5a2416', speck: '#ff6a1a', speck2: '#2a120c', barrier: 'rgba(255,190,80,.5)', barrier2: '#2a2120', asphalt: '#2e2826', curbA: '#ffb02a', curbB: '#2a2120', line: 'rgba(255,190,90,.45)', skid: 'rgba(0,0,0,.4)', dust: '255,140,40', shoulder: '#2a2120'}, pts: [[1840,348],[3220,284],[3460,586],[3519,797],[3489,1147],[3228,1404],[2902,1462],[2412,1439],[2187,1255],[2152,1075],[2014,878],[1649,898],[1241,820],[913,1105],[898,1367],[994,1788],[742,1966],[504,1984],[237,1663],[257,1128],[327,497],[616,239]]},
-  {id: 'inferno', th: 'volcano', deco: 'volcano', grip: 9, offMul: 0.6, offDrag: 1.3, width: 165, margin: 34, aLat: 760, lava: true, seed: 191, hz: ['lavaflow','lightning'], feats: ['ramps','boost'], c: {ground: '#c4401c', speck: '#ffb02a', speck2: '#6e180b', barrier: 'rgba(255,190,80,.5)', barrier2: '#2a2120', asphalt: '#38302e', curbA: '#ffb02a', curbB: '#2a2120', line: 'rgba(255,190,90,.45)', skid: 'rgba(0,0,0,.4)', dust: '255,140,40', shoulder: '#2a2120'}, pts: [[2525,1976],[3215,1990],[3544,1767],[3463,1371],[3477,1181],[3217,900],[3160,887],[2903,674],[2825,473],[2639,339],[2475,288],[2214,500],[2179,685],[1950,803],[1780,841],[1576,616],[1519,524],[1393,307],[1189,281],[877,524],[901,792],[961,1224],[1182,1351],[1357,1390],[1572,1669],[1627,1714],[1873,2021]], ramps: [0.35,0.72]},
-  {id: 'tropic', th: 'beach', deco: 'beach', grip: 9, offMul: 0.6, offDrag: 1.2, width: 175, margin: 100, aLat: 800, seed: 198, hz: ['crab','tide'], feats: ['water','coins','jump'], c: {ground: '#f2dfa8', speck: '#e3c98a', speck2: '#f7e6b8', barrier: '#ffffff', barrier2: '#2e7cf6', asphalt: '#4b4d55', curbA: '#ff5fa8', curbB: '#ffffff', line: 'rgba(255,255,255,.6)', skid: 'rgba(60,40,20,.3)', dust: '230,205,150'}, pts: [[1886,1931],[2653,1965],[2813,1726],[2846,1366],[2896,1156],[2650,866],[2166,829],[1810,853],[1604,683],[1562,499],[1386,255],[1240,236],[993,555],[899,649],[670,847],[505,863],[357,1030],[369,1216],[578,1384],[736,1440],[902,1613],[979,1692],[1185,1972]]},
-  {id: 'lagoon', th: 'beach', deco: 'beach', grip: 9, offMul: 0.6, offDrag: 1.2, width: 175, margin: 100, aLat: 800, seed: 205, hz: ['crab','tornado'], feats: ['boost','ramps','water'], sky3: {sky: ['#3ec8e0','#e4fbff'], fog: 14087418}, c: {ground: '#e8d6a0', speck: '#e3c98a', speck2: '#f7e6b8', barrier: '#ffffff', barrier2: '#1fb3a6', asphalt: '#4b4d55', curbA: '#1fb3a6', curbB: '#ffffff', line: 'rgba(255,255,255,.6)', skid: 'rgba(60,40,20,.3)', dust: '230,205,150'}, pts: [[1861,1985],[606,1950],[268,1678],[269,1393],[358,1087],[527,813],[625,798],[964,1053],[987,1204],[1225,1407],[1339,1386],[1550,1204],[1624,1073],[1828,812],[1939,808],[2168,1152],[2231,1249],[2546,1389],[2881,1459],[3306,1453],[3510,1657],[3531,1782],[3276,2027]], ramps: [0.35,0.72]},
-  {id: 'swamp', th: 'jungle', deco: 'swamp', grip: 8.5, offMul: 0.45, offDrag: 1.7, width: 165, margin: 85, aLat: 760, seed: 212, hz: ['geyser','ducks'], feats: ['mud','water','bumps'], wx: 'fog', leaf: ['#3a5a2a','#4a6a2e','#2e4a22'], sky3: {sky: ['#5a6a4a','#b8c4a0'], fog: 9083508}, c: {ground: '#3a4a26', speck: '#4a5a2e', speck2: '#2a3a1c', barrier: '#6b4526', barrier2: '#8a5a30', asphalt: '#3e3c34', curbA: '#e0b020', curbB: '#2a2a2a', line: 'rgba(255,230,150,.5)', skid: 'rgba(20,15,10,.35)', dust: '90,70,40'}, pts: [[298,1112],[367,502],[539,265],[1553,339],[2651,231],[2860,517],[2847,799],[2864,1162],[3158,1411],[3308,1418],[3503,1574],[3454,1770],[3215,1945],[2820,1967],[2525,2015],[2270,1774],[2233,1648],[1923,1395],[1590,1415],[1269,1392],[1000,1588],[946,1746],[721,1962],[624,1972],[325,1698]]},
-  {id: 'temple', th: 'jungle', deco: 'temple', grip: 8.5, offMul: 0.45, offDrag: 1.7, width: 165, margin: 85, aLat: 760, seed: 219, hz: ['banana','boulder'], feats: ['jump','coins','portal'], c: {ground: '#36602e', speck: '#3a6b30', speck2: '#244a20', barrier: '#6b4526', barrier2: '#8a5a30', asphalt: '#4a4640', curbA: '#d6a020', curbB: '#2a2a2a', line: 'rgba(255,230,150,.5)', skid: 'rgba(20,15,10,.35)', dust: '90,70,40'}, pts: [[1915,252],[3289,250],[3567,621],[3485,880],[3558,1201],[3297,1465],[2928,1361],[2546,1476],[2289,1138],[2260,1027],[2028,798],[1786,876],[1605,1104],[1562,1390],[1551,1764],[1358,2024],[931,1959],[576,1941],[360,1672],[328,1129],[290,549],[529,355]]},
-  {id: 'moon', th: 'space', deco: 'moon', grip: 10, offMul: 0.55, offDrag: 1.3, width: 175, margin: 60, aLat: 820, gravity: 430, seed: 226, hz: ['meteor','ufo'], feats: ['lowg','ramps','coins'], rock: ['#6a6c74','#9a9ca4'], hzc: {c: '#6a6c74', top: '#9a9ca4'}, c: {ground: '#8a8c94', speck: '#7a7c84', speck2: '#9a9ca4', barrier: '#c9ced8', barrier2: '#ff6a1f', asphalt: '#4a4c56', curbA: '#ff6a1f', curbB: '#e8ecf4', line: 'rgba(140,200,255,.65)', skid: 'rgba(0,0,0,.4)', dust: '170,190,230', shoulder: '#5a5c64'}, pts: [[2223,255],[1145,309],[881,510],[903,926],[961,1206],[1151,1377],[1334,1353],[1524,1237],[1572,1153],[1816,914],[1966,925],[2178,1086],[2269,1440],[2288,1695],[2464,2012],[2879,2004],[3181,2026],[3508,1756],[3537,1197],[3445,540],[3185,274]], ramps: [0.35,0.72]},
-  {id: 'mars', th: 'space', deco: 'mars', grip: 10, offMul: 0.55, offDrag: 1.3, width: 175, margin: 60, aLat: 820, gravity: 560, seed: 233, hz: ['tornado','meteor'], feats: ['ramps','sand','wind'], rock: ['#8a3e1e','#c46a3a'], sky3: {sky: ['#c4703a','#f0c49a'], fog: 14195306, sun: 16769216, sunI: 1, hs: 16765088, hg: 6958614}, hzc: {c: '#8a3e1e', top: '#c46a3a'}, c: {ground: '#a8502a', speck: '#c06a38', speck2: '#8a3e1e', barrier: '#c9ced8', barrier2: '#ff6a1f', asphalt: '#4a3430', curbA: '#ffb02a', curbB: '#e8ecf4', line: 'rgba(140,200,255,.65)', skid: 'rgba(0,0,0,.4)', dust: '170,190,230', shoulder: '#6a2e16'}, pts: [[1886,333],[1552,593],[1523,640],[1346,857],[979,888],[626,831],[303,1037],[356,1255],[496,1388],[677,1427],[921,1634],[1005,1711],[1141,1962],[1532,1926],[1999,1918],[2287,1697],[2224,1464],[2249,1082],[2539,905],[2613,846],[2790,662],[2810,571],[2570,265],[2233,273]], ramps: [0.35,0.72]},
-  {id: 'station', th: 'space', deco: 'space', grip: 10, offMul: 0.55, offDrag: 1.3, width: 175, margin: 60, aLat: 820, gravity: 520, seed: 240, hz: ['drone','ufo'], feats: ['portal','boost','lowg'], ramps: [0.3,0.7], c: {ground: '#1e2232', speck: '#323849', speck2: '#22263a', barrier: '#c9ced8', barrier2: '#ff6a1f', asphalt: '#3a3f52', curbA: '#16d6ff', curbB: '#e8ecf4', line: 'rgba(22,214,255,.7)', skid: 'rgba(0,0,0,.4)', dust: '170,190,230', shoulder: '#1c2030'}, pts: [[1900,1980],[560,1980],[300,1756],[300,1644],[560,1420],[1260,1420],[1960,1420],[2220,1196],[2220,1084],[1964,860],[1836,860],[1580,636],[1580,524],[1840,300],[2540,300],[3240,300],[3500,560],[3500,1140],[3500,1720],[3240,1980]]},
-  {id: 'haunted', th: 'valley', deco: 'haunted', grip: 10, offMul: 0.5, offDrag: 1.4, width: 170, margin: 95, aLat: 820, seed: 247, hz: ['lightning','boar'], feats: ['bumps','mud','portal'], dark: true, wx: 'fog', leaf: ['#2a2a22','#3a3020','#1e2418'], hzc: {c: '#1e2a22', top: '#2a3a2e'}, c: {ground: '#2a3a26', speck: '#3a4a2a', speck2: '#1e2a1c', barrier: '#5a5a62', barrier2: '#ff7a1a', asphalt: '#2e2e34', curbA: '#ff7a1a', curbB: '#1e1e24', line: 'rgba(255,255,255,.5)', skid: 'rgba(18,18,20,.32)', dust: '120,90,50'}, pts: [[2208,2041],[3209,1949],[3474,1690],[3509,1108],[3541,607],[3257,363],[2876,289],[2468,320],[2205,592],[2170,917],[2192,1114],[1964,1380],[1863,1389],[1599,1189],[1554,925],[1546,553],[1345,355],[1172,322],[885,563],[875,1072],[965,1746],[1259,2000]]},
+  {id: 'meadow', th: 'valley', deco: 'valley', grip: 10, offMul: 0.5, offDrag: 1.4, width: 170, margin: 95, aLat: 820, seed: 100, hz: ['cows','ducks'], feats: ['boost', 'coins'], flowers: true, c: {ground: '#4f8a3a', speck: '#f2d14b', speck2: '#e57aa8', barrier: '#ece6d6', barrier2: '#c8342b', asphalt: '#3b3e45', curbA: '#e5372b', curbB: '#f3efe6', line: 'rgba(255,255,255,.5)', skid: 'rgba(18,18,20,.32)', dust: '120,90,50'}, pts: [[1243,270],[510,306],[331,510],[254,1205],[349,1706],[630,1913],[971,1999],[1379,2031],[1566,1705],[1587,1597],[1878,1375],[2215,1383],[2588,1420],[2861,1265],[2872,1120],[2587,928],[2448,827],[2215,578],[2180,522],[1921,350]]},
+  {id: 'autumn', th: 'valley', deco: 'valley', grip: 10, offMul: 0.5, offDrag: 1.4, width: 170, margin: 95, aLat: 820, seed: 107, hz: ['deer','boar'], feats: ['mud', 'bales'], leaf: ['#d9822b','#c0461f','#e2b23a'], sky3: {sky: ['#e8a35c','#fbe2c0'], fog: 15782568, sun: 16767392}, hzc: {c: '#8a6a3a', top: '#b0823c'}, c: {ground: '#7a7a36', speck: '#c8742a', speck2: '#9a5a22', barrier: '#ece6d6', barrier2: '#c8342b', asphalt: '#3b3e45', curbA: '#d6352b', curbB: '#f3efe6', line: 'rgba(255,255,255,.5)', skid: 'rgba(18,18,20,.32)', dust: '120,90,50'}, pts: [[1523,1917],[2539,1936],[2858,1703],[2907,1458],[2832,1088],[2583,849],[2410,840],[2249,1099],[2210,1197],[2017,1476],[1585,1388],[1213,1350],[961,1101],[925,888],[994,563],[737,272],[554,233],[297,530],[362,1127],[269,1781],[516,1991]]},
+  {id: 'farm', th: 'valley', deco: 'farm', grip: 10, offMul: 0.5, offDrag: 1.4, width: 170, margin: 95, aLat: 820, seed: 114, hz: ['cows','ducks'], feats: ['bales', 'bumps'], c: {ground: '#6a9a3e', speck: '#c9b46a', speck2: '#5a8a34', barrier: '#f3efe6', barrier2: '#8a5a30', asphalt: '#3b3e45', curbA: '#c8342b', curbB: '#f3efe6', line: 'rgba(255,255,255,.5)', skid: 'rgba(18,18,20,.32)', dust: '120,90,50'}, pts: [[1308,1481],[2000,1474],[2154,1594],[2200,1723],[2431,1919],[2905,2019],[3276,2002],[3474,1709],[3521,1433],[3480,1119],[3259,904],[3068,902],[2895,684],[2803,529],[2607,314],[1557,349],[605,306],[319,610],[267,902],[348,1229],[494,1461]]},
+  {id: 'dunes', th: 'canyon', deco: 'desert', grip: 7.5, offMul: 0.55, offDrag: 1.2, width: 170, margin: 105, aLat: 720, seed: 121, hz: ['tumble','tornado'], feats: ['sand'], sky3: {sky: ['#d9a15a','#fbe8c4'], fog: 16047276}, c: {ground: '#e4c07c', speck: '#d7b06a', speck2: '#efd296', barrier: '#7d5230', barrier2: '#f0e2c4', asphalt: '#4a4440', curbA: '#c2452d', curbB: '#f1e6cf', line: 'rgba(255,240,210,.55)', skid: 'rgba(40,25,15,.32)', dust: '214,176,112'}, pts: [[1633,1969],[587,1976],[237,1656],[248,1470],[280,1140],[589,890],[751,900],[946,1149],[973,1234],[1164,1464],[1588,1392],[1943,1454],[2154,1132],[2193,825],[2209,521],[2432,331],[2883,265],[3271,265],[3522,573],[3485,851],[3441,1099],[3241,1364],[3109,1423],[2883,1635],[2797,1704],[2617,1926]], ramps: [0.35,0.72]},
+  {id: 'mesa', th: 'canyon', deco: 'desert', grip: 7.5, offMul: 0.55, offDrag: 1.2, width: 170, margin: 105, aLat: 720, seed: 128, hz: ['boulder','lightning'], feats: ['jump', 'boost'], rock: ['#8a3e22','#b45a36'], sky3: {sky: ['#c8603a','#f8c89a'], fog: 15247480}, hzc: {c: '#9a3e22', top: '#c4643a'}, c: {ground: '#b85a34', speck: '#a44a28', speck2: '#cc7448', barrier: '#5a2e1a', barrier2: '#f0e2c4', asphalt: '#4a3a36', curbA: '#c2452d', curbB: '#f1e6cf', line: 'rgba(255,240,210,.55)', skid: 'rgba(40,25,15,.32)', dust: '214,176,112'}, pts: [[1920,236],[1195,337],[962,533],[912,685],[697,858],[520,867],[353,1135],[269,1485],[363,1718],[581,2007],[1216,2026],[1948,2038],[2167,1784],[2288,1602],[2420,1445],[2589,1353],[2901,1141],[2845,908],[2837,562],[2531,309]]},
+  {id: 'oasis', th: 'canyon', deco: 'oasis', grip: 7.5, offMul: 0.55, offDrag: 1.2, width: 170, margin: 105, aLat: 720, seed: 135, hz: ['tumble','geyser'], feats: ['water', 'coins'], c: {ground: '#dcbc7c', speck: '#7aa04a', speck2: '#e8cf98', barrier: '#7d5230', barrier2: '#f0e2c4', asphalt: '#4a4440', curbA: '#c2452d', curbB: '#f1e6cf', line: 'rgba(255,240,210,.55)', skid: 'rgba(40,25,15,.32)', dust: '214,176,112'}, pts: [[1885,236],[3174,336],[3437,540],[3550,926],[3434,1160],[3194,1418],[2800,1358],[2518,1356],[2278,1193],[2210,1042],[2012,808],[1895,818],[1559,1163],[1543,1475],[1579,1741],[1316,2025],[920,2042],[604,1956],[358,1696],[321,1163],[231,615],[563,311]]},
+  {id: 'glacier', th: 'pass', deco: 'snow', grip: 3.2, offMul: 0.5, offDrag: 1.5, width: 180, margin: 95, aLat: 460, seed: 142, hz: ['penguins','snowball'], feats: ['ice', 'coins'], c: {ground: '#d8ecf6', speck: '#bfe0f0', speck2: '#f4fbff', barrier: '#3f6f9a', barrier2: '#f6fafc', asphalt: '#6a7a88', curbA: '#3aa0d8', curbB: '#f6fafc', line: 'rgba(255,255,255,.6)', skid: 'rgba(30,45,60,.26)', dust: '240,246,250'}, pts: [[1870,1988],[524,2030],[265,1805],[330,1607],[628,1406],[876,1358],[1368,1431],[1577,1096],[1595,863],[1630,509],[1870,314],[2495,328],[3212,315],[3482,474],[3495,608],[3254,792],[3144,829],[2872,1090],[2856,1194],[3048,1381],[3311,1405],[3515,1665],[3484,1801],[3225,2036]]},
+  {id: 'alpine', th: 'pass', deco: 'snow', grip: 4, offMul: 0.5, offDrag: 1.5, width: 180, margin: 95, aLat: 520, seed: 149, hz: ['yeti','cows'], feats: ['train', 'ice'], c: {ground: '#e8eef2', speck: '#d3dee7', speck2: '#f6fafc', barrier: '#3f6f9a', barrier2: '#f6fafc', asphalt: '#5d6a76', curbA: '#d6352b', curbB: '#f6fafc', line: 'rgba(255,255,255,.6)', skid: 'rgba(30,45,60,.26)', dust: '240,246,250'}, pts: [[1936,1935],[1167,1930],[957,1774],[929,1665],[739,1446],[543,1443],[260,1217],[302,920],[268,586],[540,315],[1218,341],[1940,257],[2217,539],[2228,848],[2180,1229],[2460,1396],[2623,1400],[2844,1632],[2879,1756],[2655,2038]]},
+  {id: 'polar', th: 'pass', deco: 'snow', grip: 3.4, offMul: 0.5, offDrag: 1.5, width: 180, margin: 95, aLat: 470, seed: 156, hz: ['penguins','yeti'], feats: ['ice'], dark: true, aurora: true, c: {ground: '#cfdcea', speck: '#b8c8da', speck2: '#f6fafc', barrier: '#3f6f9a', barrier2: '#f6fafc', asphalt: '#4a5866', curbA: '#7a5cff', curbB: '#f6fafc', line: 'rgba(255,255,255,.6)', skid: 'rgba(30,45,60,.26)', dust: '240,246,250'}, pts: [[2246,1957],[1202,2009],[908,1723],[910,1606],[1241,1412],[1546,1446],[1930,1403],[2193,1266],[2185,1118],[2020,891],[1770,906],[1561,685],[1539,559],[1902,293],[2542,342],[3247,299],[3561,490],[3468,1126],[3487,1783],[3193,2027]], ramps: [0.35,0.72]},
+  {id: 'neon', th: 'city', deco: 'city', grip: 11, offMul: 0.6, offDrag: 1.2, width: 180, margin: 32, aLat: 880, night: true, seed: 163, hz: ['courier','ufo'], feats: ['boost'], c: {ground: '#0a0618', speck: '#140a2a', speck2: '#090b16', barrier: '#2d2650', barrier2: '#16d6ff', asphalt: '#252a3e', curbA: '#ff3fb4', curbB: '#16d6ff', line: 'rgba(255,63,180,.7)', skid: 'rgba(0,0,0,.45)', dust: '120,130,160', shoulder: '#1c2134'}, pts: [[2220,1980],[1200,1980],[940,1756],[940,1644],[1196,1420],[1324,1420],[1580,1160],[1580,860],[1580,560],[1840,300],[2540,300],[3240,300],[3500,524],[3500,636],[3244,860],[3116,860],[2860,1084],[2860,1196],[3116,1420],[3244,1420],[3500,1644],[3500,1756],[3240,1980]], ramps: [0.35,0.72]},
+  {id: 'harbor', th: 'city', deco: 'city', grip: 11, offMul: 0.6, offDrag: 1.2, width: 160, margin: 26, aLat: 880, night: true, seed: 170, hz: ['cones','courier'], feats: ['bales', 'train'], barrels: true, c: {ground: '#0e1620', speck: '#142030', speck2: '#090b16', barrier: '#2d2650', barrier2: '#ffb21e', asphalt: '#252a3e', curbA: '#ffb21e', curbB: '#1b2430', line: 'rgba(255,214,110,.6)', skid: 'rgba(0,0,0,.45)', dust: '120,130,160', shoulder: '#1c2134'}, pts: [[2220,300],[3240,300],[3500,524],[3500,636],[3244,860],[3116,860],[2860,1120],[2860,1420],[2860,1720],[2600,1980],[2220,1980],[1840,1980],[1580,1720],[1580,1420],[1580,1120],[1324,860],[1196,860],[940,636],[940,524],[1200,300]]},
+  {id: 'raincity', th: 'city', deco: 'city', grip: 11, offMul: 0.6, offDrag: 1.2, width: 160, margin: 26, aLat: 880, night: true, seed: 177, hz: ['cones','lightning'], feats: ['water', 'boost'], wx: 'rain', c: {ground: '#10141c', speck: '#11152a', speck2: '#090b16', barrier: '#2d2650', barrier2: '#7cff6b', asphalt: '#252a3e', curbA: '#7cff6b', curbB: '#1b2034', line: 'rgba(255,214,110,.6)', skid: 'rgba(0,0,0,.45)', dust: '120,130,160', shoulder: '#1c2134'}, pts: [[2220,1980],[3240,1980],[3500,1756],[3500,1644],[3244,1420],[3116,1420],[2860,1196],[2860,1084],[3116,860],[3244,860],[3500,636],[3500,524],[3240,300],[2220,300],[1200,300],[940,560],[940,1140],[940,1720],[1200,1980]]},
+  {id: 'ashlands', th: 'volcano', deco: 'volcano', grip: 9, offMul: 0.6, offDrag: 1.3, width: 165, margin: 34, aLat: 760, lava: true, seed: 184, hz: ['bomb','geyser'], feats: ['jump'], sky3: {sky: ['#2a1a18','#6a3a2a'], fog: 4860448}, c: {ground: '#5a2416', speck: '#ff6a1a', speck2: '#2a120c', barrier: 'rgba(255,190,80,.5)', barrier2: '#2a2120', asphalt: '#2e2826', curbA: '#ffb02a', curbB: '#2a2120', line: 'rgba(255,190,90,.45)', skid: 'rgba(0,0,0,.4)', dust: '255,140,40', shoulder: '#2a2120'}, pts: [[1840,348],[3220,284],[3460,586],[3519,797],[3489,1147],[3228,1404],[2902,1462],[2412,1439],[2187,1255],[2152,1075],[2014,878],[1649,898],[1241,820],[913,1105],[898,1367],[994,1788],[742,1966],[504,1984],[237,1663],[257,1128],[327,497],[616,239]]},
+  {id: 'inferno', th: 'volcano', deco: 'volcano', grip: 9, offMul: 0.6, offDrag: 1.3, width: 165, margin: 34, aLat: 760, lava: true, seed: 191, hz: ['lavaflow','lightning'], feats: [], c: {ground: '#c4401c', speck: '#ffb02a', speck2: '#6e180b', barrier: 'rgba(255,190,80,.5)', barrier2: '#2a2120', asphalt: '#38302e', curbA: '#ffb02a', curbB: '#2a2120', line: 'rgba(255,190,90,.45)', skid: 'rgba(0,0,0,.4)', dust: '255,140,40', shoulder: '#2a2120'}, pts: [[2525,1976],[3215,1990],[3544,1767],[3463,1371],[3477,1181],[3217,900],[3160,887],[2903,674],[2825,473],[2639,339],[2475,288],[2214,500],[2179,685],[1950,803],[1780,841],[1576,616],[1519,524],[1393,307],[1189,281],[877,524],[901,792],[961,1224],[1182,1351],[1357,1390],[1572,1669],[1627,1714],[1873,2021]], ramps: [0.35,0.72]},
+  {id: 'tropic', th: 'beach', deco: 'beach', grip: 9, offMul: 0.6, offDrag: 1.2, width: 175, margin: 100, aLat: 800, seed: 198, hz: ['crab','tide'], feats: ['water', 'jump'], c: {ground: '#f2dfa8', speck: '#e3c98a', speck2: '#f7e6b8', barrier: '#ffffff', barrier2: '#2e7cf6', asphalt: '#4b4d55', curbA: '#ff5fa8', curbB: '#ffffff', line: 'rgba(255,255,255,.6)', skid: 'rgba(60,40,20,.3)', dust: '230,205,150'}, pts: [[1886,1931],[2653,1965],[2813,1726],[2846,1366],[2896,1156],[2650,866],[2166,829],[1810,853],[1604,683],[1562,499],[1386,255],[1240,236],[993,555],[899,649],[670,847],[505,863],[357,1030],[369,1216],[578,1384],[736,1440],[902,1613],[979,1692],[1185,1972]]},
+  {id: 'lagoon', th: 'beach', deco: 'beach', grip: 9, offMul: 0.6, offDrag: 1.2, width: 175, margin: 100, aLat: 800, seed: 205, hz: ['crab','tornado'], feats: ['boost'], sky3: {sky: ['#3ec8e0','#e4fbff'], fog: 14087418}, c: {ground: '#e8d6a0', speck: '#e3c98a', speck2: '#f7e6b8', barrier: '#ffffff', barrier2: '#1fb3a6', asphalt: '#4b4d55', curbA: '#1fb3a6', curbB: '#ffffff', line: 'rgba(255,255,255,.6)', skid: 'rgba(60,40,20,.3)', dust: '230,205,150'}, pts: [[1861,1985],[606,1950],[268,1678],[269,1393],[358,1087],[527,813],[625,798],[964,1053],[987,1204],[1225,1407],[1339,1386],[1550,1204],[1624,1073],[1828,812],[1939,808],[2168,1152],[2231,1249],[2546,1389],[2881,1459],[3306,1453],[3510,1657],[3531,1782],[3276,2027]], ramps: [0.35,0.72]},
+  {id: 'swamp', th: 'jungle', deco: 'swamp', grip: 8.5, offMul: 0.45, offDrag: 1.7, width: 165, margin: 85, aLat: 760, seed: 212, hz: ['geyser','ducks'], feats: ['mud', 'water'], wx: 'fog', leaf: ['#3a5a2a','#4a6a2e','#2e4a22'], sky3: {sky: ['#5a6a4a','#b8c4a0'], fog: 9083508}, c: {ground: '#3a4a26', speck: '#4a5a2e', speck2: '#2a3a1c', barrier: '#6b4526', barrier2: '#8a5a30', asphalt: '#3e3c34', curbA: '#e0b020', curbB: '#2a2a2a', line: 'rgba(255,230,150,.5)', skid: 'rgba(20,15,10,.35)', dust: '90,70,40'}, pts: [[298,1112],[367,502],[539,265],[1553,339],[2651,231],[2860,517],[2847,799],[2864,1162],[3158,1411],[3308,1418],[3503,1574],[3454,1770],[3215,1945],[2820,1967],[2525,2015],[2270,1774],[2233,1648],[1923,1395],[1590,1415],[1269,1392],[1000,1588],[946,1746],[721,1962],[624,1972],[325,1698]]},
+  {id: 'temple', th: 'jungle', deco: 'temple', grip: 8.5, offMul: 0.45, offDrag: 1.7, width: 165, margin: 85, aLat: 760, seed: 219, hz: ['banana','boulder'], feats: ['portal', 'coins'], c: {ground: '#36602e', speck: '#3a6b30', speck2: '#244a20', barrier: '#6b4526', barrier2: '#8a5a30', asphalt: '#4a4640', curbA: '#d6a020', curbB: '#2a2a2a', line: 'rgba(255,230,150,.5)', skid: 'rgba(20,15,10,.35)', dust: '90,70,40'}, pts: [[1915,252],[3289,250],[3567,621],[3485,880],[3558,1201],[3297,1465],[2928,1361],[2546,1476],[2289,1138],[2260,1027],[2028,798],[1786,876],[1605,1104],[1562,1390],[1551,1764],[1358,2024],[931,1959],[576,1941],[360,1672],[328,1129],[290,549],[529,355]]},
+  {id: 'moon', th: 'space', deco: 'moon', grip: 10, offMul: 0.55, offDrag: 1.3, width: 175, margin: 60, aLat: 820, gravity: 430, seed: 226, hz: ['meteor','ufo'], feats: ['lowg'], rock: ['#6a6c74','#9a9ca4'], hzc: {c: '#6a6c74', top: '#9a9ca4'}, c: {ground: '#8a8c94', speck: '#7a7c84', speck2: '#9a9ca4', barrier: '#c9ced8', barrier2: '#ff6a1f', asphalt: '#4a4c56', curbA: '#ff6a1f', curbB: '#e8ecf4', line: 'rgba(140,200,255,.65)', skid: 'rgba(0,0,0,.4)', dust: '170,190,230', shoulder: '#5a5c64'}, pts: [[2223,255],[1145,309],[881,510],[903,926],[961,1206],[1151,1377],[1334,1353],[1524,1237],[1572,1153],[1816,914],[1966,925],[2178,1086],[2269,1440],[2288,1695],[2464,2012],[2879,2004],[3181,2026],[3508,1756],[3537,1197],[3445,540],[3185,274]], ramps: [0.35,0.72]},
+  {id: 'mars', th: 'space', deco: 'mars', grip: 10, offMul: 0.55, offDrag: 1.3, width: 175, margin: 60, aLat: 820, gravity: 560, seed: 233, hz: ['tornado','meteor'], feats: ['wind'], rock: ['#8a3e1e','#c46a3a'], sky3: {sky: ['#c4703a','#f0c49a'], fog: 14195306, sun: 16769216, sunI: 1, hs: 16765088, hg: 6958614}, hzc: {c: '#8a3e1e', top: '#c46a3a'}, c: {ground: '#a8502a', speck: '#c06a38', speck2: '#8a3e1e', barrier: '#c9ced8', barrier2: '#ff6a1f', asphalt: '#4a3430', curbA: '#ffb02a', curbB: '#e8ecf4', line: 'rgba(140,200,255,.65)', skid: 'rgba(0,0,0,.4)', dust: '170,190,230', shoulder: '#6a2e16'}, pts: [[1886,333],[1552,593],[1523,640],[1346,857],[979,888],[626,831],[303,1037],[356,1255],[496,1388],[677,1427],[921,1634],[1005,1711],[1141,1962],[1532,1926],[1999,1918],[2287,1697],[2224,1464],[2249,1082],[2539,905],[2613,846],[2790,662],[2810,571],[2570,265],[2233,273]], ramps: [0.35,0.72]},
+  {id: 'station', th: 'space', deco: 'space', grip: 10, offMul: 0.55, offDrag: 1.3, width: 175, margin: 60, aLat: 820, gravity: 520, seed: 240, hz: ['drone','ufo'], feats: ['portal', 'lowg'], c: {ground: '#1e2232', speck: '#323849', speck2: '#22263a', barrier: '#c9ced8', barrier2: '#ff6a1f', asphalt: '#3a3f52', curbA: '#16d6ff', curbB: '#e8ecf4', line: 'rgba(22,214,255,.7)', skid: 'rgba(0,0,0,.4)', dust: '170,190,230', shoulder: '#1c2030'}, pts: [[1900,1980],[560,1980],[300,1756],[300,1644],[560,1420],[1260,1420],[1960,1420],[2220,1196],[2220,1084],[1964,860],[1836,860],[1580,636],[1580,524],[1840,300],[2540,300],[3240,300],[3500,560],[3500,1140],[3500,1720],[3240,1980]]},
+  {id: 'haunted', th: 'valley', deco: 'haunted', grip: 10, offMul: 0.5, offDrag: 1.4, width: 170, margin: 95, aLat: 820, seed: 247, hz: ['lightning','boar'], feats: ['portal', 'bumps'], dark: true, wx: 'fog', leaf: ['#2a2a22','#3a3020','#1e2418'], hzc: {c: '#1e2a22', top: '#2a3a2e'}, c: {ground: '#2a3a26', speck: '#3a4a2a', speck2: '#1e2a1c', barrier: '#5a5a62', barrier2: '#ff7a1a', asphalt: '#2e2e34', curbA: '#ff7a1a', curbB: '#1e1e24', line: 'rgba(255,255,255,.5)', skid: 'rgba(18,18,20,.32)', dust: '120,90,50'}, pts: [[2208,2041],[3209,1949],[3474,1690],[3509,1108],[3541,607],[3257,363],[2876,289],[2468,320],[2205,592],[2170,917],[2192,1114],[1964,1380],[1863,1389],[1599,1189],[1554,925],[1546,553],[1345,355],[1172,322],[885,563],[875,1072],[965,1746],[1259,2000]]},
 ];
 const TH = m => m.th || m.id; // the look a track is built from
 
@@ -1663,7 +1619,7 @@ function resetRace(mode) {
   S.cars = S.gameMode === 'online' && mode !== 'menu' && S.netStart ? onlineGrid()
     : S.gameMode === 'trial' && mode !== 'menu' ? [newCar(0, 0)] : (S.duo ? GRID_DUO : GRID).map((di, slot) => newCar(di, slot));
   buildPuddles(); if (G3.ok) show3DMap(S.map);
-  S.haz = []; S.hazT = mode === 'menu' ? 3 : 6; S.slicks = []; S.boxes = buildBoxes(); S.placeT = 0; S.pressAt = null;
+  S.haz = []; S.warned = {}; S.hazT = mode === 'menu' ? 3 : 9; S.slicks = []; S.boxes = buildBoxes(); S.placeT = 0; S.pressAt = null;
   S.fx = []; S.coinT = (S.map._coins || []).map(() => 0); S.coinsGot = 0; S.flashT = 0; placeBales();
   S.rbuf = []; S.recT = 0; S.closeFinish = false; S.replayed = false; S.duoDeadline = 0;
   S.time = 0; S.finishCount = 0; S.parts = []; markHead = 0; markCount = 0; S.resultsT = -1; S.newRecord = false;
@@ -2093,8 +2049,8 @@ function carPickups(c) {
     if (b.wait > 0 || Math.abs(b.x - c.x) > 28 || Math.abs(b.y - c.y) > 28 || Math.hypot(b.x - c.x, b.y - c.y) > 24) continue;
     b.wait = 5; burst(b.x, b.y, '255,198,41', 14, 180);
     if (!c.item) {
-      c.item = rollItem(c); c.itemT = 0; c.itemN = c.item === 'triple' ? 3 : 0;
-      if (c.isPlayer) { tone('sine', 600, 1300, .15, .07); if (S.mode === 'race') toast(t('item.' + c.item), t('item.' + c.item + '.d'), 'good'); }
+      c.item = rollItem(c); c.itemT = 0; c.itemN = 0;
+      if (c.isPlayer) tone('sine', 600, 1300, .15, .07);
     }
   }
   if (c.phaseT > 0 || c.air > 20) { if (c.oilT > 0) c.oilT -= DT; return; }
@@ -2107,22 +2063,17 @@ function carPickups(c) {
 }
 function updSlicks(dt) {
   for (const b of S.boxes) if (b.wait > 0) b.wait -= dt;
-  for (const s of S.slicks) { s.life -= dt; s.age += dt; if (s.armT > 0) s.armT -= dt; }
+  for (const s of S.slicks) { s.life -= dt; s.age += dt; }
   if (S.slicks.some(s => s.life <= 0 || s.dead)) S.slicks = S.slicks.filter(s => s.life > 0 && !s.dead);
 }
 // ---------- items ----------
-// 30 pickups. cat: what a bot looks for before using one; w(pf): how likely it is from a box, pf = 0 when leading, 1 when last.
+// Ten pickups. cat: what a bot looks for before using one; w(pf): how likely it is from a box, pf = 0 when leading, 1 when last.
 const ITEM_DEFS = {
-  boost: { cat: 'go', emo: '', w: () => 1.1 }, shield: { cat: 'def', emo: '', w: () => .9 }, oil: { cat: 'drop', emo: '', w: pf => 1.2 - pf * .6 },
-  triple: { cat: 'go', emo: '🔥', w: pf => .3 + pf }, repair: { cat: 'fix', emo: '🔧', w: () => .5 }, peel: { cat: 'drop', emo: '🍌', w: pf => 1.1 - pf * .5 },
-  spikes: { cat: 'drop', emo: '📌', w: pf => 1 - pf * .5 }, glue: { cat: 'drop', emo: '🍯', w: pf => .9 - pf * .4 }, mine: { cat: 'drop', emo: '💣', w: pf => .9 - pf * .4 },
-  icepatch: { cat: 'drop', emo: '🧊', w: pf => .9 - pf * .4 }, fakebox: { cat: 'drop', emo: '🎁', w: pf => .8 - pf * .4 }, cones: { cat: 'drop', emo: '🚧', w: pf => .8 - pf * .4 },
-  ink: { cat: 'drop', emo: '🦑', w: pf => .7 - pf * .3 }, rocket: { cat: 'shoot', emo: '🚀', w: pf => .6 + pf * .4 }, homing: { cat: 'aim', emo: '🎯', w: pf => .3 + pf * .7 },
-  freeze: { cat: 'aim', emo: '❄️', w: pf => .4 + pf * .5 }, lightning: { cat: 'all', emo: '⚡', w: pf => pf * .9 }, emp: { cat: 'near', emo: '💥', w: () => .6 },
-  tornado: { cat: 'aim', emo: '🌪️', w: pf => .2 + pf * .7 }, slowmo: { cat: 'all', emo: '⏳', w: pf => pf * .8 }, horn: { cat: 'near', emo: '📯', w: () => .7 },
-  magnet: { cat: 'aim', emo: '🧲', w: pf => .3 + pf * .7 }, swap: { cat: 'aim', emo: '🔄', w: pf => pf * .8 }, teleport: { cat: 'go', emo: '🌀', w: pf => .2 + pf * .8 },
-  jump: { cat: 'go', emo: '🦘', w: () => .6 }, ghost: { cat: 'def', emo: '👻', w: () => .6 }, star: { cat: 'go', emo: '⭐', w: pf => pf * 1.1 },
-  mega: { cat: 'go', emo: '🍄', w: pf => .2 + pf * .7 }, grip: { cat: 'go', emo: '🦎', w: () => .6 }, coins: { cat: 'now', emo: '💰', w: () => .5 },
+  boost: { cat: 'go', emo: '', w: () => 1.1 }, shield: { cat: 'def', emo: '', w: () => .9 },
+  oil: { cat: 'drop', emo: '', w: pf => 1.2 - pf * .6 }, peel: { cat: 'drop', emo: '🍌', w: pf => 1.1 - pf * .5 },
+  rocket: { cat: 'shoot', emo: '🚀', w: pf => .6 + pf * .4 }, homing: { cat: 'aim', emo: '🎯', w: pf => .3 + pf * .7 },
+  star: { cat: 'go', emo: '⭐', w: pf => pf * 1.1 }, mega: { cat: 'go', emo: '🍄', w: pf => .2 + pf * .7 },
+  lightning: { cat: 'all', emo: '⚡', w: pf => pf * .9 }, ghost: { cat: 'def', emo: '👻', w: () => .6 },
 };
 const ITEMS = Object.keys(ITEM_DEFS);
 function itemIcon(id, n) {
@@ -2130,8 +2081,8 @@ function itemIcon(id, n) {
   return (ITEM_ICON[id] || `<span class="emo">${ITEM_DEFS[id] ? ITEM_DEFS[id].emo : '?'}</span>`) + (n > 1 ? `<i class="ic-n">${n}</i>` : '');
 }
 function rollItem(c) {
-  const order = standings(), n = Math.max(2, order.length), pf = (order.indexOf(c)) / (n - 1);
-  let sum = 0; const ws = ITEMS.map(id => { let w = Math.max(0, ITEM_DEFS[id].w(pf)); if (id === 'repair' && c.damage < .2) w *= .2; if (S.gameMode === 'online' && id === 'swap') w = 0; sum += w; return w; });
+  const order = standings(), n = Math.max(2, order.length), pf = order.indexOf(c) / (n - 1);
+  let sum = 0; const ws = ITEMS.map(id => { const w = Math.max(0, ITEM_DEFS[id].w(pf)); sum += w; return w; });
   let x = Math.random() * sum; for (let i = 0; i < ITEMS.length; i++) { x -= ws[i]; if (x <= 0) return ITEMS[i]; }
   return 'boost';
 }
@@ -2145,164 +2096,71 @@ function rivalsAhead(c) { return S.cars.filter(o => o !== c && !o.finished && o.
 // an effect on another car; remote players get it over the network and apply it themselves
 function hitCar(o, k, by) {
   if (o.remote) { if (isOnline()) netSend({ t: 'fx', k, to: o.nid, x: Math.round(by ? by.x : o.x), y: Math.round(by ? by.y : o.y) }); return; }
-  applyFx(o, k, by ? by.x : o.x, by ? by.y : o.y);
+  applyFx(o, k);
 }
-const FX_KINDS = new Set(['spin', 'freeze', 'tiny', 'emp', 'slow', 'shove', 'twist']);
-function applyFx(c, k, bx, by) {
-  if (!FX_KINDS.has(k) || c.respawnT > 0) return;
-  if (c.starT > 0 || c.phaseT > 0) return;
+const FX_KINDS = new Set(['spin', 'tiny']);
+function applyFx(c, k) {
+  if (!FX_KINDS.has(k) || c.respawnT > 0 || c.starT > 0 || c.phaseT > 0) return;
+  if (c.shieldT > 0) { popShield(c); return; }
   const me = c.isPlayer && S.mode === 'race';
-  if (k === 'twist') { twist(c); return; }
-  if (c.shieldT > 0 && k !== 'shove') { popShield(c); return; }
   if (k === 'spin') { c.spin += (Math.random() < .5 ? -1 : 1) * 6; c.vx *= .4; c.vy *= .4; hurt(c, .06); burst(c.x, c.y, '255,140,40', 18, 220); if (me) { toast(t('fx.spin'), '', 'warn'); thud(380); } }
-  else if (k === 'freeze') { c.frozenT = 1.5; burst(c.x, c.y, '200,240,255', 18, 160); if (me) toast(t('fx.freeze'), '', 'warn'); }
   else if (k === 'tiny') { c.tinyT = 4; c.megaT = 0; if (me) toast(t('fx.tiny'), '', 'warn'); }
-  else if (k === 'emp') { c.boostT = 0; c.nitroOn = false; c.nitro *= .5; c.slowT = Math.max(c.slowT || 0, 1.2); c.spin += (Math.random() < .5 ? -1 : 1) * 2.5; if (me) toast(t('fx.emp'), '', 'warn'); }
-  else if (k === 'slow') { c.slowT = 3; if (me) toast(t('fx.slow'), '', 'warn'); }
-  else if (k === 'shove') { const dx = c.x - bx, dy = c.y - by, d = Math.hypot(dx, dy) || 1; c.vx += dx / d * 260; c.vy += dy / d * 260; c.spin += (Math.random() < .5 ? -1 : 1) * 1.5; }
 }
-function dropTrap(c, k, r, life, extra) {
+function dropTrap(c, k, r, life) {
   const fx = Math.cos(c.angle), fy = Math.sin(c.angle);
-  const s = Object.assign({ k, x: c.x - fx * (34 + r * .5), y: c.y - fy * (34 + r * .5), r, life, age: 0, owner: c, seed: Math.random() * 6 }, extra || {});
+  const s = { k, x: c.x - fx * (34 + r * .5), y: c.y - fy * (34 + r * .5), r, life, age: 0, owner: c, seed: Math.random() * 6 };
   S.slicks.push(s);
   if (isOnline()) netSend({ t: 'trap', k, x: Math.round(s.x), y: Math.round(s.y), r, life, seed: +s.seed.toFixed(2), by: c.nid });
-  return s;
 }
-const TRAP_KINDS = new Set(['oil', 'peel', 'spikes', 'glue', 'mine', 'icepatch', 'fakebox', 'ink']);
-function moveAlong(c, n) { // teleport down the road keeping lane, heading and speed
-  const tr = S.track, N = tr.N, p = tr.pts[c.idx], i2 = (c.idx + n) % N, q = tr.pts[i2];
-  const lat = clamp((c.x - p.x) * p.nx + (c.y - p.y) * p.ny, -S.map.width / 2 + 10, S.map.width / 2 - 10), rel = wrapAng(c.angle - p.ang), sp = Math.hypot(c.vx, c.vy);
-  burst(c.x, c.y, '170,120,255', 20, 220);
-  c.x = q.x + q.nx * lat; c.y = q.y + q.ny * lat; c.angle = q.ang + rel; c.vx = Math.cos(c.angle) * sp; c.vy = Math.sin(c.angle) * sp;
-  c.total += n; c.idx = i2; burst(c.x, c.y, '170,120,255', 20, 220);
-}
-function swapCars(a, b) {
-  const tr = S.track; let dI = b.idx - a.idx; if (dI > tr.N / 2) dI -= tr.N; if (dI < -tr.N / 2) dI += tr.N;
-  burst(a.x, a.y, '120,255,200', 18, 200); burst(b.x, b.y, '120,255,200', 18, 200);
-  for (const f of ['x', 'y', 'angle', 'vx', 'vy', 'vF', 'vR', 'idx']) { const v = a[f]; a[f] = b[f]; b[f] = v; }
-  a.total += dI; b.total -= dI; a.ghostT = b.ghostT = .6; a.air = b.air = 0;
-}
-function shove(c, radius) {
-  let n = 0;
-  for (const o of S.cars) { if (o === c || o.respawnT > 0) continue; if (Math.hypot(o.x - c.x, o.y - c.y) < radius) { hitCar(o, 'shove', c); n++; } }
-  return n;
-}
+const TRAP_KINDS = new Set(['oil', 'peel']);
 function useItem(c) {
   if (!c.item || c.respawnT > 0) return;
   const k = c.item, fx = Math.cos(c.angle), fy = Math.sin(c.angle), me = c.isPlayer, sfx = (a, b, d, v, ty) => { if (me) tone(ty || 'sine', a, b, d, v || .06); };
-  let keep = false;
   switch (k) {
     case 'boost': c.boostT = 1.6; if (me) { if (c.type === 'dog') bark(); else tone('sawtooth', 200, 900, .4, .07); } break;
-    case 'triple': c.boostT = 1.2; c.itemN = (c.itemN || 3) - 1; keep = c.itemN > 0; sfx(220, 980, .35, .07, 'sawtooth'); break;
     case 'shield': c.shieldT = 8; sfx(400, 1000, .3); break;
-    case 'repair': c.damage = 0; burst(c.x, c.y, '120,255,140', 18, 180); sfx(500, 1200, .3); break;
     case 'oil': dropTrap(c, 'oil', 30, 14); sfx(200, 70, .2, .05, 'square'); break;
     case 'peel': dropTrap(c, 'peel', 15, 14); sfx(300, 120, .15); break;
-    case 'spikes': dropTrap(c, 'spikes', 26, 14); sfx(900, 400, .12, .05, 'square'); break;
-    case 'glue': dropTrap(c, 'glue', 44, 10); sfx(160, 90, .25, .05, 'triangle'); break;
-    case 'mine': dropTrap(c, 'mine', 12, 25, { armT: 1 }); sfx(600, 300, .1, .05, 'square'); break;
-    case 'icepatch': dropTrap(c, 'icepatch', 48, 12); sfx(1400, 600, .25); break;
-    case 'fakebox': dropTrap(c, 'fakebox', 12, 20); sfx(700, 900, .1); break;
-    case 'ink': dropTrap(c, 'ink', 50, 8); sfx(200, 80, .3, .05, 'triangle'); break;
-    case 'cones': {
-      const tr = S.track, p = tr.pts[(c.idx - 6 + tr.N) % tr.N];
-      for (let i = -1; i <= 1; i++) { const x = c.x - fx * 40 + p.nx * i * 26, y = c.y - fy * 40 + p.ny * i * 26; S.haz.push({ k: 'cone', x, y, px: x, py: y, nx: 0, ny: 0, tx: 0, ty: 0, side: 1, lat: 0, along: 0, v: 0, rot: 0, age: 0, r: 7, life: 14, solid: true, fixed: true, state: 'still' }); }
-      sfx(500, 300, .12, .05, 'square'); break;
-    }
     case 'rocket': S.fx.push({ k: 'rocket', x: c.x + fx * 30, y: c.y + fy * 30, vx: fx * 1150 + c.vx * .3, vy: fy * 1150 + c.vy * .3, life: 1.6, owner: c }); sfx(300, 1500, .35, .06, 'sawtooth'); break;
     case 'homing': { const tg = carAhead(c, 2500) || rivalsAhead(c)[0]; S.fx.push({ k: 'homing', x: c.x + fx * 30, y: c.y + fy * 30, vx: fx * 700, vy: fy * 700, life: 3.2, owner: c, target: tg }); sfx(400, 1200, .4, .06, 'sawtooth'); break; }
-    case 'freeze': { const tg = carAhead(c, 900); if (tg) { hitCar(tg, 'freeze', c); S.fx.push({ k: 'zap', x: c.x, y: c.y, x2: tg.x, y2: tg.y, life: .35, col: 0x9ee8ff }); } sfx(1800, 700, .3); break; }
     case 'lightning': for (const o of rivalsAhead(c)) hitCar(o, 'tiny', c); if (me || rivalsAhead(c).includes(player())) S.flashT = .2; sfx(1600, 200, .4, .07, 'sawtooth'); break;
-    case 'slowmo': for (const o of S.cars) if (o !== c) hitCar(o, 'slow', c); sfx(800, 200, .6, .05, 'triangle'); break;
-    case 'emp': for (const o of S.cars) if (o !== c && Math.hypot(o.x - c.x, o.y - c.y) < 280) hitCar(o, 'emp', c); S.fx.push({ k: 'ring', x: c.x, y: c.y, life: .5, max: .5, r: 280, col: 0x7ab8ff }); sfx(200, 60, .4, .07, 'square'); break;
-    case 'horn': shove(c, 190); S.fx.push({ k: 'ring', x: c.x, y: c.y, life: .35, max: .35, r: 190, col: 0xffd84a }); if (me) { if (c.type === 'dog') bark(); else { tone('square', 330, 330, .25, .06); tone('square', 415, 415, .25, .05); } } break;
-    case 'tornado': S.fx.push({ k: 'twister', idx: c.idx, lat: 0, along: 0, life: 3.6, owner: c, hits: [], age: 0, x: c.x, y: c.y }); sfx(200, 500, .5, .05, 'triangle'); break;
-    case 'magnet': c.magnetT = 3; c.magTarget = carAhead(c, 1200); sfx(300, 600, .3); break;
-    case 'swap': { const tg = carAhead(c, 520); if (tg && !tg.remote) { swapCars(c, tg); if (tg.isPlayer && S.mode === 'race') toast(t('fx.swap'), '', 'warn'); } else moveAlong(c, 30); sfx(500, 1000, .25); break; }
-    case 'teleport': moveAlong(c, 36); sfx(1300, 300, .35); break;
-    case 'jump': if (!(c.air > 0)) { c.vz = 520; c.air = .1; } sfx(260, 900, .3); break;
     case 'ghost': c.phaseT = 4; sfx(700, 300, .5, .04, 'triangle'); break;
     case 'star': c.starT = 5; sfx(600, 1600, .5, .06); break;
     case 'mega': c.megaT = 6; c.tinyT = 0; sfx(150, 400, .5, .07, 'sawtooth'); break;
-    case 'grip': c.gripT = 6; sfx(400, 800, .25); break;
-    case 'coins': if (c.isPlayer || c.isP2) { S.coinsGot = (S.coinsGot || 0) + 15; burst(c.x, c.y, '255,214,60', 22, 220); } sfx(1300, 2000, .2); break;
   }
-  if (!keep) { c.item = null; c.itemN = 0; }
+  c.item = null; c.itemN = 0;
 }
 // statuses: called once per physics step for every local car; returns speed and grip multipliers
 const SMODS = { max: 1, acc: 1, grip: 1, offOk: false };
 function statusMods(c, dt) {
   const m = SMODS; m.max = 1; m.acc = 1; m.grip = 1; m.offOk = false;
-  if (c.frozenT > 0) { c.frozenT -= dt; c.inThrottle = 0; c.inSteer = 0; m.max = .2; m.grip = .5; }
   if (c.tinyT > 0) { c.tinyT -= dt; m.max *= .72; m.acc *= .8; }
-  if (c.slowT > 0) { c.slowT -= dt; m.max *= .66; }
   if (c.megaT > 0) { c.megaT -= dt; m.max *= 1.04; }
   if (c.starT > 0) { c.starT -= dt; m.max *= 1.18; m.acc *= 1.35; m.offOk = true; }
-  if (c.gripT > 0) { c.gripT -= dt; m.grip *= 3; m.offOk = true; }
   if (c.phaseT > 0) c.phaseT -= dt;
-  if (c.glueT > 0) { c.glueT -= dt; m.max *= .45; m.acc *= .6; }
-  if (c.iceT > 0) { c.iceT -= dt; m.grip *= .12; }
-  if (c.inkT > 0) { c.inkT -= dt; if (c.auto) c.inSteer += Math.sin(S.clock * 7 + c.top) * .5; }
-  if (c.magnetT > 0) {
-    c.magnetT -= dt; const o = c.magTarget;
-    if (o && !o.finished) { const dx = o.x - c.x, dy = o.y - c.y, d = Math.hypot(dx, dy) || 1; if (d > 50 && d < 1400) { c.vx += dx / d * 420 * dt; c.vy += dy / d * 420 * dt; } m.max *= 1.12; }
-  }
   if (c.beamT > 0) { c.beamT -= dt; if ((c.air || 0) < 70) { c.air = Math.max(c.air || 0, .1); c.vz = Math.max(c.vz || 0, 110); } c.vx *= 1 - 1.2 * dt; c.vy *= 1 - 1.2 * dt; }
-  if (c.spikeT > 0) c.spikeT -= dt;
   return m;
 }
-function trapHit(c, s) { // returns true when the trap is used up
-  if (c.starT > 0) return s.k === 'fakebox' || s.k === 'mine';
-  const me = c.isPlayer && S.mode === 'race';
-  switch (s.k) {
-    case 'oil': case 'peel': case 'banana':
-      if (c.oilT > 0) return false; c.oilT = .8;
-      if (c.shieldT > 0) { popShield(c); return false; }
-      c.spin += (Math.random() < .5 ? -1 : 1) * 5.5; c.vx *= .72; c.vy *= .72;
-      if (s.owner && s.owner.isPlayer && !c.isPlayer && S.mode === 'race') bumpStat('oilHits');
-      if (me) { if (s.banana || s.k === 'peel') toast(t('peelHit'), t('peelHitSub'), 'warn'); else toast(t('oilHit'), t('oilHitSub'), 'warn'); tone('sawtooth', 320, 90, .3, .07); }
-      return false;
-    case 'spikes':
-      if (c.spikeT > 0) return false; c.spikeT = .9;
-      if (c.shieldT > 0) { popShield(c); return false; }
-      c.vx *= .55; c.vy *= .55; c.spin += (Math.random() - .5) * 3; hurt(c, .05); if (me) { toast(t('fx.spikes'), '', 'warn'); tone('square', 900, 200, .2, .05); }
-      return false;
-    case 'glue': c.glueT = .25; return false;
-    case 'icepatch': c.iceT = .25; return false;
-    case 'ink': if (!(c.inkT > 0) && me) toast(t('fx.ink'), '', 'warn'); c.inkT = 2.6; return false;
-    case 'fakebox': if (c.shieldT > 0) { popShield(c); return true; } applyFx(c, 'spin', s.x, s.y); return true;
-    case 'mine': if (s.armT > 0) return false; explode(s.x, s.y, 110); return true;
-  }
+function trapHit(c, s) { // oil and banana peels spin you out; a star drives straight over them
+  if (c.starT > 0 || c.oilT > 0) return false;
+  c.oilT = .8;
+  if (c.shieldT > 0) { popShield(c); return false; }
+  c.spin += (Math.random() < .5 ? -1 : 1) * 5.5; c.vx *= .72; c.vy *= .72;
+  if (s.owner && s.owner.isPlayer && !c.isPlayer && S.mode === 'race') bumpStat('oilHits');
+  if (c.isPlayer && S.mode === 'race') tone('sawtooth', 320, 90, .3, .07);
   return false;
 }
-function explode(x, y, R) {
-  burst(x, y, '255,150,40', 30, 320); burst(x, y, '40,25,20', 14, 200);
-  for (const c of S.cars) {
-    if (c.respawnT > 0 || c.remote) continue;
-    const dx = c.x - x, dy = c.y - y, d = Math.hypot(dx, dy) || 1; if (d > R) continue;
-    if (c.starT > 0 || c.phaseT > 0) continue; if (c.shieldT > 0) { popShield(c); continue; }
-    hurt(c, .12); const k = 300 * (1 - d / (R + 20)); c.vx += dx / d * k; c.vy += dy / d * k; c.spin += (Math.random() < .5 ? -1 : 1) * 5;
-    if (c.isPlayer && S.mode === 'race') toast(t('bonk'), t('hit.bomb'), 'warn');
-  }
-  const p = player(); if (p) { const d = Math.hypot(p.x - x, p.y - y); if (d < 450 && !reduceMotion) S.shake = Math.max(S.shake, 8 * (1 - d / 450)); if (d < 700) thud(500 * (1 - d / 700) + 150); }
-}
-// flying item effects: rockets, homing rockets, a twister sent down the road, beams and rings
+// rockets and homing rockets
 function updItemFx(dt) {
-  const tr = S.track, N = tr.N, hw = S.map.width / 2;
+  const tr = S.track, hw = S.map.width / 2;
   for (const f of S.fx) {
     f.life -= dt;
-    if (f.k === 'rocket' || f.k === 'homing') {
-      if (f.k === 'homing' && f.target && !f.target.finished) { const dx = f.target.x - f.x, dy = f.target.y - f.y, d = Math.hypot(dx, dy) || 1, sp = Math.min(1250, Math.hypot(f.vx, f.vy) + 900 * dt); f.vx += (dx / d * sp - f.vx) * Math.min(1, dt * 4); f.vy += (dy / d * sp - f.vy) * Math.min(1, dt * 4); }
-      f.x += f.vx * dt; f.y += f.vy * dt;
-      if (Math.random() < .7) S.parts.push({ x: f.x, y: f.y, vx: 0, vy: 0, life: .35, max: .35, r: 4, col: '230,230,230', op: .6 });
-      for (const o of S.cars) { if (o === f.owner || o.respawnT > 0 || o.phaseT > 0) continue; if (Math.hypot(o.x - f.x, o.y - f.y) < 30) { hitCar(o, 'spin', f); f.life = 0; burst(f.x, f.y, '255,160,60', 24, 260); break; } }
-      const i = locate(tr, f.x, f.y, f.i); f.i = i; const p = tr.pts[i];
-      if (Math.abs((f.x - p.x) * p.nx + (f.y - p.y) * p.ny) > hw + S.map.margin + 10 && f.life > 0) { f.life = 0; burst(f.x, f.y, '255,160,60', 16, 200); }
-    } else if (f.k === 'twister') {
-      f.age += dt; f.idx = (f.idx + 820 * dt / tr.SP) % N; const p = tr.pts[Math.floor(f.idx)], lat = Math.sin(f.age * 2.2) * hw * .45;
-      f.x = p.x + p.nx * lat; f.y = p.y + p.ny * lat;
-      for (const o of S.cars) { if (o === f.owner || f.hits.includes(o) || o.respawnT > 0) continue; if (Math.hypot(o.x - f.x, o.y - f.y) < 58) { f.hits.push(o); hitCar(o, 'twist', f); } }
-    }
+    if (f.k === 'homing' && f.target && !f.target.finished) { const dx = f.target.x - f.x, dy = f.target.y - f.y, d = Math.hypot(dx, dy) || 1, sp = Math.min(1250, Math.hypot(f.vx, f.vy) + 900 * dt); f.vx += (dx / d * sp - f.vx) * Math.min(1, dt * 4); f.vy += (dy / d * sp - f.vy) * Math.min(1, dt * 4); }
+    f.x += f.vx * dt; f.y += f.vy * dt;
+    if (Math.random() < .7) S.parts.push({ x: f.x, y: f.y, vx: 0, vy: 0, life: .35, max: .35, r: 4, col: '230,230,230', op: .6 });
+    for (const o of S.cars) { if (o === f.owner || o.respawnT > 0 || o.phaseT > 0) continue; if (Math.hypot(o.x - f.x, o.y - f.y) < 30) { hitCar(o, 'spin', f); f.life = 0; burst(f.x, f.y, '255,160,60', 24, 260); break; } }
+    const i = locate(tr, f.x, f.y, f.i); f.i = i; const p = tr.pts[i];
+    if (Math.abs((f.x - p.x) * p.nx + (f.y - p.y) * p.ny) > hw + S.map.margin + 10 && f.life > 0) { f.life = 0; burst(f.x, f.y, '255,160,60', 16, 200); }
   }
   if (S.fx.some(f => f.life <= 0)) S.fx = S.fx.filter(f => f.life > 0);
 }
@@ -2318,14 +2176,11 @@ function botTactics(c, dt, hazardAhead) {
   const behind = S.cars.some(o => { if (o === c) return false; const rx = o.x - c.x, ry = o.y - c.y, ah = rx * fx + ry * fy; return ah < -30 && ah > -220 && Math.abs(-rx * fy + ry * fx) < 45; });
   let go = false;
   switch (def.cat) {
-    case 'go': go = c.itemT > 1 && straight; if (c.item === 'magnet') go = go && !!carAhead(c, 1000); break;
-    case 'fix': go = c.damage > .25 || c.itemT > 6; break;
+    case 'go': go = c.itemT > 1 && straight; break;
     case 'drop': go = behind || c.itemT > 7; break;
     case 'def': go = hazardAhead || c.itemT > 4; break;
-    case 'now': go = c.itemT > .5; break;
     case 'all': go = c.itemT > 1.5 && rivalsAhead(c).length > 0; break;
-    case 'near': go = S.cars.some(o => o !== c && Math.hypot(o.x - c.x, o.y - c.y) < 200) || c.itemT > 8; break;
-    case 'aim': go = !!carAhead(c, c.item === 'swap' ? 500 : c.item === 'freeze' ? 850 : 1100) || c.itemT > 9; break;
+    case 'aim': go = !!carAhead(c, 1100) || c.itemT > 9; break;
     case 'shoot': { const o = carAhead(c, 650); go = (o && Math.abs(wrapAng(Math.atan2(o.y - c.y, o.x - c.x) - c.angle)) < .25) || c.itemT > 9; break; }
   }
   if (go) useItem(c);
@@ -2377,7 +2232,7 @@ function drawPit(map, tr) {
 
 // ---------- track features: pads, patches, jumps, portals, coins, bales and level crossings ----------
 // Built once per track from map.feats. Each patch is a rectangle in track space: an index range along the lap and a lateral range.
-const FEAT_N = { boost: 3, mud: 2, ice: 3, water: 2, sand: 3, jump: 2, bumps: 2, wind: 2, portal: 1, lowg: 2, coins: 4, bales: 4, train: 1 };
+const FEAT_N = { boost: 2, mud: 1, ice: 2, water: 1, sand: 2, jump: 1, bumps: 1, wind: 1, portal: 1, lowg: 1, coins: 2, bales: 2, train: 1 };
 function buildFeats(map) {
   const tr = map._track, N = tr.N, SP = tr.SP, hw = map.width / 2, r = rng(map.seed * 53 + 7), out = [], coins = [], bales = [], used = [];
   const startA = Math.round(PIT_B / SP) + 12, startB = N - Math.round(560 / SP); // keep the grid, the start line and the pit lane clear
@@ -2496,7 +2351,7 @@ function placeBales() { // knockable hay bales or barrels at the edge of some co
 function twist(c) {
   if (c.shieldT > 0) { popShield(c); return; }
   c.spin += (Math.random() < .5 ? -1 : 1) * 6; if (!(c.air > 0)) { c.vz = 280; c.air = .1; } c.vx *= .6; c.vy *= .6; hurt(c, .04);
-  if (c.isPlayer && S.mode === 'race') toast(t('hz.tornado.hit'), '', 'warn');
+  
 }
 function boltStrike(h) {
   h.struck = true; h.life = Math.min(h.life, .9); burst(h.x, h.y, '255,250,170', 26, 300);
@@ -2506,7 +2361,7 @@ function boltStrike(h) {
     if (c.respawnT > 0 || Math.hypot(c.x - h.x, c.y - h.y) > h.r) continue;
     if (c.shieldT > 0) { popShield(c); continue; }
     c.spin += (Math.random() < .5 ? -1 : 1) * 5; c.vx *= .5; c.vy *= .5; hurt(c, .08);
-    if (c.isPlayer && S.mode === 'race') toast(t('hz.lightning.hit'), '', 'warn');
+    
   }
 }
 
@@ -2514,6 +2369,7 @@ function boltStrike(h) {
 // Each track has two hazards. They spawn ahead of the player (or the camera car in the menu) and hit bots too.
 const HAZARDS = { valley: ['deer', 'ducks'], canyon: ['tumble', 'boulder'], pass: ['yeti', 'snowball'], city: ['courier', 'cones'], volcano: ['lavaflow', 'bomb'], beach: ['tide', 'crab'], jungle: ['banana', 'boar'], space: ['meteor', 'drone'] };
 function placeHaz(h) { h.x = h.px + h.nx * h.lat + h.tx * h.along; h.y = h.py + h.ny * h.lat + h.ty * h.along; }
+const WARN_KINDS = new Set(['lavaflow', 'tide', 'bomb', 'meteor', 'lightning', 'geyser', 'tornado', 'ufo']); // the ones you have to steer around
 function spawnHazard(kind) {
   const tr = S.track, map = S.map, f = S.mode === 'menu' ? followCar() : S.duo && Math.random() < .5 ? player2() : player();
   if (!f) return;
@@ -2544,16 +2400,16 @@ function spawnHazard(kind) {
   else if (kind === 'geyser') add({ lat: (Math.random() * 2 - 1) * hw * .5, r: 42, life: 6, warn: 1.6, solid: false, hits: [] });
   else if (kind === 'ufo') add({ lat: (Math.random() * 2 - 1) * hw * .4, along: 120, va: -70, r: 46, life: 8, solid: false });
   else if (kind === 'lightning') add({ k: 'bolt', lat: (Math.random() * 2 - 1) * hw * .5, r: 60, life: 2.4, warn: 1.2, solid: false });
-  if (S.mode === 'race' && !f.finished) toast(t('hz.' + kind), t('hz.' + kind + '.sub'), 'warn');
+  if (S.mode === 'race' && !f.finished && WARN_KINDS.has(kind) && !S.warned[kind]) { S.warned[kind] = true; toast(t('hz.' + kind), t('hz.' + kind + '.sub'), 'warn'); }
   if (isOnline() && netHost() && sent.length) netSend({ t: 'hz', list: sent.map((h, i) => Object.assign({}, h, { m3: undefined, toast: i === 0 ? kind : null })) });
 }
 function updHazards(dt) {
   if (S.hazOn && S.mode !== 'countdown' && !(S.gameMode === 'trial' && S.mode !== 'menu') && !(isOnline() && !netHost())) {
     S.hazT -= dt;
     if (S.hazT <= 0) {
-      S.hazT = 6 + Math.random() * 5;
+      S.hazT = 13 + Math.random() * 8;
       const list = S.map.hz || HAZARDS[S.map.id];
-      if (S.haz.filter(h => !h.still).length < 12) spawnHazard(list[(Math.random() * list.length) | 0]);
+      if (!S.haz.some(h => !h.still)) spawnHazard(list[(Math.random() * list.length) | 0]); // one surprise at a time
     }
   }
   const hw = S.map.width / 2;
@@ -2642,16 +2498,16 @@ function carHazards(c) {
   const high = c.air > 12;
   for (const h of S.haz) {
     if (h.dead || h.state === 'fly' || h.crater) continue;
-    if (h.k === 'ufo') { if (Math.hypot(c.x - h.x, c.y - h.y) < h.r && h.age > .8 && h.life > .5) { if (!(c.beamT > 0) && c.isPlayer && S.mode === 'race') toast(t('hz.ufo.hit'), '', 'warn'); c.beamT = .15; } continue; }
+    if (h.k === 'ufo') { if (Math.hypot(c.x - h.x, c.y - h.y) < h.r && h.age > .8 && h.life > .5) { c.beamT = .15; } continue; }
     if (high) continue;
     if (h.k === 'tornado') { if (!h.hits.includes(c) && Math.hypot(c.x - h.x, c.y - h.y) < h.r) { h.hits.push(c); twist(c); } continue; }
     if (h.k === 'geyser') {
-      if (h.warn <= 0 && h.life > .4 && !h.hits.includes(c) && Math.hypot(c.x - h.x, c.y - h.y) < h.r) { h.hits.push(c); if (c.shieldT > 0) popShield(c); else { c.vz = 600; c.air = .1; c.spin += (Math.random() - .5) * 4; if (c.isPlayer && S.mode === 'race') toast(t('hz.geyser.hit'), '', 'warn'); } }
+      if (h.warn <= 0 && h.life > .4 && !h.hits.includes(c) && Math.hypot(c.x - h.x, c.y - h.y) < h.r) { h.hits.push(c); if (c.shieldT > 0) popShield(c); else { c.vz = 600; c.air = .1; c.spin += (Math.random() - .5) * 4; } }
       continue;
     }
     if (h.k === 'bolt') continue;
     if (h.k === 'lava') { if (h.life > 3 && inLava(h, c)) { if (c.shieldT > 0) { popShield(c); c.ghostT = .9; return; } sink(c); return; } continue; }
-    if (h.k === 'tide') { if (inLava(h, c)) { if (!(c.wetT > 0) && c.isPlayer && S.mode === 'race') toast(t('hz.tide.hit'), '', 'warn'); c.wetT = .3; } continue; }
+    if (h.k === 'tide') { if (inLava(h, c)) { c.wetT = .3; } continue; }
     if (h.k === 'monkey' || h.k === 'peel') continue;
     if (h.k === 'drone' && c.air > 16) continue;
     const dx = c.x - h.x, dy = c.y - h.y, d = Math.hypot(dx, dy) || 1;
@@ -2690,15 +2546,15 @@ function hitHazard(c, h, nx, ny, d) {
       break;
     case 'snowball':
       h.dead = true; burst(h.x, h.y, '245,249,252', 34, 260); c.vx *= .45; c.vy *= .45; c.spin += rs() * 3;
-      if (me) { toast(t('bonk'), t('hit.snowball'), 'warn'); thud(300); }
+      if (me) { thud(300); }
       break;
     case 'deer':
       fling(260, (Math.random() - .5) * 6, 1.3); c.vx *= .5; c.vy *= .5; c.spin += rs() * 4;
-      if (me) { toast(t('bonk'), t('hit.deer'), 'warn'); boing(); }
+      if (me) { boing(); }
       break;
     case 'courier':
       fling(300, rs() * 12, 1.4); burst(h.x, h.y, '255,170,40', 14, 220); c.vx *= .7; c.vy *= .7; c.spin += rs() * 2;
-      if (me) { toast(t('bonk'), t('hit.courier'), 'warn'); thud(260); }
+      if (me) { thud(260); }
       break;
     case 'crab':
       fling(170, rs() * 14, 1.1); c.vx *= .9; c.vy *= .9; if (me) tone('square', 900, 500, .08, .05);
@@ -2706,16 +2562,16 @@ function hitHazard(c, h, nx, ny, d) {
     case 'boar':
       if (vn > 0) { c.vx += nx * vn * 1.3; c.vy += ny * vn * 1.3; }
       c.spin += rs() * 5; c.vx *= .6; c.vy *= .6; h.stun = .5;
-      if (me && !h.hitShown) { h.hitShown = true; toast(t('bonk'), t('hit.boar'), 'warn'); thud(320); }
+      if (me && !h.hitShown) { h.hitShown = true; thud(320); }
       break;
     case 'drone':
       fling(280, rs() * 16, 1.2); burst(h.x, h.y, '255,220,120', 16, 240); c.vx *= .85; c.vy *= .85;
-      if (me) { toast(t('bonk'), t('hit.drone'), 'warn'); tone('square', 1200, 200, .25, .05); }
+      if (me) { tone('square', 1200, 200, .25, .05); }
       break;
     case 'cow':
       if (vn > 0) { c.vx += nx * vn * 1.5; c.vy += ny * vn * 1.5; }
       c.spin += rs() * 2.5; h.stun = 1.2;
-      if (me && !h.hitShown) { h.hitShown = true; toast(t('bonk'), t('hit.cow'), 'warn'); tone('sawtooth', 160, 110, .5, .07); }
+      if (me && !h.hitShown) { h.hitShown = true; tone('sawtooth', 160, 110, .5, .07); }
       break;
     case 'penguin':
       fling(220, rs() * 10, 1.1); c.vx *= .9; c.vy *= .9; if (me) tone('square', 1100, 700, .08, .05);
@@ -2727,7 +2583,7 @@ function hitHazard(c, h, nx, ny, d) {
     case 'yeti':
       if (vn > 0) { c.vx += nx * vn * 1.6; c.vy += ny * vn * 1.6; }
       c.spin += rs() * 3; h.stun = .8;
-      if (me && !h.hitShown) { h.hitShown = true; toast(t('bonk'), t('hit.yeti'), 'warn'); boing(); }
+      if (me && !h.hitShown) { h.hitShown = true; boing(); }
       break;
   }
 }
@@ -3052,8 +2908,8 @@ function netOn(m) {
   const fromHost = NET.room && m.id === NET.room.host;
   if (m.t === 'b') { if (!fromHost || !Array.isArray(m.d)) return; for (const d of m.d) { if (!Array.isArray(d) || d.length < 15) continue; const c = S.cars.find(x => x.nid === d[0]); if (c && c.remote) netApply(c, d.slice(1)); } return; }
   if (m.t === 'hz') { if (!fromHost || !Array.isArray(m.list)) return; for (const h of m.list.slice(0, 8)) { if (!validHaz(h)) continue; S.haz.push(Object.assign({}, h)); if (h.toast && S.mode === 'race') toast(t('hz.' + h.toast), t('hz.' + h.toast + '.sub'), 'warn'); } return; }
-  if (m.t === 'fx') { const c = S.cars.find(x => x.nid === m.to); if (c && !c.remote && typeof m.k === 'string') applyFx(c, m.k, +m.x || c.x, +m.y || c.y); return; }
-  if (m.t === 'trap') { if (!TRAP_KINDS.has(m.k) || ![m.x, m.y, m.r, m.life].every(Number.isFinite)) return; const o = S.cars.find(x => x.nid === m.by); S.slicks.push({ k: m.k, x: m.x, y: m.y, r: clamp(m.r, 6, 60), life: clamp(m.life, 1, 30), age: 0, owner: o || null, seed: +m.seed || 0, armT: m.k === 'mine' ? 1 : 0 }); return; }
+  if (m.t === 'fx') { const c = S.cars.find(x => x.nid === m.to); if (c && !c.remote && typeof m.k === 'string') applyFx(c, m.k); return; }
+  if (m.t === 'trap') { if (!TRAP_KINDS.has(m.k) || ![m.x, m.y, m.r, m.life].every(Number.isFinite)) return; const o = S.cars.find(x => x.nid === m.by); S.slicks.push({ k: m.k, x: m.x, y: m.y, r: clamp(m.r, 6, 60), life: clamp(m.life, 1, 30), age: 0, owner: o || null, seed: +m.seed || 0 }); return; }
   if (m.t === 'oil') { const o = S.cars.find(x => x.nid === m.by); S.slicks.push({ k: m.banana ? 'peel' : 'oil', x: m.x, y: m.y, r: m.r, life: 14, age: 0, owner: o || null, seed: m.seed, banana: !!m.banana }); return; }
 }
 const HAZ_KINDS = new Set(['deer', 'duck', 'tumble', 'boulder', 'yeti', 'snowball', 'courier', 'cone', 'lava', 'bomb', 'tide', 'crab', 'monkey', 'boar', 'drone', 'cow', 'penguin', 'tornado', 'geyser', 'ufo', 'bolt']);
@@ -3341,7 +3197,6 @@ function updHud(dt) {
   if (toastT > 0) { toastT -= dt; if (toastT <= 0) $('#toast').hidden = true; }
   if (S.flashT > 0) S.flashT -= dt; $('#flash').style.opacity = S.flashT > 0 ? Math.min(.85, S.flashT * 4).toFixed(2) : '0';
   const p = player(); if (!p) return;
-  const ink = p.inkT > 0 ? Math.min(1, p.inkT / .8) : 0; $('#ink').style.opacity = ink.toFixed(2);
   $('#hSpeed').textContent = Math.round(p.speed * KMH);
   $('#hNitro').style.width = (p.nitro * 100).toFixed(1) + '%';
   $('#gNitro').classList.toggle('full', p.nitro > .99); $('#gNitro').classList.toggle('on', p.nitroOn);
@@ -4652,81 +4507,34 @@ function sync3DObjects(dt, tm) {
   updFeats3D(dt, tm);
 }
 // ---- item traps and flying effects in 3D
-const TRAP_TEX = {};
-function trapTex(k) {
-  if (k === 'oil') return oilTex(); if (k === 'peel' || k === 'banana') return peelTex();
-  if (TRAP_TEX[k]) return TRAP_TEX[k];
-  return (TRAP_TEX[k] = cTex(128, 128, (x, w, h) => {
-    x.translate(w / 2, h / 2); const r = rng(k.length * 31);
-    const blob = (rad, col) => { x.fillStyle = col; x.beginPath(); for (let i = 0; i < 14; i++) { const a = i / 14 * Math.PI * 2, rr = rad * (.75 + .25 * Math.sin(i * 2.7 + rad)); x.lineTo(Math.cos(a) * rr, Math.sin(a) * rr); } x.closePath(); x.fill(); };
-    if (k === 'spikes') { for (let i = 0; i < 26; i++) { const a = r() * 6.28, d = r() * 50, px = Math.cos(a) * d, py = Math.sin(a) * d; x.fillStyle = '#c9ced8'; x.strokeStyle = '#3a3f48'; x.lineWidth = 1.5; x.beginPath(); x.moveTo(px, py - 8); x.lineTo(px + 6, py + 5); x.lineTo(px - 6, py + 5); x.closePath(); x.fill(); x.stroke(); } }
-    else if (k === 'glue') { blob(58, 'rgba(230,160,30,.85)'); blob(34, 'rgba(255,205,80,.8)'); x.fillStyle = 'rgba(255,255,255,.5)'; x.beginPath(); x.ellipse(-14, -16, 12, 5, -.4, 0, 7); x.fill(); }
-    else if (k === 'icepatch') { blob(60, 'rgba(180,230,255,.75)'); x.strokeStyle = 'rgba(255,255,255,.85)'; x.lineWidth = 2; for (let i = 0; i < 8; i++) { const a = r() * 6.28; x.beginPath(); x.moveTo(0, 0); x.lineTo(Math.cos(a) * 55, Math.sin(a) * 55); x.stroke(); } }
-    else if (k === 'ink') { blob(60, 'rgba(30,10,50,.88)'); for (let i = 0; i < 9; i++) { const a = r() * 6.28; x.fillStyle = 'rgba(30,10,50,.88)'; x.beginPath(); x.arc(Math.cos(a) * 58, Math.sin(a) * 58, 6 + r() * 6, 0, 7); x.fill(); } }
-  }, false));
-}
-function fakeBoxTex() {
-  return G3.fakeTex || (G3.fakeTex = cTex(64, 64, (x, w, h) => {
-    x.fillStyle = '#ffc629'; x.fillRect(0, 0, w, h); x.strokeStyle = 'rgba(255,255,255,.75)'; x.lineWidth = 4; x.strokeRect(6, 6, w - 12, h - 12);
-    x.fillStyle = '#17140a'; x.font = '40px "Russo One", sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.translate(w / 2, h / 2 + 2); x.rotate(Math.PI); x.fillText('?', 0, 0); // upside down: the only tell
-  }, false));
-}
 function makeTrap3(s) {
-  if (s.k === 'mine') {
-    const g = new THREE.Group(); part('sph', lam('#2a2d35'), 9, 6, 9, 0, 4, 0, g); g.userData.led = part('sph', basic('#ff2020'), 2.2, 2.2, 2.2, 0, 10, 0, g);
-    for (let i = 0; i < 6; i++) { const a = i / 6 * Math.PI * 2; part('cyl', lam('#9aa0aa'), .8, 5, .8, Math.cos(a) * 7, 6, Math.sin(a) * 7, g); }
-    g.position.set(s.x, 0, s.y); return g;
-  }
-  if (s.k === 'fakebox') { const m = part('box', new THREE.MeshLambertMaterial({ map: fakeBoxTex(), emissive: 0x3a2a00 }), 17, 17, 17, s.x, 14, s.y); m.castShadow = true; m.userData.spinBox = true; return m; }
-  const m = part('plane', new THREE.MeshBasicMaterial({ map: trapTex(s.k), transparent: true, depthWrite: false }), s.r * 2.3, 1, s.r * 2, s.x, .72, s.y);
+  const m = part('plane', new THREE.MeshBasicMaterial({ map: s.k === 'peel' || s.banana ? peelTex() : oilTex(), transparent: true, depthWrite: false }), s.r * 2.3, 1, s.r * 2, s.x, .72, s.y);
   m.rotation.y = s.seed; return m;
 }
-function makeFx3(f) {
+function makeFx3(f) { // a rocket: white body, red nose, flame
   const g = new THREE.Group();
-  if (f.k === 'rocket' || f.k === 'homing') {
-    const body = part('cyl', lam(f.k === 'homing' ? '#e5372b' : '#e8ecf4'), 3, 18, 3, 0, 0, 0, g); body.rotation.z = Math.PI / 2;
-    part('cone', lam('#e5372b'), 3, 6, 3, 12, 0, 0, g).rotation.z = -Math.PI / 2;
-    part('flame', basic('#ffb21e', { transparent: true, opacity: .9 }), 10, 4, 4, -14, 0, 0, g);
-    g.userData.y = 12;
-  } else if (f.k === 'twister') {
-    const m = new THREE.MeshBasicMaterial({ color: 0xa0c8ff, transparent: true, opacity: .4, depthWrite: false, side: THREE.DoubleSide }); g.userData.rings = [];
-    for (let i = 0; i < 5; i++) { const r = 8 + i * 7, ring = part('cone', m, r, 20, r, 0, 10 + i * 17, 0, g); ring.rotation.x = Math.PI; g.userData.rings.push(ring); }
-  } else if (f.k === 'zap') {
-    const len = Math.hypot(f.x2 - f.x, f.y2 - f.y), b = part('box', new THREE.MeshBasicMaterial({ color: f.col, transparent: true, opacity: .9 }), len, 3, 3, len / 2, 14, 0, g);
-    g.rotation.y = -Math.atan2(f.y2 - f.y, f.x2 - f.x); g.userData.fade = b.material;
-  } else if (f.k === 'ring') {
-    g.userData.ring = part('ring', new THREE.MeshBasicMaterial({ color: f.col, transparent: true, opacity: .8, depthWrite: false }), 1, 1, 1, 0, 2, 0, g);
-  }
-  g.position.set(f.x, 0, f.y); return g;
+  const body = part('cyl', lam(f.k === 'homing' ? '#e5372b' : '#e8ecf4'), 3, 18, 3, 0, 0, 0, g); body.rotation.z = Math.PI / 2;
+  part('cone', lam('#e5372b'), 3, 6, 3, 12, 0, 0, g).rotation.z = -Math.PI / 2;
+  part('flame', basic('#ffb21e', { transparent: true, opacity: .9 }), 10, 4, 4, -14, 0, 0, g);
+  g.position.set(f.x, 12, f.y); return g;
 }
 function syncItems3D(dt, tm) {
   // traps on the road
   for (const s of S.slicks) if (!s.m3) { s.m3 = makeTrap3(s); G3.dyn.add(s.m3); (G3.slickList = G3.slickList || []).push(s); }
-  for (const s of G3.slickList || []) {
-    if (!s.m3) continue;
-    if (s.k === 'mine') s.m3.userData.led.visible = s.armT > 0 || Math.sin(tm * 10) > 0;
-    else if (s.k === 'fakebox') { s.m3.rotation.set(.5, tm * 1.6, .3); s.m3.position.y = 14 + Math.sin(tm * 3) * 3; }
-    else if (s.m3.material) s.m3.material.opacity = clamp(s.life / 2, 0, 1);
-  }
+  for (const s of G3.slickList || []) if (s.m3) s.m3.material.opacity = clamp(s.life / 2, 0, 1);
   if (G3.slickList && G3.slickList.some(s => !S.slicks.includes(s))) G3.slickList = G3.slickList.filter(s => { if (S.slicks.includes(s)) return true; G3.dyn.remove(s.m3); return false; });
   // flying effects
   const live = new Set(S.fx);
   for (const f of S.fx) {
     if (!f.m3) { f.m3 = makeFx3(f); G3.dyn.add(f.m3); (G3.fxList = G3.fxList || []).push(f); }
-    const g = f.m3, u = g.userData;
-    if (f.k === 'rocket' || f.k === 'homing') { g.position.set(f.x, u.y, f.y); g.rotation.y = -Math.atan2(f.vy, f.vx); }
-    else if (f.k === 'twister') { g.position.set(f.x, 0, f.y); u.rings.forEach((r2, i) => { r2.rotation.y = tm * (8 + i); }); }
-    else if (f.k === 'zap') u.fade.opacity = clamp(f.life / .35, 0, 1) * .9;
-    else if (f.k === 'ring') { const k = 1 - f.life / f.max; u.ring.scale.set(f.r * k, 1, f.r * k); u.ring.material.opacity = .8 * (1 - k); }
+    f.m3.position.set(f.x, 12, f.y); f.m3.rotation.y = -Math.atan2(f.vy, f.vx);
   }
   if (G3.fxList && G3.fxList.some(f => !live.has(f))) G3.fxList = G3.fxList.filter(f => { if (live.has(f)) return true; G3.dyn.remove(f.m3); return false; });
 }
-// statuses on the car model: size, ice block, star colours, the ghost flicker
+// statuses on the car model: size, star colours, the ghost flicker
 function statusLook(c, g, u, tm) {
   const want = c.megaT > 0 ? 1.5 : c.tinyT > 0 ? .55 : 1;
   u.size = (u.size || 1) + (want - (u.size || 1)) * .15; if (Math.abs(u.size - 1) > .01) g.scale.multiplyScalar(u.size);
-  if (c.frozenT > 0 && !u.ice) { u.ice = part('box', new THREE.MeshPhongMaterial({ color: 0xbfe8ff, transparent: true, opacity: .45, shininess: 140, specular: 0xffffff, depthWrite: false }), c.model.L + 12, 26, c.model.W + 12, 0, 12, 0, g); }
-  if (u.ice) u.ice.visible = c.frozenT > 0;
   if (c.starT > 0 && u.paint && u.type !== 'dog') u.paint.color.setHSL((tm * 1.5) % 1, .9, .55);
   else if (u.wasStar && u.paint) u.paint.color.copy(u.base);
   u.wasStar = c.starT > 0;
@@ -5747,7 +5555,7 @@ window.__tk = {
   audioGain: () => audio ? audio.m.gain.value : null,
   audioProbe: () => { if (!audio) return null; const t0 = performance.now(), out = {}; for (const k in ENG) { const b = engLoop(ENG[k], Math.round(ENG[k].red * .72)), d = b.getChannelData(0); let rms = 0; for (let i = 0; i < d.length; i++) rms += d[i] * d[i]; out[k] = +Math.sqrt(rms / d.length).toFixed(3); } out.ms = Math.round(performance.now() - t0); out.voices = ['pv', 'pv2', 'rv'].filter(k => audio[k]).map(k => k + ':' + audio[k].sp.k + ':' + Math.round(audio[k].rpm)); return out; },
   spawn: k => spawnHazard(k),
-  use: (id, c) => { c = c || player(); c.item = id; c.itemN = id === 'triple' ? 3 : 0; useItem(c); return { fx: S.fx.length, traps: S.slicks.length }; },
+  use: (id, c) => { c = c || player(); c.item = id; c.itemN = 0; useItem(c); return { fx: S.fx.length, traps: S.slicks.length }; },
   items: () => ITEMS.slice(),
   run: sec => { for (let tt = 0; tt < sec; tt += DT) step(DT); },
   draw: dt => { (G3.ok ? render3D : render)(dt); updHud(dt); },
