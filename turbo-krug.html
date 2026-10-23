@@ -5606,24 +5606,20 @@ function engPop(t, big) { // exhaust crackle when lifting off at high revs
 function engDrive(v, c, th, vol, now, dt, pan, rate) {
   if (S.map && S.map.mini) rate *= 1.8; // a tiny electric motor whines high
   const sp = v.sp, r = clamp(c.speed / (c.top || BASE), 0, 1.15);
-  // the engine is heard while the car gets going and fades out once it is up to speed; braking for corners keeps it quiet,
-  // only a real slowdown (a crash, a spin) brings it back
-  const up = S.mode === 'countdown' ? 1 : 1 - clamp((r - .2) / .3, 0, 1);
-  v.acc = v.acc == null ? up : v.acc + (up - v.acc) * Math.min(1, dt * (up > v.acc ? 4 : 1.5));
   let tgt;
   if (S.mode === 'countdown') tgt = th > 0 ? sp.idle + (sp.red - sp.idle) * (.42 + .12 * Math.sin(now * 8)) : sp.idle;
   else if (sp.cvt) tgt = th > 0 ? sp.red * (.66 + .3 * Math.min(1, r)) : sp.idle + (sp.red * .55 - sp.idle) * Math.min(1, r);
   else {
     const G = sp.gears, gp = Math.min(G - .001, r * G / 1.03), gi = Math.floor(gp), fr = gp - gi;
-    if (gi !== v.gear) { if (gi > v.gear && th > 0) { v.shift = .11; if (sp.pops && c.isPlayer && v.acc > .3) engPop(now + .02, true); } v.gear = gi; }
+    if (gi !== v.gear) { if (gi > v.gear && th > 0) { v.shift = .11; if (sp.pops && c.isPlayer) engPop(now + .02, true); } v.gear = gi; }
     tgt = gi === 0 ? sp.idle + (sp.red * .9 - sp.idle) * fr : sp.red * (.6 + .38 * fr);
     if (th <= 0) tgt = Math.max(sp.idle, tgt * .92);
   }
   if (th > 0 && (c.air > 0 || c.surface === 'off')) tgt = Math.min(sp.red, tgt * (c.air > 0 ? 1.25 : 1.05)); // wheels free in the air, spinning off-road
   v.rpm += (tgt - v.rpm) * Math.min(1, dt * (tgt > v.rpm ? 10 : 6));
-  if (sp.pops && c.isPlayer && v.acc > .3 && v.th > 0 && th <= 0 && v.rpm > sp.red * .55 && S.mode === 'race') { const n = 3 + (Math.random() * 4 | 0); for (let i = 0; i < n; i++) engPop(now + .05 + i * (.06 + Math.random() * .09)); }
+  if (sp.pops && c.isPlayer && v.th > 0 && th <= 0 && v.rpm > sp.red * .55 && S.mode === 'race') { const n = 3 + (Math.random() * 4 | 0); for (let i = 0; i < n; i++) engPop(now + .05 + i * (.06 + Math.random() * .09)); }
   v.th = th;
-  let g = vol * (th > 0 ? 1 : .5) * v.acc;
+  let g = vol * (th > 0 ? 1 : .5);
   if (v.shift > 0) { v.shift -= dt; g *= .35; }
   const [a, b] = v.lay, x = clamp((v.rpm - a.rpm) / (b.rpm - a.rpm), 0, 1);
   a.s.playbackRate.setTargetAtTime(v.rpm / a.rpm * rate, now, .025); b.s.playbackRate.setTargetAtTime(v.rpm / b.rpm * rate, now, .025);
@@ -6460,7 +6456,7 @@ window.__tk = {
   mdl: MDL, g3: G3,
   screenPos: () => { const p = player(); if (!p || !G3.ok || !p.m3) return null; const v = p.m3.position.clone().project(G3.cam); return [v.x, v.y, G3.cam.position.x, G3.cam.position.z]; },
   audioGain: () => audio ? audio.m.gain.value : null,
-  audioProbe: () => { if (!audio) return null; const t0 = performance.now(), out = {}; for (const k in ENG) { const b = engLoop(ENG[k], Math.round(ENG[k].red * .72)), d = b.getChannelData(0); let rms = 0; for (let i = 0; i < d.length; i++) rms += d[i] * d[i]; out[k] = +Math.sqrt(rms / d.length).toFixed(3); } out.ms = Math.round(performance.now() - t0); out.voices = ['pv', 'pv2', 'rv'].filter(k => audio[k]).map(k => k + ':' + audio[k].sp.k + ':' + Math.round(audio[k].rpm) + ':' + (audio[k].acc || 0).toFixed(2)); return out; },
+  audioProbe: () => { if (!audio) return null; const t0 = performance.now(), out = {}; for (const k in ENG) { const b = engLoop(ENG[k], Math.round(ENG[k].red * .72)), d = b.getChannelData(0); let rms = 0; for (let i = 0; i < d.length; i++) rms += d[i] * d[i]; out[k] = +Math.sqrt(rms / d.length).toFixed(3); } out.ms = Math.round(performance.now() - t0); out.voices = ['pv', 'pv2', 'rv'].filter(k => audio[k]).map(k => k + ':' + audio[k].sp.k + ':' + Math.round(audio[k].rpm)); return out; },
   spawn: k => spawnHazard(k),
   use: (id, c) => { c = c || player(); c.item = id; c.itemN = 0; useItem(c); return { fx: S.fx.length, traps: S.slicks.length }; },
   items: () => ITEMS.slice(),
