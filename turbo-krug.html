@@ -263,6 +263,23 @@ tr.me td{color:var(--accent)}
 @keyframes pageIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 @keyframes panelIn{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.mpage:not([hidden]),.overlay:not([hidden])>.panel{animation:none}}
+.center .panel.comic-panel{width:min(860px,100%)}
+.comic-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.comic-head .res-title{margin:2px 0 0}
+.cpanels{display:flex;flex-wrap:wrap;justify-content:center;gap:12px}
+.cpanels .cp{flex:1 1 220px;max-width:270px}
+.cp{margin:0;position:relative;display:grid;grid-template-rows:auto 1fr;background:#fff;border:3px solid #111;border-radius:4px;box-shadow:4px 4px 0 #111;overflow:hidden;animation:panelIn .25s ease-out backwards}
+.cp:nth-child(2){animation-delay:.12s}.cp:nth-child(3){animation-delay:.24s}.cp:nth-child(4){animation-delay:.36s}
+.cp svg{display:block;width:100%;aspect-ratio:4/3;height:auto;border-bottom:3px solid #111}
+.cp::before{content:"";position:absolute;inset:0 0 auto;aspect-ratio:4/3;background:radial-gradient(rgba(0,0,0,.16) 1px,transparent 1.4px) 0 0/6px 6px;pointer-events:none}
+.cp figcaption{position:relative;margin:-26px 10px 10px;padding:10px 12px;background:#fff;color:#111;border:2.5px solid #111;border-radius:16px;font-size:14px;line-height:1.35;font-weight:600}
+.cp figcaption::before{content:"";position:absolute;left:26px;top:-12px;border:10px solid transparent;border-bottom-color:#111;border-top:0}
+.cp figcaption b{display:block;font-family:var(--display);font-weight:400;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#c8342b;margin-bottom:2px}
+.cp.cap figcaption{border-radius:2px;background:#ffd84a;margin-top:10px}.cp.cap figcaption::before{display:none}
+.choices{display:grid;gap:8px}.choices:empty{display:none}
+.btn.choice{height:auto;min-height:46px;padding:10px 14px;text-align:left;background:#fff;color:#111;border:2.5px solid #111;box-shadow:3px 3px 0 #111;font-weight:700}
+.btn.choice:hover{background:#ffd84a}
+.lg.story .chaps{display:flex;flex-wrap:wrap;gap:8px}.chap.new{border-color:var(--accent);color:var(--accent)}
 .daily{border-color:#4a3f8a;background:linear-gradient(90deg,#221d3a,#1a1d27)}
 .career{display:grid;gap:14px}
 .lg header{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:8px}
@@ -640,6 +657,15 @@ body.touchmode.steer-btn .hud-bl{bottom:calc(env(safe-area-inset-bottom,0px) + 1
   </div>
 </div>
 
+<div id="comic" class="overlay center comic" hidden>
+  <div class="panel comic-panel">
+    <header class="comic-head"><div><p class="label" id="comicNum"></p><h2 class="res-title" id="comicTitle"></h2></div><button id="comicSkip" class="btn small" data-t="comicSkip">Пропустить</button></header>
+    <div id="comicPanels" class="cpanels"></div>
+    <div id="comicChoices" class="choices"></div>
+    <button id="comicNext" class="btn primary" data-t="comicNext">Далее</button>
+  </div>
+</div>
+
 <div id="pause" class="overlay center" hidden>
   <div class="panel">
     <div class="checker" aria-hidden="true"></div>
@@ -852,6 +878,7 @@ const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const STR = {
   ru: {
     title: 'Турбо <span>Круг</span>', lede: 'Тридцать трасс, четыре соперника и сюрпризы на дороге. Держи газ в пол и финишируй первым.',
+    story: 'Сюжет', storySub: 'новые главы открываются по ходу карьеры', chapter: 'Глава {n} из {m}', comicNext: 'Далее', comicDone: 'Готово', comicSkip: 'Пропустить',
     mCareer: 'Карьера', mCareerSub: '4 лиги с заданиями и наградами', lgLocked: 'откроется после 3 заданий прошлой лиги',
     'lg.rookie': 'Новичок', 'lg.amateur': 'Любитель', 'lg.pro': 'Профи', 'lg.legend': 'Легенда',
     'goal.top3': 'Финишируйте в тройке', 'goal.win': 'Победите', 'goal.clean': 'В тройке, корпус целее 80%',
@@ -1038,6 +1065,7 @@ const STR = {
   },
   en: {
     title: 'Turbo <span>Lap</span>', lede: 'Thirty tracks, four rivals and surprises on the road. Keep it floored and finish first.',
+    story: 'Story', storySub: 'new chapters unlock as your career goes on', chapter: 'Chapter {n} of {m}', comicNext: 'Next', comicDone: 'Done', comicSkip: 'Skip',
     mCareer: 'Career', mCareerSub: '4 leagues with goals and rewards', lgLocked: 'opens after 3 races of the previous league',
     'lg.rookie': 'Rookie', 'lg.amateur': 'Amateur', 'lg.pro': 'Pro', 'lg.legend': 'Legend',
     'goal.top3': 'Finish in the top three', 'goal.win': 'Win', 'goal.clean': 'Top three, hull above 80%',
@@ -1875,7 +1903,7 @@ function pollPad(dt) {
     return;
   }
   // menus: move focus between visible buttons, A clicks, B goes back
-  const ov = ['#settings', '#help', '#records', '#online', '#garage', '#achievements', '#pause', '#results', '#menu'].map(id => $(id)).find(el => !el.hidden);
+  const ov = ['#comic', '#settings', '#help', '#records', '#online', '#garage', '#achievements', '#pause', '#results', '#menu'].map(id => $(id)).find(el => !el.hidden);
   if (!ov) return;
   PAD.navT -= dt;
   const dir = st.down || st.right ? 1 : st.up || st.left ? -1 : 0;
@@ -5294,7 +5322,7 @@ function setMenuPage(pg) {
   document.querySelectorAll('#menu .mpage').forEach(el => { el.hidden = el.dataset.page !== pg; });
   $('#menu').scrollTop = 0;
   if (pg === 'home') updQuick();
-  if (pg === 'career') renderCareer();
+  if (pg === 'career') { renderCareer(); const ch = pendingChapter(); if (ch >= 0) setTimeout(() => { if (S.menuPage === 'career' && !$('#menu').hidden) openComic(ch); }, 250); }
   const f = { home: '#playBtn', mode: '#modeSeg button[aria-pressed="true"]', track: '#startBtn' }[pg];
   if (!touchMode) { const el = $(f); if (el) el.focus({ preventScroll: true }); }
 }
@@ -5383,14 +5411,15 @@ const CAREER = [
   { id: 'legend', diff: 2, laps: 5, reward: 260, ev: [['pass', 'win'], ['neon', 'win'], ['mars', 'clean'], ['haunted', 'win']] },
 ];
 let career = { done: {}, bonus: {} };
-try { const c = JSON.parse(store.get('turbo-krug-career') || 'null'); if (c && c.done) career = { done: c.done || {}, bonus: c.bonus || {} }; } catch (e) {}
+try { const c = JSON.parse(store.get('turbo-krug-career') || 'null'); if (c && c.done) career = { done: c.done || {}, bonus: c.bonus || {}, story: c.story && Array.isArray(c.story.seen) ? c.story : undefined }; } catch (e) {}
 const saveCareer = () => store.set('turbo-krug-career', JSON.stringify(career));
 const evKey = (l, e) => CAREER[l].id + ':' + e;
 const leagueDone = l => CAREER[l].ev.filter((_, e) => career.done[evKey(l, e)]).length;
 const leagueOpen = l => l === 0 || leagueDone(l - 1) >= 3;
 function goalMet(goal, c) { return goal === 'win' ? c.place === 1 : goal === 'clean' ? c.place <= 3 && c.damage <= .2 : c.place <= 3; }
 function renderCareer() {
-  $('#careerList').innerHTML = CAREER.map((L, l) => {
+  const chapters = STORY.map((c, i) => c.open() ? `<button class="btn small chap${career.story.seen.includes(i) ? '' : ' new'}" data-ch="${i}">${i + 1}. ${esc(loc(c.title))}</button>` : '').join('');
+  $('#careerList').innerHTML = `<section class="lg story"><header><b>📖 ${t('story')}</b><span>${t('storySub')}</span></header><div class="chaps">${chapters}</div></section>` + CAREER.map((L, l) => {
     const open = leagueOpen(l), n = leagueDone(l);
     return `<section class="lg${open ? '' : ' locked'}"><header><b>${t('lg.' + L.id)}</b><span>${t('diff' + L.diff)} · ${lapsWord(L.laps)} · ${n}/4${open ? '' : ' · ' + t('lgLocked')}</span></header><div class="evs">${L.ev.map(([mid, goal], e) => {
       const done = career.done[evKey(l, e)];
@@ -5414,6 +5443,142 @@ function careerFinish(c) { // called at the finish: did we meet the goal, and is
   S.careerRes = { ok, first, reward: first ? L.reward : 0, bonus, goal: L.ev[e][1] };
   return (first ? L.reward : 0) + bonus;
 }
+// ---------- career story: five short comic chapters; your replies change a few lines and the ending ----------
+// A panel: who speaks (cap = a caption box), the scene behind them, the text in both languages, and an optional condition on earlier choices.
+const P = (s, bg, ru, en, when) => ({ s, bg, ru, en, when });
+const STORY = [
+  { title: { ru: 'Гараж на окраине', en: 'The garage on the edge of town' }, open: () => true, steps: [
+    [P('cap', 'garage', 'Маленький город. Старый гараж Михалыча. Пахнет бензином и пирожками.', 'A small town. Old Mikhalych\'s garage. It smells of petrol and pies.'),
+     P('mentor', 'garage', '{name}, я видел, как ты гоняешь на картинге. Держи ключи от «Старта». Машина старая, но сердце у неё горячее.', '{name}, I\'ve seen you on the karting track. Here are the keys to the "Starter". She\'s old, but her heart runs hot.'),
+     P('dog', 'garage', 'Гав!', 'Woof!')],
+    { ask: { ru: 'Что ответишь Михалычу?', en: 'What do you tell Mikhalych?' }, choices: [
+      { ru: 'Я выиграю всё, вот увидишь!', en: 'I\'ll win everything, you\'ll see!', set: { tone: 'bold' }, reply: [P('mentor', 'garage', 'Ха! Огонь в глазах есть. Главное — не спали сцепление.', 'Ha! There\'s fire in your eyes. Just don\'t burn the clutch.')] },
+      { ru: 'Спасибо. Я не подведу.', en: 'Thank you. I won\'t let you down.', set: { tone: 'kind' }, reply: [P('mentor', 'garage', 'Знаю. Потому и отдаю.', 'I know. That\'s why she\'s yours.')] },
+      { ru: 'А Шарика можно взять штурманом?', en: 'Can Sharik come along as navigator?', set: { tone: 'fun' }, reply: [P('mentor', 'garage', 'Он сам решит. Похоже, уже решил.', 'He decides for himself. Looks like he already has.'), P('dog', 'garage', 'Гав-гав!', 'Woof woof!')] },
+    ] },
+    [P('cap', 'track', 'Лига «Новичок» ждёт. Пора на трассу.', 'The Rookie league awaits. Time to hit the track.')],
+  ] },
+  { title: { ru: 'Барон', en: 'The Baron' }, open: () => leagueOpen(1), steps: [
+    [P('cap', 'track', 'Первые кубки на полке гаража. О тебе начинают говорить.', 'The first trophies are on the garage shelf. People are starting to talk.'),
+     P('baron', 'track', 'Так это ты — звезда из гаража? Мило. Любители обычно ломаются на второй лиге.', 'So you\'re the garage star? Cute. Amateurs usually crack in the second league.')],
+    { ask: { ru: 'Как ответишь Барону?', en: 'How do you answer the Baron?' }, choices: [
+      { ru: 'Посмотрим, кто сломается.', en: 'We\'ll see who cracks.', set: { rival: 'hot' }, reply: [P('baron', 'track', 'Смело. Увидимся на трассе — если догонишь.', 'Brave. See you on the track — if you can keep up.')] },
+      { ru: '(промолчать и улыбнуться)', en: '(say nothing and smile)', set: { rival: 'cool' }, reply: [P('cap', 'track', 'Барон хмыкает, но в его взгляде что-то меняется.', 'The Baron snorts, but something in his eyes changes.')] },
+      { ru: 'Удачи на трассе. (протянуть руку)', en: 'Good luck out there. (offer a hand)', set: { rival: 'friend' }, reply: [P('baron', 'track', '…Воспитанный. Редкость. Удачи и тебе.', '…Polite. That\'s rare. Good luck to you too.')] },
+    ] },
+    [P('mentor', 'garage', 'Не заводись. Он этого и хочет.', 'Don\'t let him wind you up. That\'s what he wants.', f => f.tone === 'bold'),
+     P('mentor', 'garage', 'Молодец, голову держишь холодной.', 'Good — you keep a cool head.', f => f.tone !== 'bold' && f.tone !== 'fun'),
+     P('mentor', 'garage', 'Шарик на него зарычал. Шарик в людях разбирается.', 'Sharik growled at him. Sharik knows people.', f => f.tone === 'fun')],
+  ] },
+  { title: { ru: 'Предложение', en: 'The offer' }, open: () => leagueOpen(2), steps: [
+    [P('cap', 'neon', 'Профессиональная лига. Большие деньги, яркие огни.', 'The pro league. Big money, bright lights.'),
+     P('liza', 'neon', 'Привет, {name}! «Неон-Кола» хочет свой логотип на твоём капоте. 150 очков сразу — и ты наша звезда!', 'Hi, {name}! Neon Cola wants its logo on your bonnet. 150 points right now — and you\'re our star!'),
+     P('mentor', 'garage', 'Решать тебе. Я в рекламе не разбираюсь. Только в карбюраторах.', 'Your call. I know nothing about adverts. Only carburettors.')],
+    { ask: { ru: 'Принять предложение?', en: 'Take the offer?' }, choices: [
+      { ru: 'Беру! Гаражу нужны деньги.', en: 'Deal! The garage needs the money.', set: { sponsor: true }, coins: 150, reply: [P('liza', 'neon', 'Отлично! Улыбайся на финише!', 'Great! Smile at the finish line!'), P('mentor', 'garage', 'Ну… крыша в гараже давно течёт.', 'Well… the garage roof has been leaking for ages.')] },
+      { ru: 'Спасибо, но я еду за гараж Михалыча.', en: 'Thanks, but I race for Mikhalych\'s garage.', set: { sponsor: false }, reply: [P('liza', 'neon', 'Жаль. Передумаешь — ты знаешь, где нас найти.', 'Shame. If you change your mind, you know where to find us.'), P('mentor', 'garage', '…Спасибо.', '…Thank you.')] },
+    ] },
+  ] },
+  { title: { ru: 'Вызов', en: 'The challenge' }, open: () => leagueOpen(3), steps: [
+    [P('cap', 'track', 'Лига «Легенда». Пять кругов. Лучшие из лучших.', 'The Legend league. Five laps. The best of the best.'),
+     P('baron', 'track', 'Ну что, гаражный. Последний бой. Второй раз я тебе не уступлю.', 'Well, garage kid. The final battle. I won\'t lose to you twice.', f => f.rival === 'hot'),
+     P('baron', 'track', 'Ты молчал, а ехал быстро. Уважаю. Но в «Легенде» я не уступлю.', 'You said nothing and drove fast. Respect. But I won\'t give way in the Legend league.', f => f.rival !== 'hot' && f.rival !== 'friend'),
+     P('baron', 'track', 'Слушай… на Марсе ветер в последнем повороте тянет влево. Это не подсказка. Просто погода.', 'Listen… on Mars the wind pulls left in the last corner. Not a tip. Just the weather.', f => f.rival === 'friend'),
+     P('mentor', 'garage', 'Помнишь, что я сказал в первый день?', 'Remember what I told you on the first day?')],
+    { ask: { ru: 'Что ты помнишь?', en: 'What do you remember?' }, choices: [
+      { ru: '«Не спали сцепление».', en: '"Don\'t burn the clutch."', set: {}, reply: [P('mentor', 'garage', 'Именно. И себя не спали. Вперёд.', 'Exactly. And don\'t burn yourself out. Go.')] },
+      { ru: '«У машины горячее сердце».', en: '"She\'s got a hot heart."', set: {}, reply: [P('mentor', 'garage', 'А у пилота — холодная голова. Вперёд.', 'And the driver keeps a cool head. Go.')] },
+    ] },
+  ] },
+  { title: { ru: 'Финиш сезона', en: 'Season finale' }, open: () => leagueDone(3) === 4, steps: [
+    [P('cap', 'podium', 'Финиш последней гонки. Трибуны ревут.', 'The last race is over. The stands roar.'),
+     P('liza', 'podium', 'Ты лицо «Неон-Колы»! Твои билборды по всей стране!', 'You\'re the face of Neon Cola! Your billboards are all over the country!', f => f.sponsor),
+     P('mentor', 'podium', 'Без всяких спонсоров. Из нашего гаража — на вершину.', 'No sponsors at all. From our garage to the top.', f => !f.sponsor),
+     P('baron', 'podium', '…Ладно. Сегодня ты был быстрее. Завтра — посмотрим.', '…Fine. Today you were faster. Tomorrow — we\'ll see.', f => f.rival === 'hot'),
+     P('baron', 'podium', 'Хорошая гонка. Честная.', 'Good race. A fair one.', f => f.rival !== 'hot' && f.rival !== 'friend'),
+     P('baron', 'podium', 'Я знал, что ты справишься. Реванш за мной, партнёр.', 'I knew you\'d make it. I owe you a rematch, partner.', f => f.rival === 'friend')],
+    [P('cap', 'podium', 'Ты обещал выиграть всё — и выиграл.', 'You promised to win everything — and you did.', f => f.tone === 'bold'),
+     P('cap', 'podium', 'Ты обещал не подвести — и не подвёл.', 'You promised not to let him down — and you didn\'t.', f => f.tone !== 'bold' && f.tone !== 'fun'),
+     P('cap', 'podium', 'Шарик получил медаль штурмана. Он ею очень гордится.', 'Sharik got a navigator\'s medal. He\'s very proud of it.', f => f.tone === 'fun'),
+     P('dog', 'podium', 'Гав!', 'Woof!'),
+     P('cap', 'podium', 'Конец первого сезона. Трассы ждут.', 'End of season one. The tracks are waiting.')],
+  ] },
+];
+if (!career.story) career.story = { seen: [], picks: {}, flags: {} };
+const storyFlags = () => career.story.flags;
+const NAMES = { mentor: { ru: 'Михалыч', en: 'Mikhalych' }, baron: { ru: 'Барон', en: 'The Baron' }, liza: { ru: 'Лиза Неон', en: 'Liza Neon' }, dog: { ru: 'Шарик', en: 'Sharik' } };
+const loc = o => (o && (o[LANG] || o.ru)) || '';
+// ---- drawings: simple flat vector art in a comic frame
+const SCENE = {
+  garage: '<rect width="200" height="150" fill="#6b4a2e"/><rect y="104" width="200" height="46" fill="#3a2a1e"/><rect x="10" y="22" width="70" height="4" fill="#3a2a1e"/><rect x="10" y="48" width="70" height="4" fill="#3a2a1e"/><circle cx="170" cy="118" r="18" fill="#1e1e22"/><circle cx="170" cy="118" r="8" fill="#555"/><circle cx="170" cy="96" r="18" fill="#26262a"/><circle cx="170" cy="96" r="8" fill="#555"/><rect x="18" y="8" width="10" height="14" fill="#c8342b"/><rect x="34" y="12" width="14" height="10" fill="#2e7cf6"/><rect x="56" y="36" width="18" height="12" fill="#ffc629"/><circle cx="150" cy="24" r="10" fill="#ffd36b" opacity=".85"/>',
+  track: '<rect width="200" height="150" fill="#6fb6ee"/><rect y="62" width="200" height="34" fill="#c9ced8"/><g fill="#8a90a0">' + Array.from({ length: 10 }, (_, i) => `<rect x="${i * 20 + 2}" y="66" width="16" height="6"/><rect x="${i * 20 + 8}" y="78" width="10" height="6"/>`).join('') + '</g><rect y="96" width="200" height="54" fill="#3b3e45"/><rect y="96" width="200" height="5" fill="#d6352b"/>' + Array.from({ length: 6 }, (_, i) => `<rect x="${150 + (i % 3) * 8}" y="${10 + Math.floor(i / 3) * 8}" width="8" height="8" fill="${(i + Math.floor(i / 3)) % 2 ? '#fff' : '#111'}"/>`).join('') + '<rect x="148" y="10" width="2" height="40" fill="#333"/>',
+  neon: '<rect width="200" height="150" fill="#140a2a"/>' + Array.from({ length: 9 }, (_, i) => { const h = 40 + (i * 37) % 60; return `<rect x="${i * 23}" y="${120 - h}" width="20" height="${h + 30}" fill="#1e1440" stroke="${['#ff3fb4', '#16d6ff', '#7cff6b'][i % 3]}" stroke-width="1.5"/>`; }).join('') + '<rect y="128" width="200" height="22" fill="#0a0618"/>',
+  podium: '<rect width="200" height="150" fill="#1c2240"/><polygon points="40,0 70,0 110,150 0,150" fill="#ffffff" opacity=".08"/><polygon points="130,0 160,0 200,150 90,150" fill="#ffffff" opacity=".08"/><rect x="60" y="112" width="80" height="38" fill="#ffc629"/><rect x="20" y="124" width="40" height="26" fill="#c9ced8"/><rect x="140" y="130" width="40" height="20" fill="#d08a56"/>' + Array.from({ length: 14 }, (_, i) => `<rect x="${(i * 47) % 200}" y="${(i * 29) % 90}" width="4" height="7" fill="${['#ff3fb4', '#ffc629', '#16d6ff', '#7cff6b'][i % 4]}" transform="rotate(${i * 25} ${(i * 47) % 200} ${(i * 29) % 90})"/>`).join(''),
+};
+function portrait(who) {
+  const hero = paintOf(curModel());
+  const P = {
+    hero: `<rect x="62" y="104" width="76" height="50" rx="18" fill="#23283a"/><rect x="92" y="104" width="16" height="50" fill="${hero}"/><circle cx="100" cy="72" r="38" fill="${hero}"/><path d="M68 70 Q100 56 132 70 L130 88 Q100 96 70 88 Z" fill="#141820"/><path d="M76 72 Q92 64 108 68" stroke="#9fd4ff" stroke-width="3" fill="none" opacity=".7"/><rect x="96" y="34" width="8" height="20" fill="#fff" opacity=".35"/>`,
+    mentor: `<rect x="58" y="106" width="84" height="50" rx="16" fill="#2e5ea0"/><rect x="72" y="106" width="8" height="40" fill="#24497e"/><rect x="120" y="106" width="8" height="40" fill="#24497e"/><circle cx="100" cy="74" r="32" fill="#e8b48a"/><path d="M66 62 Q100 30 134 62 L134 58 Q100 22 66 58 Z" fill="#c8342b"/><rect x="62" y="56" width="76" height="8" rx="4" fill="#9a2a22"/><path d="M78 88 Q100 78 122 88 Q112 98 100 92 Q88 98 78 88" fill="#d8dbe0"/><circle cx="88" cy="72" r="3.5" fill="#222"/><circle cx="112" cy="72" r="3.5" fill="#222"/><path d="M82 64 L94 66 M106 66 L118 64" stroke="#d8dbe0" stroke-width="3"/><rect x="134" y="118" width="26" height="6" rx="3" fill="#9aa0aa" transform="rotate(-30 147 121)"/>`,
+    baron: `<path d="M56 156 L64 110 Q100 96 136 110 L144 156 Z" fill="#7a3fd1"/><path d="M84 108 L100 126 L116 108" fill="#f4f1ea"/><circle cx="100" cy="72" r="32" fill="#e9bf98"/><path d="M68 66 Q70 34 104 36 Q132 38 132 62 Q118 50 96 52 Q80 54 68 66" fill="#2a1e1a"/><rect x="76" y="66" width="20" height="10" rx="4" fill="#111"/><rect x="104" y="66" width="20" height="10" rx="4" fill="#111"/><rect x="94" y="69" width="12" height="3" fill="#111"/><path d="M88 90 Q102 96 114 86" stroke="#7a3a2a" stroke-width="3" fill="none"/>`,
+    liza: `<path d="M58 156 L66 112 Q100 100 134 112 L142 156 Z" fill="#7cff6b"/><circle cx="100" cy="74" r="30" fill="#f2c6a0"/><path d="M66 82 Q62 40 100 38 Q140 40 134 84 L126 84 Q128 56 100 54 Q74 56 74 84 Z" fill="#ff5fa8"/><circle cx="90" cy="74" r="3.5" fill="#222"/><circle cx="110" cy="74" r="3.5" fill="#222"/><path d="M90 88 Q100 96 110 88" stroke="#c0405a" stroke-width="3" fill="none"/><path d="M70 66 Q64 80 74 84" stroke="#222" stroke-width="3" fill="none"/><rect x="138" y="96" width="16" height="28" rx="4" fill="#16d6ff"/><rect x="138" y="104" width="16" height="6" fill="#ff3fb4"/>`,
+    dog: `<ellipse cx="100" cy="128" rx="44" ry="26" fill="#c98b4f"/><circle cx="100" cy="80" r="34" fill="#c98b4f"/><ellipse cx="70" cy="80" rx="12" ry="24" fill="#7a4a24" transform="rotate(18 70 80)"/><ellipse cx="130" cy="80" rx="12" ry="24" fill="#7a4a24" transform="rotate(-18 130 80)"/><ellipse cx="100" cy="94" rx="18" ry="13" fill="#f2e2c8"/><circle cx="100" cy="88" r="5" fill="#141414"/><circle cx="88" cy="74" r="4" fill="#141414"/><circle cx="112" cy="74" r="4" fill="#141414"/><path d="M96 100 Q100 116 104 100" fill="#ff7a8a"/><rect x="74" y="108" width="52" height="7" rx="3" fill="#e5372b"/><circle cx="100" cy="118" r="4" fill="#ffc629"/>`,
+  };
+  return P[who] || '';
+}
+function panelHTML(p) {
+  const name = loc({ ru: myName(), en: myName() }), text = loc(p).split('{name}').join(esc(name));
+  const art = `<svg viewBox="0 0 200 150" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${SCENE[p.bg] || SCENE.garage}${portrait(p.art || (p.s !== 'cap' ? p.s : ''))}</svg>`;
+  const who = p.s === 'cap' ? '' : p.s === 'hero' ? name : loc(NAMES[p.s]);
+  return `<figure class="cp${p.s === 'cap' ? ' cap' : ''}">${art}<figcaption>${who ? `<b>${esc(who)}</b>` : ''}${esc(text)}</figcaption></figure>`;
+}
+// ---- the comic viewer
+const CM = { ch: 0, step: 0, replay: false, extra: null };
+function openComic(ch, replay) {
+  CM.ch = ch; CM.step = 0; CM.replay = !!replay; CM.extra = null;
+  $('#menu').hidden = true; $('#comic').hidden = false; renderComic();
+}
+function closeComic() {
+  const st = career.story; if (!st.seen.includes(CM.ch)) { st.seen.push(CM.ch); saveCareer(); }
+  $('#comic').hidden = true; $('#menu').hidden = false; renderCareer();
+  const next = CM.replay ? -1 : pendingChapter(); if (next >= 0) setTimeout(() => openComic(next), 300); // chapters unlocked together play in a row
+}
+function renderComic() {
+  const C = STORY[CM.ch], f = storyFlags(), st = C.steps[CM.step];
+  $('#comicTitle').textContent = loc(C.title);
+  $('#comicNum').textContent = t('chapter', { n: CM.ch + 1, m: STORY.length });
+  let panels, choices = '';
+  if (CM.extra) panels = CM.extra; // the answer to a choice just made
+  else if (Array.isArray(st)) panels = st;
+  else { // a question: on a replay, the answer you gave last time is shown instead of buttons
+    const pick = career.story.picks[CM.ch];
+    if (CM.replay && pick != null) { const c = st.choices[pick]; panels = [P('hero', 'track', sayQ(c.ru, '«', '»'), sayQ(c.en, '"', '"'))].concat(c.reply); }
+    else { panels = [Object.assign(P('cap', 'garage', loc(st.ask), loc(st.ask)), { art: 'hero' })]; choices = st.choices.map((c, i) => `<button class="btn choice" data-c="${i}">${esc(loc(c))}</button>`).join(''); }
+  }
+  panels = panels.filter(p => !p.when || p.when(f));
+  $('#comicPanels').innerHTML = panels.map(panelHTML).join('');
+  $('#comicChoices').innerHTML = choices;
+  const last = CM.step >= C.steps.length - 1;
+  $('#comicNext').hidden = !!choices; $('#comicNext').textContent = last ? t('comicDone') : t('comicNext');
+  $('#comicPanels').scrollTop = 0;
+}
+function comicNext() {
+  const C = STORY[CM.ch];
+  if (CM.extra) CM.extra = null;
+  if (CM.step >= C.steps.length - 1) { closeComic(); return; }
+  CM.step++; renderComic();
+}
+function comicChoose(i) {
+  const C = STORY[CM.ch], st = C.steps[CM.step], c = st.choices[i];
+  Object.assign(career.story.flags, c.set || {}); career.story.picks[CM.ch] = i;
+  if (c.coins) { wallet.coins += c.coins; saveWallet(); renderMenuStrip(); }
+  saveCareer();
+  CM.extra = [P('hero', 'track', sayQ(c.ru, '«', '»'), sayQ(c.en, '"', '"'))].concat(c.reply || []);
+  renderComic();
+}
+const sayQ = (x, a, b) => /^[«"(]/.test(x) ? x : a + x + b; // a reply already in quotes or brackets stays as it is
+function pendingChapter() { return STORY.findIndex((c, i) => c.open() && !career.story.seen.includes(i)); }
+
 // ---------- track of the day: the same track and weather for everyone today ----------
 function dailyInfo() {
   const date = new Date().toISOString().slice(0, 10); let h = 7; for (const ch of date) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
@@ -5666,6 +5831,7 @@ addEventListener('keydown', e => {
   if (e.repeat) return;
   if (S.mode === 'replay' && (code === 'Escape' || code === 'Enter' || code === 'Space')) { e.preventDefault(); endReplay(); return; }
   if (S.mode === 'photo' && code === 'Escape') { exitPhoto(); return; }
+  if (!$('#comic').hidden) { if (code === 'Escape') closeComic(); return; }
   if (code === 'Escape' && !$('#settings').hidden) closeSettings();
   else if (code === 'Escape' && !$('#garage').hidden) closeGarage();
   else if (code === 'Escape' && !$('#achievements').hidden) $('#achBack').click();
@@ -5737,7 +5903,10 @@ $('#randMap').addEventListener('click', () => { // pick another track at random 
 });
 $('#quickBtn').addEventListener('click', () => { if (['online', 'career', 'daily'].includes(S.gameMode)) { S.gameMode = 'race'; syncMode(); } startRace(); });
 $('#dailyBtn').addEventListener('click', startDaily);
-$('#careerList').addEventListener('click', e => { const b = e.target.closest('.ev'); if (b && !b.disabled) startCareer(+b.dataset.l, +b.dataset.e); });
+$('#comicNext').addEventListener('click', comicNext);
+$('#comicSkip').addEventListener('click', closeComic);
+$('#comicChoices').addEventListener('click', e => { const b = e.target.closest('.choice'); if (b) comicChoose(+b.dataset.c); });
+$('#careerList').addEventListener('click', e => { const ch = e.target.closest('.chap'); if (ch) { openComic(+ch.dataset.ch, career.story.seen.includes(+ch.dataset.ch)); return; } const b = e.target.closest('.ev'); if (b && !b.disabled) startCareer(+b.dataset.l, +b.dataset.e); });
 document.querySelectorAll('#menu .back').forEach(b => b.addEventListener('click', () => setMenuPage(b.dataset.back)));
 $('#cupNextBtn').addEventListener('click', cupNext);
 $('#p2Next').addEventListener('click', () => {
