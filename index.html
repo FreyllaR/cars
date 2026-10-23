@@ -547,7 +547,7 @@ body.touchmode.steer-btn .hud-bl{bottom:calc(env(safe-area-inset-bottom,0px) + 1
       <div id="modeSeg" class="modes">
         <button data-mode="race" aria-pressed="true"><i aria-hidden="true">🏁</i><b data-t="mRace">Гонка</b><span data-t="mRaceSub">Одна трасса с ботами</span></button>
         <button data-mode="cup" aria-pressed="false"><i aria-hidden="true">🏆</i><b data-t="mCup">Чемпионат</b><span data-t="mCupSub">5 трасс подряд, очки за места</span></button>
-        <button data-mode="trial" aria-pressed="false"><i aria-hidden="true">⏱</i><b data-t="mTrial">На время</b><span data-t="mTrialSub">Вы и ваш призрак</span></button>
+        <button data-mode="trial" aria-pressed="false"><i aria-hidden="true">⏱</i><b data-t="mTrial">На время</b><span data-t="mTrialSub">Только вы и секундомер</span></button>
         <button data-mode="online" aria-pressed="false"><i aria-hidden="true">🌐</i><b data-t="mOnline">Онлайн</b><span data-t="mOnlineSub">С друзьями по коду комнаты</span></button>
         <button data-mode="duo" aria-pressed="false" id="duoModeBtn"><i aria-hidden="true">👥</i><b data-t="mDuo">Вдвоём</b><span data-t="mDuoSub">Два игрока, один экран</span></button>
       </div>
@@ -652,13 +652,6 @@ body.touchmode.steer-btn .hud-bl{bottom:calc(env(safe-area-inset-bottom,0px) + 1
         <div id="hazSeg" class="seg words">
           <button data-haz="on" aria-pressed="true" data-t="on">Вкл</button>
           <button data-haz="off" aria-pressed="false" data-t="off">Выкл</button>
-        </div>
-      </div>
-      <div class="set">
-        <h3 class="label" data-t="ghostSet">Призрак лучшего круга</h3>
-        <div id="ghostSeg" class="seg words">
-          <button data-ghost="on" aria-pressed="true" data-t="on">Вкл</button>
-          <button data-ghost="off" aria-pressed="false" data-t="off">Выкл</button>
         </div>
       </div>
       <div class="set">
@@ -884,11 +877,11 @@ const STR = {
     'ach.garage_5': 'Коллекционер', 'ach.garage_5.d': 'Соберите 5 видов транспорта',
     'ach.tune_max': 'Механик', 'ach.tune_max.d': 'Прокачайте что-нибудь до максимума',
     'ach.dog_win': 'Хороший мальчик', 'ach.dog_win.d': 'Выиграйте гонку на собаке',
-    mode: 'Режим', mRace: 'Гонка', mRaceSub: 'Одна трасса с ботами', mCup: 'Чемпионат', mCupSub: '5 трасс подряд, очки за места', mTrial: 'На время', mTrialSub: 'Вы и ваш призрак',
+    mode: 'Режим', mRace: 'Гонка', mRaceSub: 'Одна трасса с ботами', mCup: 'Чемпионат', mCupSub: '5 трасс подряд, очки за места', mTrial: 'На время', mTrialSub: 'Только вы и секундомер',
     cupNote: 'Чемпионат: 5 трасс подряд, начиная с выбранной', cupStage: 'Чемпионат · этап {a} из {b}', nextStage: 'Следующий этап', newCup: 'Новый чемпионат',
     cupFinal: 'Итоги чемпионата', cupWin: 'Кубок ваш!', cupPlace: '{o} место в чемпионате', cupBonus: 'Бонус за чемпионат: +{n} очков', ptsCol: 'Очки',
     trialDone: 'Заезд окончен', lapCol: 'Круг', trialSub: '{map} · {laps} · лучший круг {t}', trialPts: '+{n} очков за заезд',
-    ghost: 'ПРИЗРАК', ghostSet: 'Призрак лучшего круга', tutReset: 'Показать подсказки заново', tutLabel: 'Подсказка', tutResetDone: 'Подсказки появятся в следующей гонке',
+    tutReset: 'Показать подсказки заново', tutLabel: 'Подсказка', tutResetDone: 'Подсказки появятся в следующей гонке',
     'tut.drive': '<b>W</b> — газ, <b>A</b> и <b>D</b> — руль. Нажмите газ ровно на зелёный — будет рывок.',
     'tut.drift': '<kbd>Пробел</kbd> — ручник. В заносах копится нитро.',
     'tut.nitro': 'Нитро набралось. Держите <kbd>Shift</kbd> на прямой.',
@@ -1063,11 +1056,11 @@ const STR = {
     'ach.garage_5': 'Collector', 'ach.garage_5.d': 'Own 5 vehicles',
     'ach.tune_max': 'Mechanic', 'ach.tune_max.d': 'Fully tune any vehicle',
     'ach.dog_win': 'Good boy', 'ach.dog_win.d': 'Win a race riding a dog',
-    mode: 'Mode', mRace: 'Race', mRaceSub: 'One track against bots', mCup: 'Championship', mCupSub: '5 tracks in a row, points for places', mTrial: 'Time trial', mTrialSub: 'You and your ghost',
+    mode: 'Mode', mRace: 'Race', mRaceSub: 'One track against bots', mCup: 'Championship', mCupSub: '5 tracks in a row, points for places', mTrial: 'Time trial', mTrialSub: 'Just you and the clock',
     cupNote: 'Championship: 5 tracks in a row, starting from the one you pick', cupStage: 'Championship · round {a} of {b}', nextStage: 'Next round', newCup: 'New championship',
     cupFinal: 'Championship results', cupWin: 'The cup is yours!', cupPlace: '{o} in the championship', cupBonus: 'Championship bonus: +{n} points', ptsCol: 'Pts',
     trialDone: 'Run complete', lapCol: 'Lap', trialSub: '{map} · {laps} · best lap {t}', trialPts: '+{n} points for the run',
-    ghost: 'GHOST', ghostSet: 'Best-lap ghost', tutReset: 'Show tips again', tutLabel: 'Tip', tutResetDone: 'Tips will show in your next race',
+    tutReset: 'Show tips again', tutLabel: 'Tip', tutResetDone: 'Tips will show in your next race',
     'tut.drive': '<b>W</b> is throttle, <b>A</b> and <b>D</b> steer. Hit the throttle right on green for a launch boost.',
     'tut.drift': '<kbd>Space</kbd> is the handbrake. Drifting fills your nitro.',
     'tut.nitro': 'Nitro is ready. Hold <kbd>Shift</kbd> on a straight.',
@@ -1267,7 +1260,7 @@ const MAPS = [
     c: { ground: '#d1a463', speck: '#c49553', speck2: '#ddb676', barrier: '#7d5230', barrier2: '#f0e2c4', asphalt: '#4a4440', curbA: '#c2452d', curbB: '#f1e6cf', line: 'rgba(255,240,210,.55)', skid: 'rgba(40,25,15,.32)', dust: '214,176,112' },
     pts: [[1500,300],[2800,300],[3000,500],[2800,700],[1200,800],[1000,1000],[1200,1200],[2800,1250],[3000,1500],[2800,1750],[400,1750],[200,1500],[200,500],[300,300]] },
   { id: 'pass', feats: ['coins'], grip: 2.6, offMul: .5, offDrag: 1.5, width: 180, margin: 95, aLat: 420, deco: 'snow', seed: 37,
-    c: { ground: '#e4ecf2', speck: '#d3dee7', speck2: '#f6fafc', barrier: '#3f6f9a', barrier2: '#f6fafc', asphalt: '#5d6a76', curbA: '#2f6fb0', curbB: '#f6fafc', line: 'rgba(255,255,255,.6)', skid: 'rgba(30,45,60,.26)', dust: '240,246,250' },
+    c: { ground: '#e4ecf2', speck: '#d3dee7', speck2: '#f6fafc', barrier: '#3f6f9a', barrier2: '#f6fafc', asphalt: '#dbe5ed', curbA: '#9fb6c9', curbB: '#f6fafc', line: 'rgba(0,0,0,0)', skid: 'rgba(30,45,60,.26)', dust: '240,246,250' },
     pts: [[500,400],[1100,250],[1700,450],[2000,900],[2600,1000],[2800,1500],[2300,1900],[1600,1700],[1200,1250],[700,1500],[350,1100]] },
   { id: 'city', feats: ['boost'], grip: 11, offMul: .6, offDrag: 1.2, width: 160, margin: 26, aLat: 880, deco: 'city', night: true, seed: 41,
     c: { ground: '#0c0f1c', speck: '#11152a', speck2: '#090b16', barrier: '#2d2650', barrier2: '#ff3fb4', shoulder: '#1c2134', asphalt: '#252a3e', curbA: '#16d6ff', curbB: '#1b2034', line: 'rgba(255,214,110,.6)', skid: 'rgba(0,0,0,.45)', dust: '120,130,160' },
@@ -1291,9 +1284,9 @@ const MAPS = [
   {id: 'dunes', th: 'canyon', deco: 'desert', grip: 7.5, offMul: 0.55, offDrag: 1.2, width: 170, margin: 105, aLat: 720, seed: 121, hz: ['tumble','tornado'], feats: ['sand'], sky3: {sky: ['#d9a15a','#fbe8c4'], fog: 16047276}, c: {ground: '#e4c07c', speck: '#d7b06a', speck2: '#efd296', barrier: '#7d5230', barrier2: '#f0e2c4', asphalt: '#4a4440', curbA: '#c2452d', curbB: '#f1e6cf', line: 'rgba(255,240,210,.55)', skid: 'rgba(40,25,15,.32)', dust: '214,176,112'}, pts: [[1633,1969],[587,1976],[237,1656],[248,1470],[280,1140],[589,890],[751,900],[946,1149],[973,1234],[1164,1464],[1588,1392],[1943,1454],[2154,1132],[2193,825],[2209,521],[2432,331],[2883,265],[3271,265],[3522,573],[3485,851],[3441,1099],[3241,1364],[3109,1423],[2883,1635],[2797,1704],[2617,1926]], ramps: [0.35,0.72]},
   {id: 'mesa', th: 'canyon', deco: 'desert', grip: 7.5, offMul: 0.55, offDrag: 1.2, width: 170, margin: 105, aLat: 720, seed: 128, hz: ['boulder','lightning'], feats: ['jump', 'boost'], rock: ['#8a3e22','#b45a36'], sky3: {sky: ['#c8603a','#f8c89a'], fog: 15247480}, hzc: {c: '#9a3e22', top: '#c4643a'}, c: {ground: '#b85a34', speck: '#a44a28', speck2: '#cc7448', barrier: '#5a2e1a', barrier2: '#f0e2c4', asphalt: '#4a3a36', curbA: '#c2452d', curbB: '#f1e6cf', line: 'rgba(255,240,210,.55)', skid: 'rgba(40,25,15,.32)', dust: '214,176,112'}, pts: [[1920,236],[1195,337],[962,533],[912,685],[697,858],[520,867],[353,1135],[269,1485],[363,1718],[581,2007],[1216,2026],[1948,2038],[2167,1784],[2288,1602],[2420,1445],[2589,1353],[2901,1141],[2845,908],[2837,562],[2531,309]]},
   {id: 'oasis', th: 'canyon', deco: 'oasis', grip: 7.5, offMul: 0.55, offDrag: 1.2, width: 170, margin: 105, aLat: 720, seed: 135, hz: ['tumble','geyser'], feats: ['water', 'coins'], c: {ground: '#dcbc7c', speck: '#7aa04a', speck2: '#e8cf98', barrier: '#7d5230', barrier2: '#f0e2c4', asphalt: '#4a4440', curbA: '#c2452d', curbB: '#f1e6cf', line: 'rgba(255,240,210,.55)', skid: 'rgba(40,25,15,.32)', dust: '214,176,112'}, pts: [[1885,236],[3174,336],[3437,540],[3550,926],[3434,1160],[3194,1418],[2800,1358],[2518,1356],[2278,1193],[2210,1042],[2012,808],[1895,818],[1559,1163],[1543,1475],[1579,1741],[1316,2025],[920,2042],[604,1956],[358,1696],[321,1163],[231,615],[563,311]]},
-  {id: 'glacier', th: 'pass', deco: 'snow', grip: 3.2, offMul: 0.5, offDrag: 1.5, width: 180, margin: 95, aLat: 460, seed: 142, hz: ['penguins','snowball'], feats: ['ice', 'coins'], c: {ground: '#d8ecf6', speck: '#bfe0f0', speck2: '#f4fbff', barrier: '#3f6f9a', barrier2: '#f6fafc', asphalt: '#6a7a88', curbA: '#3aa0d8', curbB: '#f6fafc', line: 'rgba(255,255,255,.6)', skid: 'rgba(30,45,60,.26)', dust: '240,246,250'}, pts: [[1870,1988],[524,2030],[265,1805],[330,1607],[628,1406],[876,1358],[1368,1431],[1577,1096],[1595,863],[1630,509],[1870,314],[2495,328],[3212,315],[3482,474],[3495,608],[3254,792],[3144,829],[2872,1090],[2856,1194],[3048,1381],[3311,1405],[3515,1665],[3484,1801],[3225,2036]]},
-  {id: 'alpine', th: 'pass', deco: 'snow', grip: 4, offMul: 0.5, offDrag: 1.5, width: 180, margin: 95, aLat: 520, seed: 149, hz: ['yeti','cows'], feats: ['train', 'ice'], c: {ground: '#e8eef2', speck: '#d3dee7', speck2: '#f6fafc', barrier: '#3f6f9a', barrier2: '#f6fafc', asphalt: '#5d6a76', curbA: '#d6352b', curbB: '#f6fafc', line: 'rgba(255,255,255,.6)', skid: 'rgba(30,45,60,.26)', dust: '240,246,250'}, pts: [[1936,1935],[1167,1930],[957,1774],[929,1665],[739,1446],[543,1443],[260,1217],[302,920],[268,586],[540,315],[1218,341],[1940,257],[2217,539],[2228,848],[2180,1229],[2460,1396],[2623,1400],[2844,1632],[2879,1756],[2655,2038]]},
-  {id: 'polar', th: 'pass', deco: 'snow', grip: 3.4, offMul: 0.5, offDrag: 1.5, width: 180, margin: 95, aLat: 470, seed: 156, hz: ['penguins','yeti'], feats: ['ice'], dark: true, aurora: true, c: {ground: '#cfdcea', speck: '#b8c8da', speck2: '#f6fafc', barrier: '#3f6f9a', barrier2: '#f6fafc', asphalt: '#4a5866', curbA: '#7a5cff', curbB: '#f6fafc', line: 'rgba(255,255,255,.6)', skid: 'rgba(30,45,60,.26)', dust: '240,246,250'}, pts: [[2246,1957],[1202,2009],[908,1723],[910,1606],[1241,1412],[1546,1446],[1930,1403],[2193,1266],[2185,1118],[2020,891],[1770,906],[1561,685],[1539,559],[1902,293],[2542,342],[3247,299],[3561,490],[3468,1126],[3487,1783],[3193,2027]], ramps: [0.35,0.72]},
+  {id: 'glacier', th: 'pass', deco: 'snow', grip: 3.2, offMul: 0.5, offDrag: 1.5, width: 180, margin: 95, aLat: 460, seed: 142, hz: ['penguins','snowball'], feats: ['ice', 'coins'], c: {ground: '#d8ecf6', speck: '#bfe0f0', speck2: '#f4fbff', barrier: '#3f6f9a', barrier2: '#f6fafc', asphalt: '#dbe5ed', curbA: '#9fb6c9', curbB: '#f6fafc', line: 'rgba(0,0,0,0)', skid: 'rgba(30,45,60,.26)', dust: '240,246,250'}, pts: [[1870,1988],[524,2030],[265,1805],[330,1607],[628,1406],[876,1358],[1368,1431],[1577,1096],[1595,863],[1630,509],[1870,314],[2495,328],[3212,315],[3482,474],[3495,608],[3254,792],[3144,829],[2872,1090],[2856,1194],[3048,1381],[3311,1405],[3515,1665],[3484,1801],[3225,2036]]},
+  {id: 'alpine', th: 'pass', deco: 'snow', grip: 4, offMul: 0.5, offDrag: 1.5, width: 180, margin: 95, aLat: 520, seed: 149, hz: ['yeti','cows'], feats: ['train', 'ice'], c: {ground: '#e8eef2', speck: '#d3dee7', speck2: '#f6fafc', barrier: '#3f6f9a', barrier2: '#f6fafc', asphalt: '#dbe5ed', curbA: '#9fb6c9', curbB: '#f6fafc', line: 'rgba(0,0,0,0)', skid: 'rgba(30,45,60,.26)', dust: '240,246,250'}, pts: [[1936,1935],[1167,1930],[957,1774],[929,1665],[739,1446],[543,1443],[260,1217],[302,920],[268,586],[540,315],[1218,341],[1940,257],[2217,539],[2228,848],[2180,1229],[2460,1396],[2623,1400],[2844,1632],[2879,1756],[2655,2038]]},
+  {id: 'polar', th: 'pass', deco: 'snow', grip: 3.4, offMul: 0.5, offDrag: 1.5, width: 180, margin: 95, aLat: 470, seed: 156, hz: ['penguins','yeti'], feats: ['ice'], dark: true, aurora: true, c: {ground: '#cfdcea', speck: '#b8c8da', speck2: '#f6fafc', barrier: '#3f6f9a', barrier2: '#f6fafc', asphalt: '#dbe5ed', curbA: '#9fb6c9', curbB: '#f6fafc', line: 'rgba(0,0,0,0)', skid: 'rgba(30,45,60,.26)', dust: '240,246,250'}, pts: [[2246,1957],[1202,2009],[908,1723],[910,1606],[1241,1412],[1546,1446],[1930,1403],[2193,1266],[2185,1118],[2020,891],[1770,906],[1561,685],[1539,559],[1902,293],[2542,342],[3247,299],[3561,490],[3468,1126],[3487,1783],[3193,2027]], ramps: [0.35,0.72]},
   {id: 'neon', th: 'city', deco: 'city', grip: 11, offMul: 0.6, offDrag: 1.2, width: 180, margin: 32, aLat: 880, night: true, seed: 163, hz: ['courier','ufo'], feats: ['boost'], c: {ground: '#0a0618', speck: '#140a2a', speck2: '#090b16', barrier: '#2d2650', barrier2: '#16d6ff', asphalt: '#252a3e', curbA: '#ff3fb4', curbB: '#16d6ff', line: 'rgba(255,63,180,.7)', skid: 'rgba(0,0,0,.45)', dust: '120,130,160', shoulder: '#1c2134'}, pts: [[2220,1980],[1200,1980],[940,1756],[940,1644],[1196,1420],[1324,1420],[1580,1160],[1580,860],[1580,560],[1840,300],[2540,300],[3240,300],[3500,524],[3500,636],[3244,860],[3116,860],[2860,1084],[2860,1196],[3116,1420],[3244,1420],[3500,1644],[3500,1756],[3240,1980]], ramps: [0.35,0.72]},
   {id: 'harbor', th: 'city', deco: 'city', grip: 11, offMul: 0.6, offDrag: 1.2, width: 160, margin: 26, aLat: 880, night: true, seed: 170, hz: ['cones','courier'], feats: ['bales', 'train'], barrels: true, c: {ground: '#0e1620', speck: '#142030', speck2: '#090b16', barrier: '#2d2650', barrier2: '#ffb21e', asphalt: '#252a3e', curbA: '#ffb21e', curbB: '#1b2430', line: 'rgba(255,214,110,.6)', skid: 'rgba(0,0,0,.45)', dust: '120,130,160', shoulder: '#1c2134'}, pts: [[2220,300],[3240,300],[3500,524],[3500,636],[3244,860],[3116,860],[2860,1120],[2860,1420],[2860,1720],[2600,1980],[2220,1980],[1840,1980],[1580,1720],[1580,1420],[1580,1120],[1324,860],[1196,860],[940,636],[940,524],[1200,300]]},
   {id: 'raincity', th: 'city', deco: 'city', grip: 11, offMul: 0.6, offDrag: 1.2, width: 160, margin: 26, aLat: 880, night: true, seed: 177, hz: ['cones','lightning'], feats: ['water', 'boost'], wx: 'rain', c: {ground: '#10141c', speck: '#11152a', speck2: '#090b16', barrier: '#2d2650', barrier2: '#7cff6b', asphalt: '#252a3e', curbA: '#7cff6b', curbB: '#1b2034', line: 'rgba(255,214,110,.6)', skid: 'rgba(0,0,0,.45)', dust: '120,130,160', shoulder: '#1c2134'}, pts: [[2220,1980],[3240,1980],[3500,1756],[3500,1644],[3244,1420],[3116,1420],[2860,1196],[2860,1084],[3116,860],[3244,860],[3500,636],[3500,524],[3240,300],[2220,300],[1200,300],[940,560],[940,1140],[940,1720],[1200,1980]]},
@@ -1560,7 +1553,7 @@ const S = {
   finishCount: 0, parts: [], cam: { x: 0, y: 0, z: 1 }, shake: 0, followIdx: 0, followT: 0,
   resultsT: -1, prevMode: null, lit: -1, newRecord: false, flakes: [], diff: 1, simDiff: null, earned: 0,
   volume: 60, prevVolume: 60, haz: [], fx: [], coinT: [], coinsGot: 0, flashT: 0, hazT: 5, hazOn: true, slicks: [], boxes: [], placeT: 0, pressAt: null,
-  cam3: 'near', gfx: 'high', stats: {}, ach: {}, achQ: [], achT: 0, gSel: null, gType: null, rbuf: [], recT: 0, rp: null, closeFinish: false, finishT: 0, replayed: false, weatherSel: 'clear', nightSel: 'day', weatherNow: 'clear', nightNow: false, puddles: [], musicVol: 45, gameMode: 'race', cup: null, ghostOn: true, ghost: null, tut: {}, hintQ: [], hintT: 0, stuckT: 0,
+  cam3: 'near', gfx: 'high', stats: {}, ach: {}, achQ: [], achT: 0, gSel: null, gType: null, rbuf: [], recT: 0, rp: null, closeFinish: false, finishT: 0, replayed: false, weatherSel: 'clear', nightSel: 'day', weatherNow: 'clear', nightNow: false, puddles: [], musicVol: 45, gameMode: 'race', cup: null, tut: {}, hintQ: [], hintT: 0, stuckT: 0,
 };
 // wallet and settings live in this browser only
 const wallet = { coins: 0, owned: ['start'], car: 'start', land: 'start', tune: {}, paint: {} };
@@ -1621,7 +1614,7 @@ function newCar(di, slot) {
     stuck: 0, stuckCount: 0, reverseT: 0, respawnT: 0, ghostT: 0, band: 1, surface: 'track',
     inThrottle: 0, inSteer: 0, inBrake: false, wrongT: 0, skid: null, dustT: 0, spin: 0, latAcc: 0, steerSm: 0,
     nitro: 0, nitroOn: false, boostT: 0, wheelspinT: 0, item: null, itemT: 0, shieldT: 0,
-    damage: 0, repairing: false, smokeT: 0, lastPlace: 0, startDone: false, rec: [], recT: 0,
+    damage: 0, repairing: false, smokeT: 0, lastPlace: 0, startDone: false,
   };
 }
 function resetRace(mode) {
@@ -1747,7 +1740,7 @@ function lapCheck(c) {
   const tm = S.time - c.lapStart; c.lapStart = S.time; c.lapTimes.push(tm);
   const wasBest = tm < c.best && tm >= minLap(S.map); if (wasBest) c.best = tm;
   if (S.mode === 'menu') return;
-  if (c.isPlayer && !c.auto && !S.duo) { saveGhost(c, tm); c.rec = []; c.recT = 0; if (c.lapClean && c.lapsDone >= 1) bumpStat('cleanLaps'); c.lapClean = true; }
+  if (c.isPlayer && !c.auto && !S.duo) { if (c.lapClean && c.lapsDone >= 1) bumpStat('cleanLaps'); c.lapClean = true; }
   if (c.lapsDone >= S.laps && !c.finished) {
     c.finished = true; c.finishTime = S.time; c.place = ++S.finishCount;
     if (c.isPlayer || c.isP2) onPlayerFinish(c);
@@ -1994,7 +1987,7 @@ function rollConditions() {
 }
 function buildPuddles() {
   S.puddles = [];
-  if (S.weatherNow !== 'rain' || !S.track) return;
+  if (S.weatherNow !== 'rain' || !S.track || isSnowy(S.map)) return;
   const tr = S.track, r = rng((S.map.seed * 13 + (S.clock * 1000 | 0)) | 0), hw = S.map.width / 2;
   for (let i = 0; i < 14; i++) {
     const idx = Math.floor((.08 + r() * .9) * tr.N), p = tr.pts[idx], lat = (r() * 2 - 1) * hw * .6;
@@ -2735,8 +2728,6 @@ function step(dt) {
   if (S.mode === 'race') {
     const p = player();
     if (p && !p.auto && !p.finished) {
-      p.recT += dt;
-      if (p.recT >= 1 / 30) { p.recT -= 1 / 30; p.rec.push(Math.round(p.x), Math.round(p.y), Math.round(p.angle * 100)); }
       if (p.nitroOn) bumpStat('nitroTime', dt);
       if (Math.abs(p.vR) > 60 && p.speed > 150) bumpStat('driftTime', dt);
       if (p.speed * KMH > (S.stats.maxSpeed || 0)) S.stats.maxSpeed = Math.round(p.speed * KMH);
@@ -2774,35 +2765,6 @@ function step(dt) {
   }
 }
 
-// ---------- best-lap ghost ----------
-const ghostKey = m => 'turbo-krug-ghost-' + m.id;
-function loadGhost(m) {
-  try { const g = JSON.parse(store.get(ghostKey(m)) || 'null'); if (g && Array.isArray(g.d) && g.d.length >= 9) return g; } catch (e) {}
-  return null;
-}
-function saveGhost(c, tm) {
-  if (c.rec.length < 30 || tm < 5) return;
-  const old = loadGhost(S.map);
-  if (old && old.t <= tm) return;
-  const g = { t: tm, car: c.model.id || 'start', color: c.color, d: c.rec.slice() };
-  store.set(ghostKey(S.map), JSON.stringify(g));
-  S.ghost = g;
-}
-function drawGhost(tm) {
-  const g = S.ghost, p = player();
-  if (!g || !S.ghostOn || !p || p.auto || S.mode !== 'race') return;
-  const n = g.d.length / 3, f = (S.time - p.lapStart) * 30, i = Math.floor(f);
-  if (i < 0 || i >= n - 1) return;
-  const k = f - i, a = i * 3, b = a + 3;
-  const x = g.d[a] + (g.d[b] - g.d[a]) * k, y = g.d[a + 1] + (g.d[b + 1] - g.d[a + 1]) * k;
-  const an = (g.d[a + 2] + wrapAng((g.d[b + 2] - g.d[a + 2]) / 100) * 100 * k) / 100;
-  const m = CARS.find(cm => cm.id === g.car) || CARS[0];
-  ctx.save(); ctx.globalAlpha = .38; ctx.translate(x, y); ctx.rotate(an);
-  carShape(ctx, m, g.color || m.color, 0, false);
-  ctx.restore();
-  ctx.save(); ctx.globalAlpha = .7; ctx.fillStyle = '#e8f6ff'; ctx.font = '800 11px "Exo 2", sans-serif'; ctx.textAlign = 'center';
-  ctx.fillText(t('ghost'), x, y - 26); ctx.restore();
-}
 
 // ---------- tips for new players ----------
 function hint(key) {
@@ -3085,7 +3047,7 @@ function startRace() {
   setupMap(S.mapIndex);
   resetRace('countdown'); calibrateTilt();
   S.cd = 3.8; S.lit = -1; S.wxShown = false; $('#resNet').hidden = true;
-  S.ghost = S.gameMode === 'duo' ? null : loadGhost(S.map); S.hintQ = []; S.hintT = 0; S.pressAt2 = null;
+  S.hintQ = []; S.hintT = 0; S.pressAt2 = null;
   document.body.classList.toggle('duo', S.gameMode === 'duo'); $('#hud2').hidden = S.gameMode !== 'duo'; $('#hint').hidden = true; S.stuckT = 0;
   for (const id of ['#menu', '#pause', '#results', '#garage', '#settings', '#toast', '#achievements', '#records', '#help', '#online']) $(id).hidden = true;
   $('#hud').hidden = false; $('#lights').hidden = false; $('#lights').classList.remove('go');
@@ -3543,7 +3505,6 @@ function render(dt) {
     const r = 700 / z;
     S.parts.push({ x: S.cam.x - r + Math.random() * 2 * r, y: S.cam.y - r + Math.random() * 2 * r, vx: (Math.random() - .5) * 20, vy: -30 - Math.random() * 40, life: 1.4, max: 1.4, r: 1.6, col: '255,200,90' });
   }
-  drawGhost(tm);
   for (const c of S.cars) drawCar(c, tm);
   drawHazards(tm, true);
   if (map.night) drawNight();
@@ -3766,6 +3727,18 @@ function wallStrip(tr, lat, h, mat, uLen) {
   const m = new THREE.Mesh(g, mat); m.castShadow = true; m.receiveShadow = true;
   return m;
 }
+function snowTrailTex(map) { // packed snow with the grooves of runners and tracks, no paint
+  return cTex(512, 256, (x, w, h) => {
+    x.fillStyle = '#e3ecf3'; x.fillRect(0, 0, w, h);
+    const r = rng(map.seed * 3);
+    for (let i = 0; i < 40; i++) { x.fillStyle = r() < .5 ? 'rgba(255,255,255,.35)' : 'rgba(150,175,200,.12)'; x.beginPath(); x.ellipse(r() * w, r() * h, 20 + r() * 70, 8 + r() * 26, r() * 3, 0, 7); x.fill(); }
+    for (let i = 0; i < 26; i++) { // grooves along the trail, slightly wavy
+      const y0 = 10 + r() * (h - 20), a = .12 + r() * .22, gap = 10 + r() * 6, ph = r() * 6;
+      for (const off of [0, gap]) { x.strokeStyle = `rgba(110,140,170,${a.toFixed(2)})`; x.lineWidth = 1.2 + r() * 1.6; x.beginPath(); for (let xx = 0; xx <= w; xx += 16) x.lineTo(xx, y0 + off + Math.sin(xx / 70 + ph) * 3); x.stroke(); }
+    }
+    for (let i = 0; i < 4000; i++) { x.fillStyle = r() < .6 ? 'rgba(255,255,255,.7)' : 'rgba(170,190,210,.25)'; x.fillRect(r() * w, r() * h, 1.5, 1.5); }
+  });
+}
 function railStrip(tr, lat, y0, y1, mat) { // a vertical band along the track between two heights
   const N = tr.N, pos = new Float32Array((N + 1) * 6), idx = [];
   for (let k = 0; k <= N; k++) { const p = tr.pts[k % N], x = p.x + p.nx * lat, z = p.y + p.ny * lat; pos.set([x, y0, z, x, y1, z], k * 6); if (k < N) idx.push(k * 2, k * 2 + 1, k * 2 + 2, k * 2 + 1, k * 2 + 3, k * 2 + 2); }
@@ -3818,11 +3791,17 @@ function buildMap3D(map) {
     const heat = new THREE.MeshBasicMaterial({ color: 0xffa040, transparent: true, opacity: .55, depthWrite: false });
     g.add(ribbon(tr, hw + map.margin, hw + map.margin + 26, .2, heat, 256), ribbon(tr, -hw - map.margin - 26, -hw - map.margin, .2, heat, 256));
   }
-  const curb = cTex(64, 8, (x, w, h) => { x.fillStyle = C.curbA; x.fillRect(0, 0, 32, h); x.fillStyle = C.curbB; x.fillRect(32, 0, 32, h); });
-  const curbM = new THREE.MeshLambertMaterial({ map: curb });
-  g.add(ribbon(tr, -hw - 18, -hw + 2, 1.6, curbM, 48), ribbon(tr, hw - 2, hw + 18, 1.6, curbM, 48));
-  g.add(wallStrip(tr, hw + 18, 1.6, curbM, 48), wallStrip(tr, -hw - 18, 1.6, curbM, 48)); // raised kerbs
-  const asph = cTex(512, 256, (x, w, h) => {
+  const snowy = isSnowy(map);
+  if (snowy) { // a groomed snowmobile trail: soft snow berms instead of kerbs
+    const berm = facet('#f2f7fb');
+    for (const sg of [-1, 1]) { const a = sg * (hw - 4), b = sg * (hw + 20); g.add(ribbon(tr, Math.min(a, b), Math.max(a, b), 3.2, berm, 48), wallStrip(tr, a, 3.2, berm, 48), wallStrip(tr, b, 3.2, berm, 48)); }
+  } else {
+    const curb = cTex(64, 8, (x, w, h) => { x.fillStyle = C.curbA; x.fillRect(0, 0, 32, h); x.fillStyle = C.curbB; x.fillRect(32, 0, 32, h); });
+    const curbM = new THREE.MeshLambertMaterial({ map: curb });
+    g.add(ribbon(tr, -hw - 18, -hw + 2, 1.6, curbM, 48), ribbon(tr, hw - 2, hw + 18, 1.6, curbM, 48));
+    g.add(wallStrip(tr, hw + 18, 1.6, curbM, 48), wallStrip(tr, -hw - 18, 1.6, curbM, 48)); // raised kerbs
+  }
+  const asph = snowy ? snowTrailTex(map) : cTex(512, 256, (x, w, h) => {
     x.fillStyle = C.asphalt; x.fillRect(0, 0, w, h);
     const r = rng(map.seed * 3);
     for (let i = 0; i < 26; i++) { x.fillStyle = r() < .5 ? 'rgba(255,255,255,.025)' : 'rgba(0,0,0,.06)'; x.beginPath(); x.ellipse(r() * w, r() * h, 20 + r() * 60, 8 + r() * 24, r() * 3, 0, 7); x.fill(); } // patches
@@ -3838,11 +3817,18 @@ function buildMap3D(map) {
   g.add(ribbon(tr, -hw, hw, .45, map._asphM, 256));
   // walls
   if (!map.lava) {
-    const wallH = map.night ? 22 : 7, lim = hw + map.margin + 8;
+    const wallH = map.night ? 22 : snowy ? 10 : 7, lim = hw + map.margin + 8;
     const wt = cTex(64, 32, (x, w, h) => { x.fillStyle = C.barrier; x.fillRect(0, 0, w, h); x.fillStyle = C.barrier2; x.fillRect(0, 0, 32, h); x.fillStyle = 'rgba(0,0,0,.25)'; x.fillRect(0, h - 5, w, 5); });
-    const wm = new THREE.MeshLambertMaterial({ map: wt, side: THREE.DoubleSide });
+    const wm = snowy ? facet('#eef4f9', { side: THREE.DoubleSide }) : new THREE.MeshLambertMaterial({ map: wt, side: THREE.DoubleSide });
     g.add(wallStrip(tr, lim, wallH, wm, 44), wallStrip(tr, -lim, wallH, wm, 44));
-    if (!map.night) { // steel guard rail on posts above the low wall
+    if (snowy) { // the bank is snow; orange-tipped marker poles show the trail
+      for (const sg of [-1, 1]) g.add(ribbon(tr, sg > 0 ? lim - 10 : -lim, sg > 0 ? lim : -lim + 10, wallH, facet('#f6fafd'), 48));
+      const poles = [], step = Math.max(6, Math.round(90 / tr.SP));
+      for (let i = 0; i < tr.N; i += step) for (const sg of [-1, 1]) { const p = tr.pts[i]; poles.push({ x: p.x + p.nx * sg * (lim - 4), y: p.y + p.ny * sg * (lim - 4) }); }
+      const stick = new THREE.InstancedMesh(GEO.cyl6, facet('#2a2f38'), poles.length), tip = new THREE.InstancedMesh(GEO.cyl6, facet('#ff6a1a'), poles.length), dm = new THREE.Object3D();
+      poles.forEach((q, i) => { dm.position.set(q.x, 14, q.y); dm.scale.set(1.1, 28, 1.1); dm.updateMatrix(); stick.setMatrixAt(i, dm.matrix); dm.position.y = 30; dm.scale.set(1.3, 8, 1.3); dm.updateMatrix(); tip.setMatrixAt(i, dm.matrix); });
+      stick.castShadow = true; g.add(stick, tip);
+    } else if (!map.night) { // steel guard rail on posts above the low wall
       const steel = new THREE.MeshPhongMaterial({ color: 0xc8ccd2, shininess: 90, specular: 0x888888, side: THREE.DoubleSide });
       for (const sgn of [-1, 1]) { const rail = railStrip(tr, sgn * (lim - 1.5), 9, 14, steel); g.add(rail); }
       const posts = [], step = Math.max(3, Math.round(40 / tr.SP));
@@ -4559,17 +4545,6 @@ function sync3DObjects(dt, tm) {
     G3.carsRef = S.cars;
   }
   for (const c of S.cars) updCar3D(c, dt, tm);
-  // ghost
-  if (G3.ghostRef !== S.ghost) {
-    if (G3.ghostMesh) { G3.dyn.remove(G3.ghostMesh); disposeCar3D(G3.ghostMesh); G3.ghostMesh = null; }
-    if (S.ghost) { const m = CARS.find(cm => cm.id === S.ghost.car) || CARS[0]; G3.ghostMesh = makeCar3D(m, S.ghost.color || m.color, true); G3.dyn.add(G3.ghostMesh); }
-    G3.ghostRef = S.ghost;
-  }
-  if (G3.ghostMesh) {
-    const gp = ghostPose();
-    G3.ghostMesh.visible = !!gp;
-    if (gp) { G3.ghostMesh.position.set(gp.x, 0, gp.y); G3.ghostMesh.rotation.y = -gp.a; }
-  }
   // hazards
   for (const h of S.haz) { if (!h.m3) { h.m3 = makeHaz3(h); G3.dyn.add(h.m3); G3.hz.add(h); } updHaz3(h, tm); }
   for (const h of G3.hz) if (h.dead || !S.haz.includes(h)) {
@@ -4714,14 +4689,6 @@ function updFeats3D(dt, tm) {
   F.coins.forEach((m, i) => { const on = !(S.coinT[i] > 0); m.visible = on; if (on) { m.rotation.z = tm * 3 + i; m.position.y = 14 + Math.sin(tm * 3 + i) * 2; } });
 }
 
-function ghostPose() {
-  const g = S.ghost, p = player();
-  if (!g || !S.ghostOn || !p || p.auto || S.mode !== 'race') return null;
-  const n = g.d.length / 3, f = (S.time - p.lapStart) * 30, i = Math.floor(f);
-  if (i < 0 || i >= n - 1) return null;
-  const k = f - i, a = i * 3, b = a + 3;
-  return { x: g.d[a] + (g.d[b] - g.d[a]) * k, y: g.d[a + 1] + (g.d[b + 1] - g.d[a + 1]) * k, a: (g.d[a + 2] + wrapAng((g.d[b + 2] - g.d[a + 2]) / 100) * 100 * k) / 100 };
-}
 const colCache = {};
 function rgb3(s) { return colCache[s] || (colCache[s] = s.split(',').map(v => +v / 255)); }
 function updParticles(dt) {
@@ -4819,8 +4786,6 @@ function render3D(dt) {
       fctx.restore();
     }
     fctx.globalAlpha = 1;
-    const gp = G3.ghostMesh && G3.ghostMesh.visible ? ghostPose() : null;
-    if (gp) { vv.set(gp.x, 30, gp.y).project(G3.cam); if (vv.z < 1) { fctx.globalAlpha = .7; fctx.fillStyle = '#e8f6ff'; fctx.font = '800 11px "Exo 2", sans-serif'; fctx.fillText(t('ghost'), (vv.x + 1) / 2 * W, (1 - vv.y) / 2 * H); fctx.globalAlpha = 1; } }
     drawMini();
   }
   drawWeatherFx(dt, f);
@@ -5291,11 +5256,6 @@ function setMusic(v) {
   S.musicVol = clamp(Math.round(v / 5) * 5, 0, 100);
   $('#mvol').value = S.musicVol; $('#mvolOut').textContent = S.musicVol + '%'; store.set('turbo-krug-music', String(S.musicVol));
 }
-function setGhost(on) {
-  S.ghostOn = !!on;
-  $('#ghostSeg').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String((b.dataset.ghost === 'on') === S.ghostOn)));
-  store.set('turbo-krug-ghost', S.ghostOn ? 'on' : 'off');
-}
 function renderMapList() {
   const box = $('#maps');
   if (!box.children.length) {
@@ -5538,7 +5498,6 @@ $('#nightSeg').addEventListener('click', e => { const b = e.target.closest('butt
 $('#mvol').addEventListener('input', e => setMusic(+e.target.value));
 $('#tiltSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (b) setSteer(b.dataset.steer); });
 $('#agSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (b) setAutoGas(b.dataset.ag === 'on'); });
-$('#ghostSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (b) setGhost(b.dataset.ghost === 'on'); });
 $('#tutReset').addEventListener('click', () => { S.tut = {}; store.set('turbo-krug-tut', '{}'); $('#tutReset').textContent = t('tutResetDone'); });
 $('#modeSeg').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
@@ -5662,7 +5621,6 @@ function start(data) {
   if ([0, 1, 2].includes(sd)) S.diff = sd;
   const v = parseInt(store.get('turbo-krug-vol'), 10); setVolume(v >= 0 && v <= 100 ? v : 60);
   setHaz(store.get('turbo-krug-haz') !== 'off');
-  setGhost(store.get('turbo-krug-ghost') !== 'off');
   $('#tiltSet').hidden = $('#agSet').hidden = !touchMode;
   const sm = store.get('turbo-krug-steer') || (store.get('turbo-krug-tilt') === 'on' ? 'tilt' : 'btn');
   setSteer(sm === 'tilt' && window.DeviceOrientationEvent && DeviceOrientationEvent.requestPermission ? 'btn' : sm); // iOS asks for tilt only after a tap
