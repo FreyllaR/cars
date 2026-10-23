@@ -858,7 +858,8 @@ const STR = {
     camera: 'Камера', camNear: 'Близко', camFar: 'Далеко', camTop: 'Сверху', gfx: 'Графика', gfxHigh: 'Красивая', gfxLow: 'Быстрая',
     'car.bike': 'Байк', 'car.bike.tag': 'Лёгкий и резкий, ложится в поворот',
     'car.superbike': 'Супербайк', 'car.superbike.tag': 'Ракета на двух колёсах',
-    'car.sled': 'Снегоход', 'car.sled.tag': 'Держит лёд и снег, на асфальте медленнее',
+    'car.sled': 'Снегоход', 'car.sled.tag': 'Только для снежных трасс — там выбирается сам',
+    sledAuto: 'на снегу едем на снегоходе', sledOff: 'снегоход только для снега, едем на: {c}',
     'car.dog': 'Шарик', 'car.dog.tag': 'Бежит лапами, трава ему не помеха',
     'car.greyhound': 'Борзая', 'car.greyhound.tag': 'Самая быстрая собака на свете',
     'vt.car': 'Машины', 'vt.moto': 'Мотоциклы', 'vt.sled': 'Снегоходы', 'vt.dog': 'Собаки',
@@ -1036,7 +1037,8 @@ const STR = {
     camera: 'Camera', camNear: 'Close', camFar: 'Far', camTop: 'High', gfx: 'Graphics', gfxHigh: 'Detailed', gfxLow: 'Fast',
     'car.bike': 'Bike', 'car.bike.tag': 'Light and sharp, leans into corners',
     'car.superbike': 'Superbike', 'car.superbike.tag': 'A rocket on two wheels',
-    'car.sled': 'Snowmobile', 'car.sled.tag': 'Grips ice and snow, slower on tarmac',
+    'car.sled': 'Snowmobile', 'car.sled.tag': 'Snow tracks only — picked for you there',
+    sledAuto: 'on snow you ride the snowmobile', sledOff: 'the snowmobile is for snow only, riding: {c}',
     'car.dog': 'Rex', 'car.dog.tag': 'Runs on paws, grass is no problem',
     'car.greyhound': 'Greyhound', 'car.greyhound.tag': 'The fastest dog in the world',
     'vt.car': 'Cars', 'vt.moto': 'Bikes', 'vt.sled': 'Snowmobiles', 'vt.dog': 'Dogs',
@@ -1561,21 +1563,32 @@ const S = {
   cam3: 'near', gfx: 'high', stats: {}, ach: {}, achQ: [], achT: 0, gSel: null, gType: null, rbuf: [], recT: 0, rp: null, closeFinish: false, finishT: 0, replayed: false, weatherSel: 'clear', nightSel: 'day', weatherNow: 'clear', nightNow: false, puddles: [], musicVol: 45, gameMode: 'race', cup: null, ghostOn: true, ghost: null, tut: {}, hintQ: [], hintT: 0, stuckT: 0,
 };
 // wallet and settings live in this browser only
-const wallet = { coins: 0, owned: ['start'], car: 'start', tune: {}, paint: {} };
+const wallet = { coins: 0, owned: ['start'], car: 'start', land: 'start', tune: {}, paint: {} };
 function loadWallet() {
   const c = parseInt(store.get('turbo-krug-coins'), 10); if (c >= 0) wallet.coins = c;
   try { const o = JSON.parse(store.get('turbo-krug-owned') || 'null'); if (Array.isArray(o)) wallet.owned = ['start', ...o.filter(x => x !== 'start' && CARS.some(m => m.id === x))]; } catch (e) {}
   const car = store.get('turbo-krug-car'); if (car && wallet.owned.includes(car)) wallet.car = car;
+  const land = store.get('turbo-krug-land'); wallet.land = land && wallet.owned.includes(land) ? land : wallet.car;
   try { wallet.tune = JSON.parse(store.get('turbo-krug-tune') || '{}') || {}; wallet.paint = JSON.parse(store.get('turbo-krug-paint') || '{}') || {}; } catch (e) {}
   try { S.stats = Object.assign({}, JSON.parse(store.get('turbo-krug-stats') || '{}')); S.ach = JSON.parse(store.get('turbo-krug-ach') || '{}') || {}; } catch (e) { S.stats = {}; S.ach = {}; }
 }
 function saveWallet() {
-  store.set('turbo-krug-coins', String(wallet.coins)); store.set('turbo-krug-owned', JSON.stringify(wallet.owned)); store.set('turbo-krug-car', wallet.car);
+  store.set('turbo-krug-coins', String(wallet.coins)); store.set('turbo-krug-owned', JSON.stringify(wallet.owned)); store.set('turbo-krug-car', wallet.car); store.set('turbo-krug-land', wallet.land);
   store.set('turbo-krug-tune', JSON.stringify(wallet.tune)); store.set('turbo-krug-paint', JSON.stringify(wallet.paint));
 }
 const tuneOf = id => Object.assign({ e: 0, t: 0, b: 0 }, wallet.tune[id] || {});
 const paintOf = m => wallet.paint[m.id] || m.color;
-const curModel = () => CARS.find(m => m.id === wallet.car) || CARS[0];
+const isSnowy = map => !!map && map.deco === 'snow';
+// The vehicle actually raced on a track: on snow you take the snowmobile if you have one; elsewhere it stays in the shed
+// and your last land vehicle goes out instead.
+function rideFor(id, map) {
+  const own = x => wallet.owned.includes(x.id), pick = CARS.find(x => x.id === id && own(x)) || CARS[0];
+  if (isSnowy(map)) return pick.type === 'sled' ? pick : CARS.find(x => x.type === 'sled' && own(x)) || pick;
+  if (pick.type !== 'sled') return pick;
+  return CARS.find(x => x.id === wallet.land && own(x) && x.type !== 'sled') || CARS[0];
+}
+const curModel = () => rideFor(wallet.car, S.map);
+function pickCar(id) { wallet.car = id; const m = CARS.find(x => x.id === id); if (m && m.type !== 'sled') wallet.land = id; }
 const MAXM = 2400; let marks = new Float32Array(MAXM * 4), markHead = 0, markCount = 0;
 const K = {};
 const player = () => S.cars.find(c => c.isPlayer);
@@ -1592,7 +1605,7 @@ function newCar(di, slot) {
   const attract = S.mode === 'menu';
   const dif = DIFFS[S.simDiff != null ? S.simDiff : attract ? 1 : S.diff];
   const human = d.player || d.player2;
-  const model = d.player ? curModel() : d.player2 ? (CARS.find(m => m.id === S.p2car && wallet.owned.includes(m.id)) || CARS[0]) : botModel(di), tuned = human && !attract, tu = tuneOf(model.id);
+  const model = d.player ? curModel() : d.player2 ? rideFor(S.p2car, S.map) : botModel(di), tuned = human && !attract, tu = tuneOf(model.id);
   const asphaltK = tuned && model.asphalt && map.deco !== 'snow' ? model.asphalt : 1;
   return {
     di, id: d.id, color: d.player ? paintOf(model) : d.player2 ? (paintOf(model) === paintOf(curModel()) ? d.color : paintOf(model)) : d.color, isPlayer: !!d.player, isP2: !!d.player2, model, type: model.type || 'car',
@@ -2894,12 +2907,12 @@ function netConnect(then) {
   ws.onerror = () => { NET.err = t('netFail'); renderOnline(); };
   renderOnline();
 }
-function netProfile() { const m = curModel(); return { name: myName(), car: m.id, color: /^#[0-9a-f]{6}$/i.test(paintOf(m)) ? paintOf(m) : '#ffc629' }; }
+function netProfile() { const rm = NET.room && MAPS.find(x => x.id === NET.room.cfg.map), m = rideFor(wallet.car, rm || S.map); return { name: myName(), car: m.id, color: /^#[0-9a-f]{6}$/i.test(paintOf(m)) ? paintOf(m) : '#ffc629' }; }
 function netOn(m) {
   if (m.t === 'hello') { NET.you = m.id; return; }
   if (m.t === 'pong') { const rtt = Date.now() - m.c; if (rtt < NET.rtt) { NET.rtt = rtt; NET.offset = m.s + rtt / 2 - Date.now(); } return; }
   if (m.t === 'error') { NET.err = t(m.e) || m.e; renderOnline(); return; }
-  if (m.t === 'room') { NET.room = m; NET.err = ''; renderOnline(); return; }
+  if (m.t === 'room') { NET.room = m; NET.err = ''; if (!m.started) { const pr = netProfile(); if (NET.sentCar && pr.car !== NET.sentCar) netSend(Object.assign({ t: 'profile' }, pr)); NET.sentCar = pr.car; } renderOnline(); return; } // the track decides snowmobile or not
   if (m.t === 'closed') { NET.room = null; if (isOnline()) { toast(t('hostLeft'), '', 'warn'); setTimeout(toMenu, 2200); } renderOnline(); return; }
   if (m.t === 'start') { startOnlineRace(m); return; }
   if (!isOnline()) return;
@@ -3437,8 +3450,27 @@ function rideShape(g, m, color, steer) {
     el(L * .66, 0, 1.6, 1.6, '#111');
   }
 }
+const PREV = {};
+function preview3D(m, color) { // renders a vehicle once into a small offscreen canvas and keeps the picture
+  const key = m.id + color; if (PREV[key]) return PREV[key];
+  if (!PREV.r) {
+    const cv = document.createElement('canvas'); cv.width = 480; cv.height = 280;
+    PREV.r = new THREE.WebGLRenderer({ canvas: cv, antialias: true, alpha: true, preserveDrawingBuffer: true }); PREV.r.setClearColor(0x000000, 0);
+    PREV.scene = new THREE.Scene(); PREV.scene.add(new THREE.HemisphereLight(0xffffff, 0x445566, .95));
+    const sun = new THREE.DirectionalLight(0xffffff, .75); sun.position.set(60, 120, 80); PREV.scene.add(sun);
+    PREV.cam = new THREE.PerspectiveCamera(30, 480 / 280, 1, 2000);
+  }
+  const g = makeCar3D(m, color); g.rotation.y = -.5; PREV.scene.add(g); // nose to the right and a little toward us
+  const box = new THREE.Box3().setFromObject(g), c = box.getCenter(new THREE.Vector3()), size = box.getSize(new THREE.Vector3()), r = Math.max(size.x, size.z, size.y * 1.6) * .5;
+  PREV.cam.position.set(c.x + r * .7, c.y + r * 1.1, c.z + r * 3.1); PREV.cam.lookAt(c);
+  PREV.r.render(PREV.scene, PREV.cam);
+  const out = document.createElement('canvas'); out.width = 480; out.height = 280; out.getContext('2d').drawImage(PREV.r.domElement, 0, 0);
+  PREV.scene.remove(g); disposeCar3D(g);
+  return (PREV[key] = out);
+}
 function drawCarPreview(cv, m) {
   const g = cv.getContext('2d'); g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, cv.width, cv.height);
+  if (G3.ok) { try { const im = preview3D(m, paintOf(m)), k = Math.min(cv.width / im.width, cv.height / im.height); g.drawImage(im, (cv.width - im.width * k) / 2, (cv.height - im.height * k) / 2, im.width * k, im.height * k); return; } catch (e) {} }
   const s = Math.min(cv.width / 58, cv.height / 34);
   g.setTransform(s, 0, 0, s, cv.width / 2, cv.height / 2); g.rotate(-.2);
   carShape(g, m, paintOf(m), .4, false);
@@ -4116,18 +4148,67 @@ function makeRide3D(m, color, ghost) {
     part('box', black, L * .3, 3, Wd * .45, -L * .12, 14.5, 0, lean);
     part('box', suit, 8, 11, 8, -L * .08, 21, 0, lean); part('sph', paint, 4.8, 4.8, 4.8, -L * .04, 29, 0, lean); part('box', lam('#10141c'), 3, 3, 6, -L * .04 + 3.5, 29, 0, lean);
     part('box', headM, 1, 2.5, 5, L * .48, 8, 0, lean); part('box', tail, 1, 2, 6, -L * .5, 8, 0, lean);
-  } else {
-    const legs = [], sc = m.id === 'greyhound' ? 1.25 : 1;
-    for (const sx of [-1, 1]) for (const sz of [-1, 1]) { const lg = new THREE.Group(); lg.position.set(sx * L * .27, 11 * sc, sz * Wd * .3); part('cyl', paint, 1.8, 11 * sc, 1.8, 0, -5.5 * sc, 0, lg); part('sph', lam('#5a3a1e'), 2.2, 1.6, 2.4, .8, -11 * sc, 0, lg); lean.add(lg); legs.push(lg); }
+  } else { // dogs: a mutt with floppy ears, or a slim greyhound
+    const grey = m.id === 'greyhound', legH = grey ? 15 : 11, top = legH + 4;
+    const mat = c => new THREE.MeshPhongMaterial(Object.assign({ color: c, shininess: 12, specular: 0x111111 }, op));
+    const dark = mat(col3(color).multiplyScalar(.55)), light = mat(col3(color).lerp(new THREE.Color(0xf6ead6), .65));
+    const nose = mat(0x141414), eyeW = mat(0xffffff), pink = mat(0xff7a8a), pad = mat(0x3a2a22);
+    u.mats.push(dark, light, nose, eyeW, pink, pad);
     const body = new THREE.Group(); lean.add(body); u.body = body;
-    part('sph', paint, L * .42, 6.5 * (m.id === 'greyhound' ? .85 : 1), Wd * .48, 0, 13 * sc, 0, body);
-    part('cyl', stripe, 4.6, 2, 4.6, L * .3, 15.5 * sc, 0, body).rotation.z = Math.PI / 2;
-    const head = new THREE.Group(); head.position.set(L * .42, 18 * sc, 0); body.add(head); u.head = head;
-    part('sph', paint, 5.5, 5, 5, 0, 0, 0, head); part('box', paint, 6, 3.6, 4.2, 5, -1, 0, head); part('sph', lam('#111111'), 1.4, 1.2, 1.4, 8, -.4, 0, head);
-    part('sph', lam('#111111'), 1, 1, 1, 3, 1.8, -2.6, head); part('sph', lam('#111111'), 1, 1, 1, 3, 1.8, 2.6, head);
-    const ears = []; for (const s of [-1, 1]) { const e = part('box', lam('#5a3a1e'), 2.4, 5.5, 1.2, -1.5, 3, s * 3.4, head); e.rotation.x = s * .5; ears.push(e); } u.ears = ears;
-    const tongue = part('box', lam('#ff7a8a'), 2, .6, 1.6, 7, -3.2, 0, head); u.tongue = tongue;
-    const tl = new THREE.Group(); tl.position.set(-L * .42, 15 * sc, 0); body.add(tl); part('cyl', paint, 1.2, 9, 1.2, 0, 4, 0, tl); tl.rotation.z = .7; u.tailWag = tl;
+    // torso: a deep chest in front, a smaller rump behind, joined by the back; a pale belly and chest patch
+    part('sph', paint, grey ? 8.5 : 8.5, grey ? 8.5 : 7.4, grey ? 5.4 : 6.6, L * .18, top + 2, 0, body);
+    part('sph', paint, grey ? 7.5 : 8, grey ? 5.6 : 6.6, grey ? 5 : 6.2, -L * .2, top + (grey ? 3.4 : 2), 0, body);
+    part('cyl', paint, grey ? 4.6 : 5.8, L * .42, grey ? 4.6 : 5.8, 0, top + (grey ? 3.4 : 2.4), 0, body).rotation.z = Math.PI / 2 + (grey ? .08 : 0);
+    part('sph', light, 6.5, grey ? 5 : 4.5, grey ? 4.2 : 5.2, L * .12, top - (grey ? 3.4 : 2.2), 0, body);
+    part('sph', light, 3.2, 5.2, grey ? 3.2 : 4, L * .3, top + 2.6, 0, body);
+    if (!grey) part('sph', dark, 7.5, 2.4, 5.4, -L * .02, top + 7.6, 0, body); // a darker saddle on the back
+    // neck and collar
+    const neck = part('cyl', paint, grey ? 2.4 : 3.4, grey ? 10 : 8, grey ? 2.4 : 3.4, L * .36, top + 7, 0, body); neck.rotation.z = -.75;
+    const collar = new THREE.Mesh(GEO.ring3 || (GEO.ring3 = new THREE.TorusGeometry(1, .22, 6, 14)), stripe); collar.scale.setScalar(grey ? 2.9 : 3.8); collar.position.set(L * .34, top + 6.4, 0); collar.rotation.set(0, Math.PI / 2, -.75); body.add(collar);
+    part('sph', mat(0xffc629), 1.1, 1.1, .5, L * .38, top + 3.6, 0, body);
+    // head: skull, muzzle, nose, eyes, brows, tongue, ears
+    const head = new THREE.Group(); head.position.set(L * .44 + (grey ? 2 : 0), top + (grey ? 12 : 11), 0); body.add(head); u.head = head;
+    part('sph', paint, grey ? 4.2 : 5, grey ? 4 : 4.6, grey ? 3.6 : 4.4, 0, 0, 0, head);
+    const muzzle = part('cyl', grey ? paint : light, grey ? 1.7 : 2.6, grey ? 8 : 5.6, grey ? 1.9 : 2.6, grey ? 6.2 : 4.6, grey ? -1.2 : -1.4, 0, head); muzzle.rotation.z = Math.PI / 2;
+    part('sph', nose, 1.4, 1.1, 1.5, grey ? 10.2 : 7.5, grey ? -.8 : -.6, 0, head);
+    for (const s of [-1, 1]) {
+      part('sph', eyeW, 1.2, 1.2, .8, grey ? 2.6 : 2.8, 1.6, s * (grey ? 2.4 : 2.8), head);
+      part('sph', nose, .8, .8, .6, grey ? 3.4 : 3.6, 1.7, s * (grey ? 2.5 : 2.9), head);
+      part('box', dark, 2.6, .7, 1.4, grey ? 2.4 : 2.6, 3, s * (grey ? 2.2 : 2.6), head).rotation.x = s * .2; // brows
+    }
+    const tongue = part('box', pink, 2.4, .5, 1.8, grey ? 8 : 6.4, grey ? -3 : -3.6, 0, head); tongue.rotation.z = -.5; u.tongue = tongue;
+    const ears = [];
+    for (const s of [-1, 1]) {
+      const pivot = new THREE.Group(); pivot.position.set(-1, grey ? 2.4 : 2.8, s * (grey ? 2.6 : 3.6)); head.add(pivot);
+      if (grey) part('sph', dark, 2.4, 1.1, 1.6, -1.6, .4, 0, pivot); // small ears folded back
+      else { const e = part('sph', dark, 2, 4.4, 1.1, 0, -3, s * .6, pivot); e.rotation.x = s * .25; } // floppy ears
+      pivot.rotation.x = s * (grey ? -.3 : .35); ears.push(pivot);
+    }
+    u.ears = ears;
+    // legs: thigh, shin and paw; hind legs bend at the hock
+    const legs = [];
+    for (const sx of [-1, 1]) for (const sz of [-1, 1]) {
+      const front = sx > 0, lg = new THREE.Group(); lg.position.set(sx * L * (grey ? .26 : .22), top, sz * Wd * (grey ? .26 : .3));
+      if (front) {
+        part('cyl', paint, grey ? 1.5 : 2, legH * .6, grey ? 1.5 : 2, 0, -legH * .3, 0, lg);
+        part('cyl', grey ? paint : light, grey ? 1.1 : 1.6, legH * .5, grey ? 1.1 : 1.6, .4, -legH * .78, 0, lg);
+      } else {
+        const thigh = part('sph', paint, grey ? 3.2 : 3.8, legH * .42, grey ? 2.4 : 3, -1, -legH * .25, 0, lg); thigh.rotation.z = .3;
+        const shin = part('cyl', grey ? paint : light, grey ? 1.1 : 1.5, legH * .55, grey ? 1.1 : 1.5, -1.6, -legH * .72, 0, lg); shin.rotation.z = -.25;
+      }
+      part('sph', grey ? paint : light, 2, 1.2, 2, front ? 1.2 : -.4, -legH + .6, 0, lg);
+      part('sph', pad, 1.3, .5, 1.5, front ? 1.6 : 0, -legH + .1, 0, lg);
+      lean.add(lg); legs.push(lg);
+    }
+    // tail: three segments that curve up and wag
+    const tl = new THREE.Group(); tl.position.set(-L * .36, top + (grey ? 3.4 : 4), 0); body.add(tl); u.tailWag = tl;
+    let seg = tl;
+    for (let i = 0; i < 3; i++) {
+      const piece = new THREE.Group(); piece.position.y = i ? (grey ? 4.2 : 3.4) : 0; piece.rotation.z = grey ? .35 : .5; seg.add(piece);
+      part('cyl', i === 2 && !grey ? light : paint, (grey ? 1 : 1.5) * (1 - i * .22), grey ? 4.4 : 3.6, (grey ? 1 : 1.5) * (1 - i * .22), 0, grey ? 2.2 : 1.8, 0, piece);
+      seg = piece;
+    }
+    tl.rotation.z = grey ? 1.9 : .9;
     u.legs = legs; u.run = 0;
   }
   const flame = new THREE.Mesh(GEO.flame, new THREE.MeshBasicMaterial({ color: 0xff9a1f, transparent: true, opacity: .85, blending: THREE.AdditiveBlending, depthWrite: false }));
@@ -4225,7 +4306,8 @@ function updCar3D(c, dt, tm) {
     const sp = Math.min(1, c.speed / 300); u.run += c.speed * dt * .045 + dt * 2;
     u.legs.forEach((l, i) => { l.rotation.z = Math.sin(u.run + (i === 0 || i === 3 ? 0 : Math.PI)) * .9 * sp; });
     u.body.position.y = Math.abs(Math.sin(u.run)) * 3 * sp; u.tailWag.rotation.x = Math.sin(tm * 14) * .6;
-    u.ears.forEach((e, i) => { e.rotation.z = -.3 - sp * .6 + Math.sin(u.run * 2 + i) * .1; });
+    u.ears.forEach((e, i) => { e.rotation.z = -sp * .5 + Math.sin(u.run * 2 + i) * .15; }); // ears fly back at speed
+    u.head.rotation.z = Math.sin(u.run * 2) * .06 * sp;
     u.tongue.visible = c.speed > 120;
   }
   if (u.tread) u.tread.forEach((b, i) => { b.position.x = -c.model.L * .48 + ((i * 4.4 + u.spin * 4) % 22); });
@@ -5234,7 +5316,8 @@ function renderMapList() {
     b.querySelector('.chip').textContent = t('map.' + m.id + '.chip');
     b.querySelector('.rec').textContent = isFinite(r) ? t('rec', { t: fmt(r) }) : t('noRec');
   });
-  $('#mapNote').textContent = t('map.' + MAPS[S.mapIndex].id + '.note');
+  const mp = MAPS[S.mapIndex], ride = rideFor(wallet.car, mp), mine = CARS.find(x => x.id === wallet.car);
+  $('#mapNote').textContent = t('map.' + mp.id + '.note') + (ride.type === 'sled' && mine && mine.type !== 'sled' ? ' · ' + t('sledAuto') : mine && mine.type === 'sled' && ride.type !== 'sled' ? ' · ' + t('sledOff', { c: carName(ride) }) : '');
 }
 function drawPreview(cv, map) {
   prepareMap(map);
@@ -5311,7 +5394,7 @@ function renderVehDetail() {
   drawCarPreview($('#vdCv'), m);
 }
 function openGarage() { S.gSel = wallet.car; S.gType = null; $('#menu').hidden = true; $('#garage').hidden = false; renderGarage(); $('#garageBack').focus(); }
-function closeGarage() { $('#garage').hidden = true; $('#menu').hidden = false; renderMenuStrip(); resetRace('menu'); }
+function closeGarage() { $('#garage').hidden = true; $('#menu').hidden = false; renderMenuStrip(); renderMapList(); resetRace('menu'); }
 $('#vehTabs').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
   S.gType = b.dataset.vt; const first = CARS.find(m => m.type === S.gType && wallet.owned.includes(m.id)) || CARS.find(m => m.type === S.gType);
@@ -5321,8 +5404,8 @@ $('#cars').addEventListener('click', e => { const b = e.target.closest('[data-pi
 $('#vehDetail').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b || b.disabled) return;
   const m = CARS.find(x => x.id === S.gSel);
-  if (b.dataset.buy) { if (wallet.coins < m.price) return; wallet.coins -= m.price; wallet.owned.push(m.id); wallet.car = m.id; }
-  else if (b.dataset.sel) wallet.car = m.id;
+  if (b.dataset.buy) { if (wallet.coins < m.price) return; wallet.coins -= m.price; wallet.owned.push(m.id); pickCar(m.id); }
+  else if (b.dataset.sel) pickCar(m.id);
   else if (b.dataset.tune) {
     const tu = tuneOf(m.id), k = b.dataset.tune, price = tunePrice(m, tu[k]);
     if (tu[k] >= 3 || wallet.coins < price) return;
@@ -5560,7 +5643,7 @@ window.__tk = {
   run: sec => { for (let tt = 0; tt < sec; tt += DT) step(DT); },
   draw: dt => { (G3.ok ? render3D : render)(dt); updHud(dt); },
   perf: dt => { perfWatch(dt); return { lv: gfxLevel(), auto: G3.autoLevel, pr: G3.ok && G3.r.getPixelRatio(), sh: G3.ok && G3.r.shadowMap.enabled }; },
-  setCar: id => { if (!wallet.owned.includes(id)) wallet.owned.push(id); wallet.car = id; },
+  setCar: id => { if (!wallet.owned.includes(id)) wallet.owned.push(id); pickCar(id); },
   sim(mapIndex, seconds, diff) {
     setupMap(mapIndex); S.simDiff = diff == null ? null : diff; resetRace('menu'); S.simDiff = null; S.stat = { resets: 0 };
     let off = 0, n = 0;
