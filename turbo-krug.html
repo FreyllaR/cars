@@ -219,6 +219,7 @@ tr.me td{color:var(--accent)}
 .modes b{font-family:var(--display);font-weight:400;font-size:15px}
 .modes span{font-size:12px;color:var(--muted)}
 .track-note{margin:-4px 0 10px}
+.conds{display:grid;gap:8px;justify-items:start}
 .maps.locked .map{opacity:.75}
 .maps.locked .map[aria-pressed="true"]{opacity:1}
 .cup-box table{margin-top:4px}
@@ -420,6 +421,22 @@ body.touchmode .hud-bl,body.touchmode .mini{bottom:calc(env(safe-area-inset-bott
         </div>
         <p id="diffNote" class="seg-note">Очки ×1</p>
       </section>
+      <section id="condSec">
+        <h2 class="label" data-t="conditions">Условия</h2>
+        <div class="conds">
+          <div id="weatherSeg" class="seg words">
+            <button data-w="clear" aria-pressed="true" data-t="wClear">Ясно</button>
+            <button data-w="rain" aria-pressed="false" data-t="wRain">Дождь</button>
+            <button data-w="fog" aria-pressed="false" data-t="wFog">Туман</button>
+            <button data-w="random" aria-pressed="false" data-t="wRandom">Случайно</button>
+          </div>
+          <div id="nightSeg" class="seg words">
+            <button data-n="day" aria-pressed="true" data-t="nDay">День</button>
+            <button data-n="night" aria-pressed="false" data-t="nNight">Ночь</button>
+            <button data-n="random" aria-pressed="false" data-t="wRandom">Случайно</button>
+          </div>
+        </div>
+      </section>
       <section>
         <h2 class="label" data-t="controls">Управление</h2>
         <div class="keys">
@@ -471,6 +488,10 @@ body.touchmode .hud-bl,body.touchmode .mini{bottom:calc(env(safe-area-inset-bott
       <div class="set">
         <label class="label" for="vol" data-t="volume">Громкость</label>
         <div class="vol"><input id="vol" type="range" min="0" max="100" step="5" value="60"><output id="volOut" for="vol">60%</output></div>
+      </div>
+      <div class="set">
+        <label class="label" for="mvol" data-t="music">Музыка</label>
+        <div class="vol"><input id="mvol" type="range" min="0" max="100" step="5" value="45"><output id="mvolOut" for="mvol">45%</output></div>
       </div>
       <div class="set">
         <h3 class="label" data-t="language">Язык</h3>
@@ -597,6 +618,8 @@ const STR = {
     track: 'Трасса', laps: 'Круги', rivals: 'Соперники', controls: 'Управление',
     k1: '<b>W / S</b> газ и тормоз', k2: '<b>A / D</b> руль, <b>Пробел</b> ручник', k3: '<b>Shift</b> нитро, <b>E</b> предмет', k4: '<b>R</b> на трассу, <b>Esc</b> пауза, <b>M</b> звук',
     nitro: 'Нитро', hull: 'Корпус', repair: 'Ремонт', item: 'Предмет',
+    conditions: 'Условия', wClear: 'Ясно', wRain: 'Дождь', wFog: 'Туман', wRandom: 'Случайно', nDay: 'День', nNight: 'Ночь', music: 'Музыка',
+    'wx.rain': 'Дождь: скользко, лужи', 'wx.fog': 'Туман', 'wx.night': 'Ночь', 'wx.blizzard': 'Метель',
     camera: 'Камера', camNear: 'Близко', camFar: 'Далеко', camTop: 'Сверху', gfx: 'Графика', gfxHigh: 'Красивая', gfxLow: 'Быстрая',
     'car.bike': 'Байк', 'car.bike.tag': 'Лёгкий и резкий, ложится в поворот',
     'car.superbike': 'Супербайк', 'car.superbike.tag': 'Ракета на двух колёсах',
@@ -688,6 +711,8 @@ const STR = {
     track: 'Track', laps: 'Laps', rivals: 'Rivals', controls: 'Controls',
     k1: '<b>W / S</b> throttle and brake', k2: '<b>A / D</b> steer, <b>Space</b> handbrake', k3: '<b>Shift</b> nitro, <b>E</b> use item', k4: '<b>R</b> back on track, <b>Esc</b> pause, <b>M</b> mute',
     nitro: 'Nitro', hull: 'Hull', repair: 'Repair', item: 'Item',
+    conditions: 'Conditions', wClear: 'Clear', wRain: 'Rain', wFog: 'Fog', wRandom: 'Random', nDay: 'Day', nNight: 'Night', music: 'Music',
+    'wx.rain': 'Rain: slippery, puddles', 'wx.fog': 'Fog', 'wx.night': 'Night', 'wx.blizzard': 'Blizzard',
     camera: 'Camera', camNear: 'Close', camFar: 'Far', camTop: 'High', gfx: 'Graphics', gfxHigh: 'Detailed', gfxLow: 'Fast',
     'car.bike': 'Bike', 'car.bike.tag': 'Light and sharp, leans into corners',
     'car.superbike': 'Superbike', 'car.superbike.tag': 'A rocket on two wheels',
@@ -975,7 +1000,7 @@ function genDecor(map, tr) {
     out.push(d);
   }
   out.sort((a, b) => (a.k === 'pond' ? -1e6 : a.y) - (b.k === 'pond' ? -1e6 : b.y));
-  if (map.night) {
+  {
     const step = Math.round(240 / tr.SP);
     for (let i = 0, n = 0; i < tr.N; i += step, n++) {
       const p = tr.pts[i], s = n % 2 ? 1 : -1, lat = s * (map.width / 2 + map.margin * .5);
@@ -1033,7 +1058,7 @@ const S = {
   finishCount: 0, parts: [], cam: { x: 0, y: 0, z: 1 }, shake: 0, followIdx: 0, followT: 0,
   resultsT: -1, prevMode: null, lit: -1, newRecord: false, flakes: [], diff: 1, simDiff: null, earned: 0,
   volume: 60, prevVolume: 60, haz: [], hazT: 5, hazOn: true, slicks: [], boxes: [], placeT: 0, pressAt: null,
-  cam3: 'near', gfx: 'high', stats: {}, ach: {}, achQ: [], achT: 0, gSel: null, gType: null, gameMode: 'race', cup: null, ghostOn: true, ghost: null, tut: {}, hintQ: [], hintT: 0, stuckT: 0,
+  cam3: 'near', gfx: 'high', stats: {}, ach: {}, achQ: [], achT: 0, gSel: null, gType: null, weatherSel: 'clear', nightSel: 'day', weatherNow: 'clear', nightNow: false, puddles: [], musicVol: 45, gameMode: 'race', cup: null, ghostOn: true, ghost: null, tut: {}, hintQ: [], hintT: 0, stuckT: 0,
 };
 // wallet and settings live in this browser only
 const wallet = { coins: 0, owned: ['start'], car: 'start', tune: {}, paint: {} };
@@ -1073,7 +1098,7 @@ function newCar(di, slot) {
     cr: model.type === 'moto' ? 7 : model.type === 'dog' ? 8 : 11, offRes: model.offRes || 0, iceGrip: model.iceGrip || 0,
     brakeMul: tuned ? 1 + .15 * tu.b : 1, lapClean: true,
     skill: d.player ? (attract ? .975 : 1) : d.skill * dif.speed,
-    profile: profileFor(map, d.player ? .975 : d.skill * dif.corner),
+    profile: profileFor(map, (d.player ? .975 : d.skill * dif.corner) * (S.weatherNow === 'rain' ? .86 : 1)),
     top: tuned ? model.top * (1 + .025 * tu.e) * asphaltK : BASE, accel: tuned ? model.accel * (1 + .04 * tu.e) : ACCEL,
     gripMul: tuned ? model.grip * (1 + .05 * tu.t) : 1, steerMul: tuned ? model.steer * (1 + .02 * tu.b) : 1,
     x: p.x + p.nx * lat, y: p.y + p.ny * lat, angle: p.ang, vx: 0, vy: 0, vF: 0, vR: 0, speed: 0,
@@ -1087,7 +1112,9 @@ function newCar(di, slot) {
 }
 function resetRace(mode) {
   S.mode = mode;
+  if (mode !== 'menu') rollConditions(); // before newCar: rain changes how bots brake for corners
   S.cars = S.gameMode === 'trial' && mode !== 'menu' ? [newCar(0, 0)] : GRID.map((di, slot) => newCar(di, slot));
+  buildPuddles(); if (G3.ok) show3DMap(S.map);
   S.haz = []; S.hazT = mode === 'menu' ? 3 : 6; S.slicks = []; S.boxes = buildBoxes(); S.placeT = 0; S.pressAt = null;
   S.time = 0; S.finishCount = 0; S.parts = []; markHead = 0; markCount = 0; S.resultsT = -1; S.newRecord = false;
   const f = followCar(); S.cam.x = f.x; S.cam.y = f.y;
@@ -1135,7 +1162,12 @@ function physCar(c, dt) {
   const drag = off ? map.offDrag * (1 - c.offRes * .7) : .25;
   vF -= vF * drag * (th === 0 ? 1.6 : 1) * dt;
   if (vF > maxSpd) vF -= (vF - maxSpd) * 2.5 * dt;
-  let grip = Math.max(map.grip * c.gripMul, c.iceGrip) * (off ? .8 : 1);
+  let grip = Math.max(map.grip * c.gripMul * weatherGrip(), c.iceGrip) * (off ? .8 : 1);
+  if (c.aquaT > 0) { c.aquaT -= dt; grip *= .3; vF -= vF * .5 * dt; }
+  else if (S.weatherNow === 'rain' && c.speed > 120 && inPuddle(c)) {
+    c.aquaT = .45;
+    if (c.isPlayer || Math.random() < .3) burst(c.x, c.y, '200,215,235', 12, 160);
+  }
   if (c.inBrake) { grip *= .22; vF -= vF * .6 * dt; }
   vR *= Math.exp(-grip * dt);
   c.vx = fx * vF + rx * vR; c.vy = fy * vF + ry * vR;
@@ -1296,6 +1328,29 @@ function burst(x, y, col, n, sp) {
   for (let i = 0; i < n; i++) { const a = Math.random() * 6.28, v = Math.random() * sp;
     S.parts.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, life: .5 + Math.random() * .5, max: 1, r: 3 + Math.random() * 5, col }); }
 }
+// ---------- weather and time of day ----------
+const isNight = () => !!(S.map && (S.map.night || S.nightNow));
+function rollConditions() {
+  const ws = S.weatherSel, ns = S.nightSel;
+  S.weatherNow = ws === 'random' ? (Math.random() < .55 ? 'clear' : Math.random() < .6 ? 'rain' : 'fog') : ws;
+  S.nightNow = ns === 'random' ? Math.random() < .35 : ns === 'night';
+}
+function buildPuddles() {
+  S.puddles = [];
+  if (S.weatherNow !== 'rain' || !S.track) return;
+  const tr = S.track, r = rng((S.map.seed * 13 + (S.clock * 1000 | 0)) | 0), hw = S.map.width / 2;
+  for (let i = 0; i < 14; i++) {
+    const idx = Math.floor((.08 + r() * .9) * tr.N), p = tr.pts[idx], lat = (r() * 2 - 1) * hw * .6;
+    S.puddles.push({ x: p.x + p.nx * lat, y: p.y + p.ny * lat, r: 22 + r() * 22, a: r() * 6 });
+  }
+}
+const weatherGrip = () => S.weatherNow === 'rain' ? .78 : 1;
+function inPuddle(c) {
+  if (!S.puddles || !S.puddles.length) return false;
+  for (const q of S.puddles) if (Math.abs(q.x - c.x) < q.r * 1.3 && Math.abs(q.y - c.y) < q.r * 1.3 && Math.hypot((q.x - c.x) / 1.3, q.y - c.y) < q.r) return true;
+  return false;
+}
+
 // ---------- nitro, items, damage, pit lane ----------
 const PIT_A = 160, PIT_B = 470, PIT_SIDE = 1; // pit zone: distance after the start line, on the right half of the road
 function inPit(idx, lat) {
@@ -1320,6 +1375,8 @@ function launch(c) { // reaction to the green light
   else { c.wheelspinT = .9; toast(t('wheelspin'), t('wheelspinSub'), 'warn'); }
 }
 function onThrottlePress() {
+  const pl = player();
+  if (pl && pl.type === 'dog' && pl.speed < 60 && (S.mode === 'race' || S.mode === 'countdown')) bark();
   if (S.mode === 'countdown') S.pressAt = S.cd;
   else if (S.mode === 'race' && S.time < .3) {
     const p = player();
@@ -1367,7 +1424,7 @@ function carPickups(c) {
 function useItem(c) {
   if (!c.item || c.respawnT > 0) return;
   const fx = Math.cos(c.angle), fy = Math.sin(c.angle);
-  if (c.item === 'boost') { c.boostT = 1.6; if (c.isPlayer) tone('sawtooth', 200, 900, .4, .07); }
+  if (c.item === 'boost') { c.boostT = 1.6; if (c.isPlayer) { if (c.type === 'dog') bark(); else tone('sawtooth', 200, 900, .4, .07); } }
   else if (c.item === 'shield') { c.shieldT = 8; if (c.isPlayer) tone('sine', 400, 1000, .3, .06); }
   else if (c.item === 'oil') { S.slicks.push({ x: c.x - fx * 34, y: c.y - fy * 34, r: 30, life: 14, age: 0, owner: c, seed: Math.random() * 6 }); if (c.isPlayer) tone('square', 200, 70, .2, .05); }
   c.item = null;
@@ -1699,6 +1756,7 @@ function step(dt) {
     S.cd -= dt;
     const lit = S.cd > 3 ? 0 : S.cd > 2 ? 1 : S.cd > 1 ? 2 : 3;
     if (lit !== S.lit) { S.lit = lit; showLights(lit); if (lit > 0) beep(440, .18); }
+    if (S.lit === 1 && !S.wxShown) { S.wxShown = true; const wx = [S.weatherNow === 'rain' ? (S.map.deco === 'snow' ? t('wx.blizzard') : t('wx.rain')) : S.weatherNow === 'fog' ? t('wx.fog') : '', S.nightNow && !S.map.night ? t('wx.night') : ''].filter(Boolean).join(' · '); if (wx) toast(wx, '', ''); }
     if (S.cd <= 0) { S.mode = 'race'; S.time = 0; S.goT = 1; showLights(-1); beep(990, .4); for (const c of S.cars) { c.lapStart = 0; launch(c); } }
   }
   if (S.goT > 0) { S.goT -= dt; if (S.goT <= 0) $('#lights').hidden = true; }
@@ -1838,7 +1896,7 @@ function startRace() {
   if (S.gameMode !== 'cup') S.cup = null;
   setupMap(S.mapIndex);
   resetRace('countdown');
-  S.cd = 3.8; S.lit = -1;
+  S.cd = 3.8; S.lit = -1; S.wxShown = false;
   S.ghost = loadGhost(S.map); S.hintQ = []; S.hintT = 0; $('#hint').hidden = true; S.stuckT = 0;
   for (const id of ['#menu', '#pause', '#results', '#garage', '#settings', '#toast']) $(id).hidden = true;
   $('#hud').hidden = false; $('#lights').hidden = false; $('#lights').classList.remove('go');
@@ -1852,7 +1910,7 @@ function toMenu() {
   saveStats();
   $('#menu').hidden = false;
   if (S.cup && !S.cup.done) S.cup = null;
-  renderMapList(); renderMenuStrip(); syncMode();
+  renderMapList(); renderMenuStrip(); syncMode(); setConditions();
 }
 function togglePause(force) {
   if (S.mode === 'race' || S.mode === 'countdown') { if (force === false) return; S.prevMode = S.mode; S.mode = 'paused'; $('#pause').hidden = false; $('#resumeBtn').focus(); }
@@ -2262,6 +2320,7 @@ function render(dt) {
       fctx.beginPath(); fctx.arc(fl.x, fl.y, fl.s, 0, 7); fctx.fill();
     }
   }
+  drawWeatherFx(dt, f);
   if (map.night) {
     const g = fctx.createRadialGradient(W / 2, H * .62, Math.min(W, H) * .3, W / 2, H * .62, Math.max(W, H) * .75);
     g.addColorStop(0, 'rgba(5,6,15,0)'); g.addColorStop(1, 'rgba(5,6,15,.65)'); fctx.fillStyle = g; fctx.fillRect(0, 0, W, H);
@@ -2456,7 +2515,8 @@ function buildMap3D(map) {
     x.fillStyle = 'rgba(255,255,255,.55)'; x.fillRect(0, 3, w, 3); x.fillRect(0, h - 6, w, 3);
     x.fillStyle = C.line; x.fillRect(0, h / 2 - 2, w * .45, 4);
   });
-  g.add(ribbon(tr, -hw, hw, .45, new THREE.MeshLambertMaterial({ map: asph }), 256));
+  map._asphM = new THREE.MeshLambertMaterial({ map: asph });
+  g.add(ribbon(tr, -hw, hw, .45, map._asphM, 256));
   // walls
   if (!map.lava) {
     const wallH = map.night ? 22 : 12, lim = hw + map.margin + 8;
@@ -2528,15 +2588,19 @@ function buildDecor3D(map, g) {
     sp.scale.set(d.s * 3.5, d.s * 3.5, 1); sp.position.set(d.x, 14, d.y); g.add(sp);
   }
   if (by.bld) buildCity3D(map, by.bld, g);
-  if (map.night) {
-    const glow = G3.glowWarm || (G3.glowWarm = new THREE.CanvasTexture(GLOW_WARM));
-    inst('cyl', lam('#2a2f44'), map._lamps, (o, d) => { o.position.set(d.x, 40, d.y); o.scale.set(1.4, 80, 1.4); });
-    inst('circle', new THREE.MeshBasicMaterial({ color: 0xffc070, transparent: true, opacity: .16, blending: THREE.AdditiveBlending, depthWrite: false }), map._lamps, (o, d) => { o.position.set(d.x, .7, d.y); o.scale.setScalar(110); }, null, false);
-    for (const l of map._lamps) {
-      const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: glow, blending: THREE.AdditiveBlending, depthWrite: false, opacity: .9 }));
-      sp.scale.set(60, 60, 1); sp.position.set(l.x, 80, l.y); g.add(sp);
-    }
-  }
+}
+function buildLamps3D(map) { // street lamps, built on demand for night races
+  if (map._g3lamps) return map._g3lamps;
+  const g = new THREE.Group(), dummy = new THREE.Object3D(), L = map._lamps, glow = G3.glowWarm || (G3.glowWarm = new THREE.CanvasTexture(GLOW_WARM));
+  const poles = new THREE.InstancedMesh(GEO.cyl, lam('#2a2f44'), L.length), pools = new THREE.InstancedMesh(GEO.circle, new THREE.MeshBasicMaterial({ color: 0xffc070, transparent: true, opacity: .16, blending: THREE.AdditiveBlending, depthWrite: false }), L.length);
+  L.forEach((d, i) => {
+    dummy.position.set(d.x, 40, d.y); dummy.scale.set(1.4, 80, 1.4); dummy.updateMatrix(); poles.setMatrixAt(i, dummy.matrix);
+    dummy.position.set(d.x, .7, d.y); dummy.scale.setScalar(110); dummy.updateMatrix(); pools.setMatrixAt(i, dummy.matrix);
+    const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: glow, blending: THREE.AdditiveBlending, depthWrite: false, opacity: .9 }));
+    sp.scale.set(60, 60, 1); sp.position.set(d.x, 80, d.y); g.add(sp);
+  });
+  poles.castShadow = true; g.add(poles, pools);
+  return (map._g3lamps = g);
 }
 function buildCity3D(map, list, g) {
   const fac = cTex(128, 128, (x, w, h) => {
@@ -2564,17 +2628,33 @@ function buildCity3D(map, list, g) {
   const m = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ map: fac, emissiveMap: fac, emissive: 0xffffff, emissiveIntensity: .85, side: THREE.DoubleSide }));
   m.castShadow = true; m.receiveShadow = true; g.add(m);
 }
+const skyCache = {};
 function show3DMap(map) {
   if (!G3.ok) return;
-  const sk = SKY3[map.id] || SKY3.valley;
+  const sk = SKY3[map.id] || SKY3.valley, night = isNight(), w = S.weatherNow;
   G3.world.clear(); G3.world.add(buildMap3D(map));
-  G3.scene.background = map._sky;
-  G3.scene.fog = new THREE.Fog(sk.fog, sk.near, sk.far);
-  G3.hemi.color.setHex(sk.hs); G3.hemi.groundColor.setHex(sk.hg); G3.hemi.intensity = sk.hI;
-  G3.sun.color.setHex(sk.sun); G3.sun.intensity = sk.sunI;
+  if (night && !map.night) G3.world.add(buildLamps3D(map));
+  let sky = sk.sky, fogC = sk.fog, near = sk.near, far = sk.far, sunI = sk.sunI, hI = sk.hI, hs = sk.hs, hg = sk.hg, sun = sk.sun;
+  if (night && !map.night) { sky = map.lava ? ['#080302', '#3a1008'] : ['#03040a', '#161c38']; fogC = map.lava ? 0x2a0c06 : 0x0e1228; sunI = .22; sun = 0x8a98ff; hI = .42; hs = 0x4a5a90; hg = 0x0a0c12; }
+  if (w === 'rain') { sky = night ? ['#05060c', '#1a1e2a'] : ['#59616d', '#a9b0b9']; fogC = night ? 0x10131b : 0x9aa2ac; near *= .55; far *= .6; sunI *= .5; }
+  if (w === 'fog') { sky = night ? ['#101219', '#1d2029'] : ['#b8bec6', '#d6dbe1']; fogC = night ? 0x1a1d26 : 0xc9cfd6; near = 40; far = 650; sunI *= .7; }
+  const key = sky.join();
+  G3.scene.background = skyCache[key] || (skyCache[key] = skyTex(sky[0], sky[1]));
+  G3.scene.fog = new THREE.Fog(fogC, near, far);
+  G3.hemi.color.setHex(hs); G3.hemi.groundColor.setHex(hg); G3.hemi.intensity = hI;
+  G3.sun.color.setHex(sun); G3.sun.intensity = sunI;
   G3.marks.material.color.copy(col3(map.c.skid)); G3.marks.material.opacity = .35;
-  G3.head.intensity = map.night ? 1.6 : 0;
+  G3.head.intensity = night ? 1.6 : 0;
+  if (map._asphM) map._asphM.color.setHex(w === 'rain' ? 0x8c939c : 0xffffff);
+  buildPuddles3D();
   G3.c3.snap = true;
+}
+function buildPuddles3D() {
+  if (G3.puddleG) { G3.dyn.remove(G3.puddleG); G3.puddleG = null; }
+  if (!S.puddles || !S.puddles.length) return;
+  const g = new THREE.Group(), mat = G3.puddleM || (G3.puddleM = new THREE.MeshPhongMaterial({ color: 0x6f8aa6, shininess: 140, specular: 0xcfe3ff, transparent: true, opacity: .55, depthWrite: false }));
+  for (const q of S.puddles) { const m = part('circle', mat, q.r * 1.3, 1, q.r, q.x, .58, q.y, g); m.rotation.y = q.a; }
+  G3.dyn.add(g); G3.puddleG = g;
 }
 
 // ---- vehicles
@@ -2709,7 +2789,7 @@ function updCar3D(c, dt, tm) {
   if (u.type !== 'dog') u.paint.color.copy(u.base).lerp(dark3(), c.damage * .45);
   u.flame.visible = !!c.boosting; if (c.boosting) { u.flame.material.color.setHex(c.nitroOn ? 0x4fc8ff : 0xff9a1f); u.flame.scale.x = 12 + Math.random() * 8; }
   u.shield.visible = c.shieldT > 0; if (c.shieldT > 0) u.shield.material.opacity = c.shieldT < 1.5 && Math.sin(tm * 20) < 0 ? .08 : .22;
-  u.beam.visible = !!S.map.night && u.type !== 'dog';
+  u.beam.visible = isNight() && u.type !== 'dog';
 }
 
 // ---- hazards
@@ -2907,7 +2987,7 @@ function render3D(dt) {
   c3.fov += (fovT - c3.fov) * Math.min(1, dt * 3); cam.fov = c3.fov; cam.updateProjectionMatrix();
   // sun and its shadow box follow the action
   G3.sun.position.set(f.x + 260, 620, f.y + 180); G3.sun.target.position.set(f.x + fx * 150, 0, f.y + fy * 150); G3.sun.target.updateMatrixWorld();
-  if (map.night) { G3.head.position.set(f.x + fx * 10, 14, f.y + fy * 10); G3.head.target.position.set(f.x + fx * 200, 0, f.y + fy * 200); G3.head.target.updateMatrixWorld(); }
+  if (isNight()) { G3.head.position.set(f.x + fx * 10, 14, f.y + fy * 10); G3.head.target.position.set(f.x + fx * 200, 0, f.y + fy * 200); G3.head.target.updateMatrixWorld(); }
   sync3DObjects(dt, tm);
   // particles
   const pa = G3.pts.geometry.attributes, n = Math.min(S.parts.length, G3.PN);
@@ -2945,6 +3025,7 @@ function render3D(dt) {
     if (gp) { v.set(gp.x, 30, gp.y).project(cam); if (v.z < 1) { fctx.globalAlpha = .7; fctx.fillStyle = '#e8f6ff'; fctx.font = '800 11px "Exo 2", sans-serif'; fctx.fillText(t('ghost'), (v.x + 1) / 2 * W, (1 - v.y) / 2 * H); fctx.globalAlpha = 1; } }
     drawMini();
   }
+  drawWeatherFx(dt, f);
   if (map.deco === 'snow' && !reduceMotion) {
     fctx.fillStyle = 'rgba(255,255,255,.85)';
     for (const fl of S.flakes) {
@@ -2955,6 +3036,27 @@ function render3D(dt) {
   }
 }
 function fx_dpr() { return fx._dpr || 1; }
+function drawWeatherFx(dt, f) {
+  const w = S.weatherNow;
+  if (w === 'rain' && !reduceMotion) {
+    if (!S.drops || S.drops.length !== 160) S.drops = Array.from({ length: 160 }, () => ({ x: Math.random() * W, y: Math.random() * H, v: 900 + Math.random() * 500, l: 14 + Math.random() * 18 }));
+    const snowy = S.map.deco === 'snow';
+    fctx.strokeStyle = snowy ? 'rgba(255,255,255,.85)' : 'rgba(190,205,225,.45)'; fctx.lineWidth = snowy ? 2.6 : 1.4; fctx.lineCap = 'round';
+    fctx.beginPath();
+    for (const d of S.drops) {
+      const sp = snowy ? .25 : 1;
+      d.y += d.v * dt * sp; d.x -= d.v * dt * .12 * sp;
+      if (d.y > H + 20) { d.y = -20; d.x = Math.random() * (W + 80); }
+      if (snowy) { fctx.moveTo(d.x, d.y); fctx.lineTo(d.x + .5, d.y + 1); }
+      else { fctx.moveTo(d.x, d.y); fctx.lineTo(d.x + d.l * .14, d.y + d.l); }
+    }
+    fctx.stroke();
+    if (f && f.speed > 40 && Math.random() < .5 && S.mode !== 'menu') { // splashes kicked up around the player
+      S.parts.push({ x: f.x + (Math.random() - .5) * 60, y: f.y + (Math.random() - .5) * 60, vx: (Math.random() - .5) * 60, vy: (Math.random() - .5) * 60, life: .4, max: .4, r: 2.4, col: '200,215,235', op: .6 });
+    }
+  }
+  if (w === 'fog') { const g = fctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, 'rgba(210,215,222,.35)'); g.addColorStop(.6, 'rgba(210,215,222,.1)'); g.addColorStop(1, 'rgba(210,215,222,0)'); fctx.fillStyle = g; fctx.fillRect(0, 0, W, H); }
+}
 
 // ---------- audio ----------
 // Sound plays only while racing: outside the race the master gain fades out and the audio context is suspended.
@@ -2966,8 +3068,75 @@ function initAudio() {
     const ac = new AC(), o1 = ac.createOscillator(), o2 = ac.createOscillator(), f = ac.createBiquadFilter(), g = ac.createGain(), m = ac.createGain();
     o1.type = 'sawtooth'; o2.type = 'square'; f.type = 'lowpass'; f.frequency.value = 600; g.gain.value = 0; m.gain.value = 0;
     o1.connect(f); o2.connect(f); f.connect(g); g.connect(m); m.connect(ac.destination); o1.start(); o2.start();
-    audio = { ac, o1, o2, f, g, m, sus: 0 };
+    const mus = ac.createGain(); mus.gain.value = 0; mus.connect(m);
+    audio = { ac, o1, o2, f, g, m, mus, sus: 0 };
   } catch (e) { audio = null; }
+}
+// Procedural race music: drums, bass, arpeggio and a seeded melody per track. Scheduled a little ahead of the audio clock.
+const MUSIC = {
+  valley: { bpm: 126, root: 48, scale: [0, 2, 4, 5, 7, 9, 11], prog: [0, 4, 5, 3] },
+  canyon: { bpm: 116, root: 50, scale: [0, 2, 3, 5, 7, 9, 10], prog: [0, 3, 4, 0] },
+  pass: { bpm: 108, root: 52, scale: [0, 2, 3, 5, 7, 8, 10], prog: [0, 5, 3, 4] },
+  city: { bpm: 132, root: 45, scale: [0, 2, 3, 5, 7, 8, 10], prog: [0, 5, 2, 6] },
+  volcano: { bpm: 142, root: 50, scale: [0, 1, 3, 5, 7, 8, 10], prog: [0, 6, 5, 4] },
+};
+const midiHz = n => 440 * Math.pow(2, (n - 69) / 12);
+let noiseBuf = null;
+function noise() {
+  if (!noiseBuf) { noiseBuf = audio.ac.createBuffer(1, audio.ac.sampleRate, audio.ac.sampleRate); const d = noiseBuf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; }
+  const n = audio.ac.createBufferSource(); n.buffer = noiseBuf; return n;
+}
+function voice(type, hz, t0, len, vol, cutoff) {
+  const ac = audio.ac, o = ac.createOscillator(), g = ac.createGain();
+  o.type = type; o.frequency.value = hz; g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(vol, t0 + .008); g.gain.exponentialRampToValueAtTime(.0001, t0 + len);
+  if (cutoff) { const f = ac.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = cutoff; o.connect(f); f.connect(g); } else o.connect(g);
+  g.connect(audio.mus); o.start(t0); o.stop(t0 + len + .02);
+}
+function hit(kind, t0) {
+  const ac = audio.ac;
+  if (kind === 'kick') { const o = ac.createOscillator(), g = ac.createGain(); o.frequency.setValueAtTime(150, t0); o.frequency.exponentialRampToValueAtTime(42, t0 + .12); g.gain.setValueAtTime(.55, t0); g.gain.exponentialRampToValueAtTime(.0001, t0 + .16); o.connect(g); g.connect(audio.mus); o.start(t0); o.stop(t0 + .18); return; }
+  const n = noise(), f = ac.createBiquadFilter(), g = ac.createGain();
+  f.type = kind === 'hat' ? 'highpass' : 'bandpass'; f.frequency.value = kind === 'hat' ? 7000 : 1800;
+  const v = kind === 'hat' ? .05 : .16, l = kind === 'hat' ? .03 : .12;
+  g.gain.setValueAtTime(v, t0); g.gain.exponentialRampToValueAtTime(.0001, t0 + l);
+  n.connect(f); f.connect(g); g.connect(audio.mus); n.start(t0, Math.random() * .5); n.stop(t0 + l + .02);
+}
+function musicStep(t0) {
+  const M = MUSIC[S.map.id] || MUSIC.valley, st = S.mus.step, beat = st % 16, bar = Math.floor(st / 16) % 4, sixteenth = 60 / M.bpm / 4;
+  const deg = M.prog[bar], chord = [0, 2, 4].map(k => M.root + M.scale[(deg + k) % 7] + 12 * Math.floor((deg + k) / 7));
+  if (beat % 4 === 0) hit('kick', t0);
+  if (beat === 4 || beat === 12) hit('snare', t0);
+  if (beat % 2 === 1) hit('hat', t0);
+  if (beat % 2 === 0) voice('square', midiHz(chord[0] - 12 + (beat % 8 === 6 ? 12 : 0)), t0, sixteenth * 1.8, .1, 700);
+  voice('triangle', midiHz(chord[beat % 3] + 12), t0, sixteenth * .9, .045);
+  const mel = S.mus.mel[st % 64];
+  if (mel != null && Math.floor(st / 64) % 2 === 1) voice('sawtooth', midiHz(M.root + 24 + mel), t0, sixteenth * 2.4, .035, 2600);
+}
+function updMusic() {
+  if (!audio || !audio.mus) return;
+  const ac = audio.ac, want = audioWanted() && S.musicVol > 0 && (S.mode === 'race' || S.mode === 'countdown' || S.mode === 'results');
+  audio.mus.gain.setTargetAtTime(want ? S.musicVol / 100 * .55 : 0, ac.currentTime, .1);
+  if (!want) { S.mus = null; return; }
+  if (!S.mus || S.mus.map !== S.map.id) {
+    const M = MUSIC[S.map.id] || MUSIC.valley, r = rng(S.map.seed * 31), pent = [0, 2, 4, 7, 9].map(k => M.scale[[0, 1, 2, 4, 5][[0, 2, 4, 7, 9].indexOf(k)]]);
+    S.mus = { step: 0, next: ac.currentTime + .08, map: S.map.id, mel: Array.from({ length: 64 }, (_, i) => i % 2 === 0 && r() < .55 ? pent[(r() * pent.length) | 0] : null) };
+  }
+  const M = MUSIC[S.map.id] || MUSIC.valley, sx = 60 / M.bpm / 4;
+  if (S.mus.next < ac.currentTime - .5) S.mus.next = ac.currentTime + .05;
+  while (S.mus.next < ac.currentTime + .18) { musicStep(S.mus.next); S.mus.next += sx; S.mus.step++; }
+}
+const ENGINE = {
+  car: { t1: 'sawtooth', t2: 'square', base: 46, range: 150, f: 380, fr: 1100 },
+  moto: { t1: 'square', t2: 'sawtooth', base: 72, range: 240, f: 700, fr: 2000 },
+  sled: { t1: 'square', t2: 'square', base: 60, range: 180, f: 900, fr: 1600 },
+};
+function bark() {
+  tone('sawtooth', 640, 380, .09, .12); setTimeout(() => tone('sawtooth', 580, 330, .12, .12), 140);
+}
+function rainNoise(on) {
+  if (!audio) return;
+  if (on && !audio.rain) { const n = noise(), f = audio.ac.createBiquadFilter(), g = audio.ac.createGain(); n.loop = true; f.type = 'lowpass'; f.frequency.value = 1400; g.gain.value = .06; n.connect(f); f.connect(g); g.connect(audio.m); n.start(); audio.rain = { n, g }; }
+  if (!on && audio.rain) { audio.rain.n.stop(); audio.rain = null; }
 }
 const audioWanted = () => S.volume > 0 && (S.mode === 'countdown' || S.mode === 'race' || (S.mode === 'results' && S.resultsT > 0));
 function updAudio() {
@@ -2984,12 +3153,21 @@ function updAudio() {
     }
     return;
   }
+  updMusic();
+  rainNoise(S.weatherNow === 'rain' && S.map.deco !== 'snow' && (S.mode === 'race' || S.mode === 'countdown'));
   const p = player(), engineOn = p && !p.finished && (S.mode === 'race' || S.mode === 'countdown');
-  const r = p ? Math.min(1.2, p.speed / BASE) : 0;
+  const E = p && ENGINE[p.type], r = p ? Math.min(1.2, p.speed / BASE) : 0;
   const rev = S.mode === 'countdown' && (K.KeyW || K.ArrowUp) ? .5 : 0;
-  const base = 46 + (r + rev) * 150;
-  audio.o1.frequency.setTargetAtTime(base, now, .06); audio.o2.frequency.setTargetAtTime(base * .5, now, .06);
-  audio.f.frequency.setTargetAtTime(380 + (r + rev) * 1100, now, .08);
+  if (!E) { // the dog pants instead of revving
+    audio.g.gain.setTargetAtTime(0, now, .05);
+    if (p && engineOn) { S.pantT = (S.pantT || 0) - (now - (S.pantAt || now)); S.pantAt = now; if (S.pantT <= 0) { S.pantT = .42 - Math.min(.24, p.speed / 1500); const n = noise(), f = audio.ac.createBiquadFilter(), g = audio.ac.createGain(); f.type = 'bandpass'; f.frequency.value = 900; g.gain.setValueAtTime(.12, now); g.gain.exponentialRampToValueAtTime(.0001, now + .11); n.connect(f); f.connect(g); g.connect(audio.m); n.start(now, Math.random() * .5); n.stop(now + .13); } }
+    return;
+  }
+  const mm = p.model, bs = (mm.id === 'legenda' ? .82 : mm.id === 'raketa' ? 1.12 : 1) * E.base;
+  if (audio.o1.type !== E.t1) audio.o1.type = E.t1; if (audio.o2.type !== E.t2) audio.o2.type = E.t2;
+  const base = bs + (r + rev) * E.range * (p.boosting ? 1.12 : 1);
+  audio.o1.frequency.setTargetAtTime(base, now, .06); audio.o2.frequency.setTargetAtTime(base * (p.type === 'sled' ? .51 : .5), now, .06);
+  audio.f.frequency.setTargetAtTime(E.f + (r + rev) * E.fr, now, .08);
   audio.g.gain.setTargetAtTime(engineOn ? .05 + (p.inThrottle > 0 || rev ? .035 : 0) : 0, now, .1);
 }
 // Browsers stop animation frames in hidden tabs and panes, so updAudio stops running there.
@@ -3085,6 +3263,20 @@ function setCam3(m) {
 function setGfx(g) {
   S.gfx = g === 'low' ? 'low' : 'high'; store.set('turbo-krug-gfx', S.gfx); applyGfx(); resize();
   $('#gfxSeg').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.gfx === S.gfx)));
+}
+function setConditions(w, n) {
+  if (w) S.weatherSel = w; if (n) S.nightSel = n;
+  store.set('turbo-krug-weather', S.weatherSel); store.set('turbo-krug-night', S.nightSel);
+  $('#weatherSeg').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.w === S.weatherSel)));
+  $('#nightSeg').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.n === S.nightSel)));
+  if (S.mode === 'menu') { // preview the conditions behind the menu
+    S.weatherNow = S.weatherSel === 'random' ? 'clear' : S.weatherSel; S.nightNow = S.nightSel === 'night';
+    buildPuddles(); if (G3.ok) show3DMap(S.map);
+  }
+}
+function setMusic(v) {
+  S.musicVol = clamp(Math.round(v / 5) * 5, 0, 100);
+  $('#mvol').value = S.musicVol; $('#mvolOut').textContent = S.musicVol + '%'; store.set('turbo-krug-music', String(S.musicVol));
 }
 function setGhost(on) {
   S.ghostOn = !!on;
@@ -3316,6 +3508,9 @@ $('#langSeg').addEventListener('click', e => { const b = e.target.closest('butto
 $('#hazSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (b) setHaz(b.dataset.haz === 'on'); });
 $('#camSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (b) setCam3(b.dataset.cam); });
 $('#gfxSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (b) setGfx(b.dataset.gfx); });
+$('#weatherSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (b) setConditions(b.dataset.w, null); });
+$('#nightSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (b) setConditions(null, b.dataset.n); });
+$('#mvol').addEventListener('input', e => setMusic(+e.target.value));
 $('#ghostSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (b) setGhost(b.dataset.ghost === 'on'); });
 $('#tutReset').addEventListener('click', () => { S.tut = {}; store.set('turbo-krug-tut', '{}'); $('#tutReset').textContent = t('tutResetDone'); });
 $('#modeSeg').addEventListener('click', e => {
@@ -3374,6 +3569,9 @@ function start(data) {
   const v = parseInt(store.get('turbo-krug-vol'), 10); setVolume(v >= 0 && v <= 100 ? v : 60);
   setHaz(store.get('turbo-krug-haz') !== 'off');
   setGhost(store.get('turbo-krug-ghost') !== 'off');
+  { const mv = parseInt(store.get('turbo-krug-music'), 10); setMusic(mv >= 0 && mv <= 100 ? mv : 45); }
+  S.weatherSel = ['clear', 'rain', 'fog', 'random'].includes(store.get('turbo-krug-weather')) ? store.get('turbo-krug-weather') : 'clear';
+  S.nightSel = ['day', 'night', 'random'].includes(store.get('turbo-krug-night')) ? store.get('turbo-krug-night') : 'day';
   S.gfx = store.get('turbo-krug-gfx') || (touchMode ? 'low' : 'high');
   init3D();
   setCam3(store.get('turbo-krug-cam3') || 'near'); setGfx(S.gfx);
