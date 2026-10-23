@@ -1345,6 +1345,7 @@ function resetRace(mode) {
 function placeOnTrack(c, idx) {
   const p = S.track.pts[idx];
   c.x = p.x; c.y = p.y; c.angle = p.ang; c.vx = c.vy = 0; c.vF = c.vR = 0; c.speed = 0; c.ghostT = 1.3; c.skid = null;
+  c.air = 0; c.vz = 0; c.rampAt = null;
 }
 function physCar(c, dt) {
   const map = S.map, tr = S.track;
@@ -1438,7 +1439,7 @@ function lapCheck(c) {
   const tm = S.time - c.lapStart; c.lapStart = S.time; c.lapTimes.push(tm);
   const wasBest = tm < c.best; if (wasBest) c.best = tm;
   if (S.mode === 'menu') return;
-  if (c.isPlayer && !c.auto) { saveGhost(c, tm); c.rec = []; c.recT = 0; if (c.lapClean && c.lapsDone >= 1) bumpStat('cleanLaps'); c.lapClean = true; }
+  if (c.isPlayer && !c.auto && !S.duo) { saveGhost(c, tm); c.rec = []; c.recT = 0; if (c.lapClean && c.lapsDone >= 1) bumpStat('cleanLaps'); c.lapClean = true; }
   if (c.lapsDone >= S.laps && !c.finished) {
     c.finished = true; c.finishTime = S.time; c.place = ++S.finishCount;
     if (c.isPlayer || c.isP2) onPlayerFinish(c);
@@ -1527,7 +1528,7 @@ function pollPad(dt) {
     return;
   }
   // menus: move focus between visible buttons, A clicks, B goes back
-  const ov = ['#settings', '#garage', '#achievements', '#pause', '#results', '#menu'].map(id => $(id)).find(el => !el.hidden);
+  const ov = ['#settings', '#help', '#records', '#online', '#garage', '#achievements', '#pause', '#results', '#menu'].map(id => $(id)).find(el => !el.hidden);
   if (!ov) return;
   PAD.navT -= dt;
   const dir = st.down || st.right ? 1 : st.up || st.left ? -1 : 0;
@@ -1685,6 +1686,7 @@ function popShield(c) {
   if (c.isPlayer) tone('sine', 900, 300, .25, .08);
 }
 function launch(c) { // reaction to the green light
+  if (c.remote) return;
   c.startDone = true;
   if (c.isPlayer && !c.auto) hint('drive');
   if (c.auto) { const r = Math.random(); if (r < .25) c.boostT = 1.1; else if (r < .33) c.wheelspinT = .7; return; }
@@ -2229,14 +2231,14 @@ function updHint(dt) {
 const CUP_PTS = [10, 7, 5, 3, 1], CUP_BONUS = [600, 300, 150];
 function startCup() {
   S.cup = { round: 0, order: MAPS.map((m, i) => i), pts: {}, done: false };
-  for (const d of DRIVERS) S.cup.pts[d.id] = 0;
+  for (const d of DRIVERS) if (!d.player2) S.cup.pts[d.id] = 0;
   S.mapIndex = S.cup.order[0];
   startRace();
 }
 function cupStandings(withRace) {
   const pts = Object.assign({}, S.cup.pts);
   if (withRace) standings().forEach((c, i) => { pts[c.id] += CUP_PTS[i] || 0; });
-  return DRIVERS.map(d => ({ id: d.id, pts: pts[d.id], color: d.player ? curModel().color : d.color, me: !!d.player })).sort((a, b) => b.pts - a.pts);
+  return DRIVERS.filter(d => !d.player2).map(d => ({ id: d.id, pts: pts[d.id] || 0, color: d.player ? paintOf(curModel()) : d.color, me: !!d.player })).sort((a, b) => b.pts - a.pts);
 }
 function cupNext() {
   standings().forEach((c, i) => { S.cup.pts[c.id] += CUP_PTS[i] || 0; });
@@ -2322,17 +2324,26 @@ function netOn(m) {
   if (m.t === 'start') { startOnlineRace(m); return; }
   if (!isOnline()) return;
   if (m.t === 'left') { const c = S.cars.find(x => x.nid === m.id); if (c) { toast(t('netLeft', { p: c.netName }), '', ''); S.cars = S.cars.filter(x => x !== c); } return; }
-  if (m.t === 's') { const c = S.cars.find(x => x.nid === m.id); if (c) netApply(c, m.d); return; }
-  if (m.t === 'b') { for (const d of m.d) { const c = S.cars.find(x => x.nid === d[0]); if (c && c.remote) netApply(c, d.slice(1)); } return; }
-  if (m.t === 'hz') { for (const h of m.list) { S.haz.push(Object.assign({}, h)); if (h.toast && S.mode === 'race') toast(t('hz.' + h.toast), t('hz.' + h.toast + '.sub'), 'warn'); } return; }
+  if (m.t === 's') { const c = S.cars.find(x => x.nid === m.id); if (c && Array.isArray(m.d) && m.d.length >= 15) netApply(c, m.d); return; }
+  const fromHost = NET.room && m.id === NET.room.host;
+  if (m.t === 'b') { if (!fromHost || !Array.isArray(m.d)) return; for (const d of m.d) { if (!Array.isArray(d) || d.length < 15) continue; const c = S.cars.find(x => x.nid === d[0]); if (c && c.remote) netApply(c, d.slice(1)); } return; }
+  if (m.t === 'hz') { if (!fromHost || !Array.isArray(m.list)) return; for (const h of m.list.slice(0, 8)) { if (!validHaz(h)) continue; S.haz.push(Object.assign({}, h)); if (h.toast && S.mode === 'race') toast(t('hz.' + h.toast), t('hz.' + h.toast + '.sub'), 'warn'); } return; }
   if (m.t === 'oil') { const o = S.cars.find(x => x.nid === m.by); S.slicks.push({ x: m.x, y: m.y, r: m.r, life: 14, age: 0, owner: o || null, seed: m.seed, banana: !!m.banana }); return; }
 }
-const pack = c => [Math.round(c.x), Math.round(c.y), +c.angle.toFixed(3), Math.round(c.vx), Math.round(c.vy), Math.round(c.air || 0), c.total, c.lapsDone, c.finished ? 1 : 0, +(c.finishTime || 0).toFixed(3), +(c.inSteer || 0).toFixed(2), c.nitroOn ? 2 : c.boosting ? 1 : 0, c.shieldT > 0 ? 1 : 0, +c.damage.toFixed(2)];
+const HAZ_KINDS = new Set(['deer', 'duck', 'tumble', 'boulder', 'yeti', 'snowball', 'courier', 'cone', 'lava', 'bomb', 'tide', 'crab', 'monkey', 'boar', 'drone']);
+function validHaz(h) {
+  if (!h || typeof h !== 'object' || !HAZ_KINDS.has(h.k)) return false;
+  for (const f of ['px', 'py', 'nx', 'ny', 'tx', 'ty', 'lat', 'along', 'side', 'age']) if (typeof h[f] !== 'number' || !isFinite(h[f])) return false;
+  if (h.k === 'boulder' && !(Array.isArray(h.poly) && h.poly.length >= 6 && h.poly.every(Number.isFinite))) return false;
+  if ((h.k === 'lava' || h.k === 'tide') && !(isFinite(h.w) && isFinite(h.maxReach))) return false;
+  h.state = 'move'; h.dead = false; return true;
+}
+const pack = c => [Math.round(c.x), Math.round(c.y), +c.angle.toFixed(3), Math.round(c.vx), Math.round(c.vy), Math.round(c.air || 0), c.total, c.lapsDone, c.finished ? 1 : 0, +(c.finishTime || 0).toFixed(3), +(c.inSteer || 0).toFixed(2), c.nitroOn ? 2 : c.boosting ? 1 : 0, c.shieldT > 0 ? 1 : 0, +c.damage.toFixed(2), isFinite(c.best) ? +c.best.toFixed(3) : -1];
 function netApply(c, d) {
   c.net = { x: d[0], y: d[1], a: d[2], vx: d[3], vy: d[4], air: d[5], at: performance.now() };
   c.total = d[6]; c.lapsDone = d[7];
   if (d[8] && !c.finished) { c.finished = true; c.finishTime = d[9]; c.place = ++S.finishCount; }
-  c.inSteer = d[10]; c.boosting = d[11] > 0; c.nitroOn = d[11] > 1; c.shieldT = d[12] ? 1 : 0; c.damage = d[13];
+  c.inSteer = d[10]; c.boosting = d[11] > 0; c.nitroOn = d[11] > 1; c.shieldT = d[12] ? 1 : 0; c.damage = d[13]; if (d[14] > 0) c.best = d[14];
 }
 function netStep(dt) { // remote cars glide toward their latest reported state (dead reckoning)
   if (!isOnline()) return;
@@ -2397,6 +2408,7 @@ function renderOnline() {
 }
 function openOnline() {
   $('#menu').hidden = true; $('#results').hidden = true; $('#online').hidden = false; renderOnline();
+  if (NET.room && !NET.room.started) netSend(Object.assign({ t: 'profile' }, netProfile()));
   if (NET.room && netHost()) netSend(Object.assign({ t: 'cfg' }, { map: MAPS[S.mapIndex].id, laps: S.laps, bots: NET.room.cfg.bots }));
 }
 $('#online').addEventListener('click', e => {
@@ -2467,15 +2479,16 @@ function startRace() {
   if (S.gameMode !== 'cup') S.cup = null;
   setupMap(S.mapIndex);
   resetRace('countdown');
-  S.cd = 3.8; S.lit = -1; S.wxShown = false;
+  S.cd = 3.8; S.lit = -1; S.wxShown = false; $('#resNet').hidden = true;
   S.ghost = S.gameMode === 'duo' ? null : loadGhost(S.map); S.hintQ = []; S.hintT = 0; S.pressAt2 = null;
   document.body.classList.toggle('duo', S.gameMode === 'duo'); $('#hud2').hidden = S.gameMode !== 'duo'; $('#hint').hidden = true; S.stuckT = 0;
-  for (const id of ['#menu', '#pause', '#results', '#garage', '#settings', '#toast']) $(id).hidden = true;
+  for (const id of ['#menu', '#pause', '#results', '#garage', '#settings', '#toast', '#achievements', '#records', '#help', '#online']) $(id).hidden = true;
   $('#hud').hidden = false; $('#lights').hidden = false; $('#lights').classList.remove('go');
   $('#touch').hidden = !touchMode;
   resize(); hudTick = 0;
 }
 function toMenu() {
+  if (NET.room) { netSend({ t: 'leave' }); NET.room = null; } // a host leaving a running race closes the room: the bots ran on the host
   if (S.rp) { S.rp = null; $('#replayBar').hidden = true; $('#cine').hidden = true; }
   setupMap(S.mapIndex);
   resetRace('menu');
@@ -2497,10 +2510,11 @@ function onPlayerFinish(c) {
   if (S.duo) { // both players have to cross the line before the results
     toast((c.isP2 ? t('p2') : t('p1')) + ' · ' + t('finish'), t('placeSub', { o: ord(c.place), t: fmt(c.finishTime) }), 'good'); beep(880, .2);
     if (S.cars.filter(x => x.isPlayer || x.isP2).every(x => x.finished)) { S.mode = 'results'; S.resultsT = 1.4; S.finishT = S.time; S.closeFinish = false; S.earned = 0; S.duoDeadline = 0; }
-    else { S.duoDeadline = S.time + 30; setTimeout(() => toast(t('duoLeft', { n: 30 }), '', ''), 1800); } // the other player gets 30 seconds
+    else { S.duoDeadline = S.time + 30; setTimeout(() => { if (S.duo && S.duoDeadline && S.mode === 'race') toast(t('duoLeft', { n: 28 }), '', ''); }, 1800); } // the other player gets 30 seconds
     return;
   }
   S.finishT = S.time;
+  if (S.gameMode === 'online') c.place = standings().indexOf(c) + 1; // remote finishes can arrive late
   S.closeFinish = S.gameMode !== 'trial' && S.gameMode !== 'online' && S.cars.some(o => o !== c && (o.finished ? S.time - o.finishTime < .7 : (c.total - o.total) * S.track.SP < 160));
   S.mode = 'results'; S.resultsT = 1.4;
   const rec = getRecord(S.map);
@@ -3977,7 +3991,7 @@ function setLang(l) {
   document.querySelectorAll('[data-th]').forEach(el => { el.innerHTML = t(el.dataset.th); });
   document.querySelectorAll('[data-ta]').forEach(el => { el.setAttribute('aria-label', t(el.dataset.ta)); });
   $('#langSeg').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === LANG)));
-  syncDiff(); renderMapList(); renderMenuStrip();
+  syncDiff(); renderMapList(); renderMenuStrip(); syncMode();
   if (!$('#garage').hidden) renderGarage();
   if (!$('#results').hidden) showResults(true);
   hudTick = 0;
@@ -4293,18 +4307,21 @@ addEventListener('resize', resize);
 // ---------- loop ----------
 let last = performance.now(), accT = 0;
 function frame(now) {
+  requestAnimationFrame(frame); // scheduled first, so one bad frame never stops the game
   const dt = Math.min(.05, (now - last) / 1000); last = now; lastFrameAt = performance.now();
-  pollPad(dt);
-  if (S.mode === 'replay') updReplay(dt);
-  else if (S.mode !== 'paused') {
-    accT += dt;
-    while (accT >= DT) { step(DT); accT -= DT; }
-  }
-  (G3.ok ? render3D : render)(S.mode === 'paused' ? 0 : dt);
-  if (S.mode !== 'menu' && S.mode !== 'replay') { updHud(dt); updHint(dt); }
-  updAchBanner(dt);
-  updAudio();
-  requestAnimationFrame(frame);
+  try {
+    pollPad(dt);
+    if (S.mode === 'replay') updReplay(dt);
+    else if (S.mode !== 'paused') {
+      accT += dt;
+      let n = 0; while (accT >= DT && n++ < 12) { step(DT); accT -= DT; }
+      if (accT > DT) accT = 0;
+    }
+    (G3.ok ? render3D : render)(S.mode === 'paused' ? 0 : dt);
+    if (S.mode !== 'menu' && S.mode !== 'replay') { updHud(dt); updHint(dt); }
+    updAchBanner(dt);
+    updAudio();
+  } catch (e) { console.error(e); }
 }
 
 // debug hook: headless bot races for tuning

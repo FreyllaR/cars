@@ -11,6 +11,7 @@ const DATA = process.env.DATA || path.join(__dirname, 'data');
 const MAPS = ['valley', 'canyon', 'pass', 'city', 'volcano', 'beach', 'jungle', 'space'];
 const VEHICLES = /^[a-z0-9]{2,16}$/;
 const MAX_PLAYERS = 5;
+const RELAYED = new Set(['s', 'b', 'hz', 'oil', 'fin']);
 const STATIC = process.env.STATIC ? path.resolve(process.env.STATIC) : null;
 
 // ---------- leaderboard ----------
@@ -57,10 +58,10 @@ function postScore(body) {
 }
 
 const server = http.createServer(async (req, res) => {
-  const url = new URL(req.url, 'http://local');
   const ip = String(req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').split(',')[0].trim();
-  const send = (code, obj) => { res.writeHead(code, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' }); res.end(JSON.stringify(obj)); };
+  const send = (code, obj) => { if (res.headersSent) return; res.writeHead(code, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' }); res.end(JSON.stringify(obj)); };
   try {
+    const url = new URL(req.url, 'http://local');
     if (url.pathname === '/api/ping') return send(200, { ok: true, now: Date.now(), rooms: rooms.size });
     if (url.pathname === '/api/scores' && req.method === 'GET') {
       const map = url.searchParams.get('map');
@@ -96,13 +97,17 @@ function frame(str) {
 class Client {
   constructor(sock) {
     this.sock = sock; this.buf = Buffer.alloc(0); this.id = crypto.randomBytes(4).toString('hex'); this.alive = true; this.room = null;
-    this.name = 'Pilot'; this.car = 'start'; this.color = '#ffc629';
+    this.name = 'Pilot'; this.car = 'start'; this.color = '#ffc629'; this.winAt = 0; this.winN = 0;
     sock.on('data', d => this.onData(d));
     sock.on('close', () => leave(this));
     sock.on('error', () => sock.destroy());
     this.send({ t: 'hello', id: this.id, now: Date.now() });
   }
-  send(obj) { if (!this.sock.destroyed) this.sock.write(frame(typeof obj === 'string' ? obj : JSON.stringify(obj))); }
+  send(obj) {
+    if (this.sock.destroyed) return;
+    if (this.sock.writableLength > 1 << 20) return this.close(); // a client that stops reading is dropped
+    this.sock.write(frame(typeof obj === 'string' ? obj : JSON.stringify(obj)));
+  }
   close() { try { this.sock.end(Buffer.from([0x88, 0])); } catch (e) {} this.sock.destroy(); }
   onData(d) {
     this.buf = Buffer.concat([this.buf, d]);
@@ -119,14 +124,26 @@ class Client {
       this.buf = this.buf.subarray(off + 4 + len);
       if (!(b0 & 128) || op === 0) return this.close(); // fragmented messages are not used by the game
       if (op === 8) return this.close();
+      if (op >= 8 && len > 125) return this.close(); // control frames are at most 125 bytes
       if (op === 9) { this.sock.write(Buffer.concat([Buffer.from([0x8a, body.length]), body])); continue; }
       if (op === 10) { this.alive = true; continue; }
-      if (op === 1) { this.alive = true; let msg; try { msg = JSON.parse(body.toString('utf8')); } catch (e) { continue; } onMessage(this, msg); }
+      if (op === 1) {
+        this.alive = true;
+        let msg; try { msg = JSON.parse(body.toString('utf8')); } catch (e) { continue; }
+        if (!msg || typeof msg !== 'object' || Array.isArray(msg)) continue;
+        if (RELAYED.has(msg.t)) { // race traffic is capped at ~60 messages a second; room commands always pass
+          const now = Date.now();
+          if (now - this.winAt > 1000) { this.winAt = now; this.winN = 0; }
+          if (++this.winN > 60) continue;
+        }
+        try { onMessage(this, msg); } catch (e) { console.error('message failed', e && e.message); }
+      }
     }
   }
 }
 server.on('upgrade', (req, sock) => {
-  const url = new URL(req.url, 'http://local'), key = req.headers['sec-websocket-key'];
+  let url; try { url = new URL(req.url, 'http://local'); } catch (e) { sock.destroy(); return; }
+  const key = req.headers['sec-websocket-key'];
   if (url.pathname !== '/ws' || !key) { sock.destroy(); return; }
   const accept = crypto.createHash('sha1').update(key + GUID).digest('base64');
   sock.write(['HTTP/1.1 101 Switching Protocols', 'Upgrade: websocket', 'Connection: Upgrade', 'Sec-WebSocket-Accept: ' + accept, '', ''].join('\r\n'));
@@ -180,6 +197,7 @@ function onMessage(c, m) {
       const room = rooms.get(String(m.code || '').toUpperCase().trim());
       if (!room) return c.send({ t: 'error', e: 'noroom' });
       if (room.started) return c.send({ t: 'error', e: 'started' });
+      if (room === r) { c.send(roomState(room)); return; }
       if (room.clients.size >= MAX_PLAYERS) return c.send({ t: 'error', e: 'full' });
       if (r) leave(c);
       setProfile(c, m); room.clients.add(c); c.room = room;
@@ -199,10 +217,16 @@ function onMessage(c, m) {
       return;
     }
     case 'lobby': if (r && r.host === c) { r.started = false; broadcast(r, roomState(r)); } return;
-    case 's': case 'b': case 'hz': case 'oil': case 'fin':
+    case 'b': case 'hz': // bots and hazards are simulated by the host only
+      if (r && r.started && r.host === c) { m.id = c.id; broadcast(r, m, c); }
+      return;
+    case 's': case 'oil': case 'fin':
       if (r && r.started) { m.id = c.id; broadcast(r, m, c); }
       return;
   }
 }
 
 server.listen(PORT, '127.0.0.1', () => console.log('turbo-krug server on', PORT));
+
+process.on('uncaughtException', e => console.error('uncaught', e && e.message));
+process.on('unhandledRejection', e => console.error('unhandled', e && e.message));
