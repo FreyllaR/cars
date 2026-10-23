@@ -143,6 +143,24 @@ h1 span{color:var(--accent)}
 .ach-banner b{font-family:var(--display);font-weight:400;font-size:18px}
 .ach-banner em{font-style:normal;font-weight:800;color:var(--accent)}
 .menu-links{display:flex;flex-wrap:wrap;gap:8px}
+.text-in{height:40px;padding:0 12px;border-radius:9px;border:1px solid var(--line);background:var(--panel-2);color:var(--fg);font:inherit;font-weight:600;width:100%}
+.text-in:focus{border-color:var(--accent);outline:none}
+.code-in{text-transform:uppercase;letter-spacing:.3em;font-family:var(--display);font-size:20px;text-align:center}
+.center .panel.online-panel{width:min(520px,100%)}
+.on-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.on-row>*{flex:1 1 140px}
+.room-code{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-radius:12px;background:#25231b;border:1px solid var(--accent)}
+.room-code b{font-family:var(--display);font-weight:400;font-size:40px;letter-spacing:.2em;color:var(--accent);user-select:all;-webkit-user-select:all}
+.room-code .btn{flex:none;height:38px;padding:0 14px}
+.plist{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+.plist li{display:grid;grid-template-columns:14px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 12px;background:var(--panel-2);border:1px solid var(--line);border-radius:9px}
+.plist i{width:12px;height:12px;border-radius:3px}
+.plist em{font-style:normal;font-size:12px;color:var(--muted)}
+.on-note{margin:0;font-size:13px;color:var(--muted)}
+.on-note a{color:var(--accent)}
+.on-err{margin:0;color:var(--flag);font-weight:600}
+.rec-table td:nth-child(3),.rec-table th:nth-child(3){text-align:right}
+.rec-table tr.me td{color:var(--accent)}
 .cine{position:fixed;inset:0;z-index:15;pointer-events:none}
 .cine i{position:absolute;left:0;right:0;height:9vh;background:#000}
 .cine i:first-child{top:0}
@@ -447,6 +465,7 @@ body.touchmode .hud-bl{bottom:calc(env(safe-area-inset-bottom,0px) + 44px)}
         <button data-mode="race" aria-pressed="true"><b data-t="mRace">Гонка</b><span data-t="mRaceSub">Одна трасса с ботами</span></button>
         <button data-mode="cup" aria-pressed="false"><b data-t="mCup">Чемпионат</b><span data-t="mCupSub">Все трассы подряд</span></button>
         <button data-mode="trial" aria-pressed="false"><b data-t="mTrial">На время</b><span data-t="mTrialSub">Вы и ваш призрак</span></button>
+        <button data-mode="online" aria-pressed="false"><b data-t="mOnline">Онлайн</b><span data-t="mOnlineSub">С друзьями по коду комнаты</span></button>
         <button data-mode="duo" aria-pressed="false" id="duoModeBtn"><b data-t="mDuo">Вдвоём</b><span data-t="mDuoSub">Два игрока, один экран</span></button>
       </div>
       <div id="p2Row" class="p2-row" hidden>
@@ -512,6 +531,7 @@ body.touchmode .hud-bl{bottom:calc(env(safe-area-inset-bottom,0px) + 44px)}
     </div>
     <div class="menu-links">
       <button id="achBtn" class="btn" data-t="achTitle">Достижения</button>
+      <button id="recBtn" class="btn" data-t="recTitle">Рекорды</button>
     </div>
     <div class="cta-row">
       <button id="startBtn" class="cta"><span data-t="start">На старт</span> <kbd>Enter</kbd></button>
@@ -542,6 +562,10 @@ body.touchmode .hud-bl{bottom:calc(env(safe-area-inset-bottom,0px) + 44px)}
       <div class="set">
         <label class="label" for="vol" data-t="volume">Громкость</label>
         <div class="vol"><input id="vol" type="range" min="0" max="100" step="5" value="60"><output id="volOut" for="vol">60%</output></div>
+      </div>
+      <div class="set">
+        <label class="label" for="pname" data-t="pname">Имя пилота</label>
+        <input id="pname" class="text-in" type="text" maxlength="16" autocomplete="nickname" spellcheck="false">
       </div>
       <div class="set">
         <label class="label" for="mvol" data-t="music">Музыка</label>
@@ -605,6 +629,7 @@ body.touchmode .hud-bl{bottom:calc(env(safe-area-inset-bottom,0px) + 44px)}
       <p id="resRec" class="res-rec" hidden></p>
       <p id="resPts" class="res-pts"></p>
       <p id="resHint" class="res-hint"></p>
+      <p id="resNet" class="res-hint" hidden></p>
     </div>
     <div id="podium" class="podium" hidden></div>
     <table id="resTable">
@@ -624,6 +649,7 @@ body.touchmode .hud-bl{bottom:calc(env(safe-area-inset-bottom,0px) + 44px)}
       <button id="againBtn" class="btn primary" data-t="again">Ещё раз</button>
       <button id="nextBtn" class="btn" data-t="next">Следующая трасса</button>
       <button id="replayBtn" class="btn" data-t="watchReplay">Повтор финиша</button>
+      <button id="lobbyBtn" class="btn primary" data-t="toLobby" hidden>В комнату</button>
       <button id="resMenuBtn" class="btn" data-t="trackSelect">Выбор трассы</button>
     </div>
   </div>
@@ -661,6 +687,25 @@ body.touchmode .hud-bl{bottom:calc(env(safe-area-inset-bottom,0px) + 44px)}
     <button id="achBack" class="btn primary" data-t="done">Готово</button>
   </div>
 </div>
+<div id="records" class="overlay center" hidden>
+  <div class="panel ach-panel">
+    <div class="checker" aria-hidden="true"></div>
+    <header class="g-head">
+      <div><h2 class="res-title" data-t="recTitle">Рекорды</h2><p class="res-sub" data-t="recSub">Лучшие круги всех игроков</p></div>
+    </header>
+    <div id="recTabs" class="tabs" role="tablist"></div>
+    <div id="recBody"></div>
+    <button id="recBack" class="btn primary" data-t="done">Готово</button>
+  </div>
+</div>
+<div id="online" class="overlay center" hidden>
+  <div class="panel online-panel">
+    <div class="checker" aria-hidden="true"></div>
+    <h2 class="res-title" data-t="mOnline">Онлайн</h2>
+    <div id="onBody"></div>
+    <button id="onBack" class="btn" data-t="leave">Выйти</button>
+  </div>
+</div>
 <div id="cine" class="cine" hidden><i></i><i></i></div>
 <div id="replayBar" class="replay-bar" hidden><span class="rec-dot"></span><b data-t="replay">Повтор</b><button id="replaySkip" class="btn" data-t="skip">Пропустить</button></div>
 <div id="achBanner" class="ach-banner" hidden><span class="label" data-t="achNew">Достижение</span><b id="achName"></b><em id="achReward"></em></div>
@@ -689,6 +734,13 @@ const STR = {
     'tut.drive.t': 'Левой половиной экрана рулите, справа газ и тормоз. Газ ровно на зелёный даёт рывок.',
     p1: 'Игрок 1', p2: 'Игрок 2', 'drv.you2': 'Игрок 2', mDuo: 'Вдвоём', mDuoSub: 'Два игрока, один экран', p2Ride: 'Транспорт игрока 2', change: 'Сменить',
     duoWin: '{p} впереди!', kDuo: '<b>Игрок 2</b>: стрелки, <b>правый Shift</b> нитро, <b>Enter</b> предмет, <b>/</b> ручник',
+    vehicle: 'Транспорт', mOnline: 'Онлайн', mOnlineSub: 'С друзьями по коду комнаты', recTitle: 'Рекорды', recSub: 'Лучшие круги всех игроков на этой трассе', pname: 'Имя пилота',
+    leave: 'Выйти', toLobby: 'В комнату', createRoom: 'Создать комнату', joinRoom: 'Войти', codePh: 'КОД', orJoin: 'или войдите по коду друга',
+    roomCode: 'Код комнаты', copy: 'Скопировать', copied: 'Скопировано', players: 'Игроки', host: 'хозяин', you2: 'вы', bots: 'Боты',
+    startOnline: 'Начать гонку', waitHost: 'Ждём, пока хозяин начнёт гонку', roomCfg: '{map} · {laps}', shareHint: 'Отправьте код друзьям: они выбирают «Онлайн» и вводят его.',
+    offline: 'Онлайн и общие рекорды работают на сайте игры:', connecting: 'Подключаемся…', noroom: 'Комнаты с таким кодом нет', started: 'Гонка в этой комнате уже идёт', full: 'Комната заполнена', netFail: 'Нет связи с сервером',
+    hostLeft: 'Хозяин вышел, гонка окончена', recNone: 'Пока никто не проехал эту трассу', recYou: 'Вы: #{n} в мире', recSent: 'Ваш лучший круг в мировом рейтинге: #{n}', recLoad: 'Загружаем…',
+    netLeft: '{p} вышел из гонки',
     replay: 'Повтор', skip: 'Пропустить', watchReplay: 'Повтор финиша', photoFinish: 'Фотофиниш!',
     camera: 'Камера', camNear: 'Близко', camFar: 'Далеко', camTop: 'Сверху', gfx: 'Графика', gfxHigh: 'Красивая', gfxLow: 'Быстрая',
     'car.bike': 'Байк', 'car.bike.tag': 'Лёгкий и резкий, ложится в поворот',
@@ -797,6 +849,13 @@ const STR = {
     'tut.drive.t': 'Steer with the left half of the screen, gas and brake on the right. Gas right on green gives a launch boost.',
     p1: 'Player 1', p2: 'Player 2', 'drv.you2': 'Player 2', mDuo: 'Two players', mDuoSub: 'Split screen, one keyboard', p2Ride: 'Player 2 ride', change: 'Change',
     duoWin: '{p} wins!', kDuo: '<b>Player 2</b>: arrows, <b>right Shift</b> nitro, <b>Enter</b> item, <b>/</b> handbrake',
+    vehicle: 'Vehicle', mOnline: 'Online', mOnlineSub: 'Race friends with a room code', recTitle: 'Records', recSub: 'Best laps of all players on this track', pname: 'Driver name',
+    leave: 'Leave', toLobby: 'Back to room', createRoom: 'Create a room', joinRoom: 'Join', codePh: 'CODE', orJoin: "or join a friend's room",
+    roomCode: 'Room code', copy: 'Copy', copied: 'Copied', players: 'Players', host: 'host', you2: 'you', bots: 'Bots',
+    startOnline: 'Start the race', waitHost: 'Waiting for the host to start', roomCfg: '{map} · {laps}', shareHint: 'Send the code to friends: they pick Online and enter it.',
+    offline: 'Online races and shared records work on the game site:', connecting: 'Connecting…', noroom: 'No room with that code', started: 'A race is already running in that room', full: 'The room is full', netFail: 'No connection to the server',
+    hostLeft: 'The host left, the race is over', recNone: 'Nobody has raced this track yet', recYou: 'You: #{n} in the world', recSent: 'Your best lap ranks #{n} in the world', recLoad: 'Loading…',
+    netLeft: '{p} left the race',
     replay: 'Replay', skip: 'Skip', watchReplay: 'Watch the finish', photoFinish: 'Photo finish!',
     camera: 'Camera', camNear: 'Close', camFar: 'Far', camTop: 'High', gfx: 'Graphics', gfxHigh: 'Detailed', gfxLow: 'Fast',
     'car.bike': 'Bike', 'car.bike.tag': 'Light and sharp, leans into corners',
@@ -999,7 +1058,7 @@ const store = {
 const recKey = m => 'turbo-krug-best-' + m.id;
 function getRecord(m) { const v = parseFloat(store.get(recKey(m))); return isFinite(v) ? v : Infinity; }
 const carName = m => t('car.' + m.id);
-const drvName = c => S.duo && c.id === 'you' ? t('p1') : t('drv.' + c.id);
+const drvName = c => c.netName && !c.isPlayer ? c.netName : S.duo && c.id === 'you' ? t('p1') : t('drv.' + c.id);
 const player2 = () => S.cars.find(c => c.isP2);
 
 // ---------- track geometry ----------
@@ -1249,8 +1308,10 @@ function newCar(di, slot) {
 function resetRace(mode) {
   S.mode = mode;
   if (mode !== 'menu') rollConditions(); // before newCar: rain changes how bots brake for corners
+  if (mode !== 'menu' && S.gameMode === 'online') { S.weatherNow = 'clear'; S.nightNow = false; } // the same conditions for everyone
   S.duo = S.gameMode === 'duo' && mode !== 'menu';
-  S.cars = S.gameMode === 'trial' && mode !== 'menu' ? [newCar(0, 0)] : (S.duo ? GRID_DUO : GRID).map((di, slot) => newCar(di, slot));
+  S.cars = S.gameMode === 'online' && mode !== 'menu' && S.netStart ? onlineGrid()
+    : S.gameMode === 'trial' && mode !== 'menu' ? [newCar(0, 0)] : (S.duo ? GRID_DUO : GRID).map((di, slot) => newCar(di, slot));
   buildPuddles(); if (G3.ok) show3DMap(S.map);
   S.haz = []; S.hazT = mode === 'menu' ? 3 : 6; S.slicks = []; S.boxes = buildBoxes(); S.placeT = 0; S.pressAt = null;
   S.rbuf = []; S.recT = 0; S.closeFinish = false; S.replayed = false;
@@ -1497,6 +1558,7 @@ function collide() {
   const cs = S.cars;
   for (let i = 0; i < cs.length; i++) for (let j = i + 1; j < cs.length; j++) {
     const a = cs[i], b = cs[j];
+    if (a.remote && b.remote) continue;
     if (a.respawnT > 0 || b.respawnT > 0 || a.ghostT > 0 || b.ghostT > 0 || Math.abs((a.air || 0) - (b.air || 0)) > 12) continue;
     if (Math.abs(a.x - b.x) > 60 || Math.abs(a.y - b.y) > 60) continue;
     const ac = Math.cos(a.angle), as = Math.sin(a.angle), bc = Math.cos(b.angle), bs = Math.sin(b.angle);
@@ -1505,13 +1567,14 @@ function collide() {
       const dx = bx - ax, dy = by - ay, d = Math.hypot(dx, dy);
       const rsum = (a.cr || 11) + (b.cr || 11);
       if (d >= rsum || d < 1e-3) continue;
-      const nx = dx / d, ny = dy / d, ov = (rsum - d) / 2;
-      a.x -= nx * ov; a.y -= ny * ov; b.x += nx * ov; b.y += ny * ov;
+      const nx = dx / d, ny = dy / d, ov = (rsum - d) / 2, ra = b.remote ? 2 : a.remote ? 0 : 1, rb = 2 - ra; // remote cars don't get pushed here
+      a.x -= nx * ov * ra; a.y -= ny * ov * ra; b.x += nx * ov * rb; b.y += ny * ov * rb;
       const rv = (b.vx - a.vx) * nx + (b.vy - a.vy) * ny;
       if (rv < 0) {
         const imp = -(1.3) * rv / 2;
         const ka = b.shieldT > 0 && !(a.shieldT > 0) ? 1.7 : a.shieldT > 0 ? .4 : 1, kb = a.shieldT > 0 && !(b.shieldT > 0) ? 1.7 : b.shieldT > 0 ? .4 : 1;
-        a.vx -= imp * nx * ka; a.vy -= imp * ny * ka; b.vx += imp * nx * kb; b.vy += imp * ny * kb;
+        if (!a.remote) { a.vx -= imp * nx * ka * (b.remote ? 2 : 1); a.vy -= imp * ny * ka * (b.remote ? 2 : 1); }
+        if (!b.remote) { b.vx += imp * nx * kb * (a.remote ? 2 : 1); b.vy += imp * ny * kb * (a.remote ? 2 : 1); }
         if (-rv > 160) { hurt(a, (-rv - 160) / 3000); hurt(b, (-rv - 160) / 3000); }
         if ((a.isPlayer || b.isPlayer) && -rv > 120) thud(-rv * .7);
       }
@@ -1521,7 +1584,7 @@ function collide() {
 function band() {
   const p = S.duo ? S.cars.filter(x => x.isPlayer || x.isP2).sort((a, b) => b.total - a.total)[0] : player();
   for (const c of S.cars) {
-    if (c.isPlayer || c.isP2 || S.mode === 'menu' || !p || p.finished) { c.band = 1; continue; }
+    if (c.isPlayer || c.isP2 || S.mode === 'menu' || !p || p.finished || S.gameMode === 'online') { c.band = 1; continue; }
     const diffPx = (c.total - p.total) * S.track.SP;
     c.band = 1 - clamp(diffPx / 9000, -.06, .05);
   }
@@ -1660,7 +1723,11 @@ function useItem(c) {
   const fx = Math.cos(c.angle), fy = Math.sin(c.angle);
   if (c.item === 'boost') { c.boostT = 1.6; if (c.isPlayer) { if (c.type === 'dog') bark(); else tone('sawtooth', 200, 900, .4, .07); } }
   else if (c.item === 'shield') { c.shieldT = 8; if (c.isPlayer) tone('sine', 400, 1000, .3, .06); }
-  else if (c.item === 'oil') { S.slicks.push({ x: c.x - fx * 34, y: c.y - fy * 34, r: 30, life: 14, age: 0, owner: c, seed: Math.random() * 6 }); if (c.isPlayer) tone('square', 200, 70, .2, .05); }
+  else if (c.item === 'oil') {
+    const sl = { x: c.x - fx * 34, y: c.y - fy * 34, r: 30, life: 14, age: 0, owner: c, seed: Math.random() * 6 };
+    S.slicks.push(sl); if (c.isPlayer) tone('square', 200, 70, .2, .05);
+    if (isOnline()) netSend({ t: 'oil', x: Math.round(sl.x), y: Math.round(sl.y), r: sl.r, seed: sl.seed, by: c.nid });
+  }
   c.item = null;
 }
 function updSlicks(dt) {
@@ -1737,7 +1804,8 @@ function spawnHazard(kind) {
   const idx = (f.idx + Math.round((650 + Math.random() * 350) / tr.SP)) % tr.N, p = tr.pts[idx];
   const hw = map.width / 2, side = Math.random() < .5 ? -1 : 1, edge = hw + Math.min(map.margin * .8, 70);
   const base = { k: kind, px: p.x, py: p.y, nx: p.nx, ny: p.ny, tx: p.tx, ty: p.ty, side, age: 0, along: 0, lat: 0, v: 0, rot: 0, solid: true, state: 'move' };
-  const add = o => { const h = Object.assign({}, base, o); placeHaz(h); S.haz.push(h); };
+  const sent = [];
+  const add = o => { const h = Object.assign({}, base, o); placeHaz(h); S.haz.push(h); sent.push(h); };
   if (kind === 'deer') add({ lat: side * edge, v: -side * 175, r: 15 });
   else if (kind === 'ducks') for (let i = 0; i < 4; i++) add({ k: 'duck', lat: side * (hw + 26 + i * 15), along: i % 2 ? 5 : -5, v: -side * 55, r: i ? 4 : 6, mom: !i, solid: false });
   else if (kind === 'tumble') add({ lat: side * edge, v: -side * 230, r: 12 });
@@ -1755,9 +1823,10 @@ function spawnHazard(kind) {
   else if (kind === 'boar') add({ lat: side * edge, v: -side * 250, r: 16 });
   else if (kind === 'drone') add({ lat: side * edge, v: -side * 160, r: 12 });
   if (S.mode === 'race' && !f.finished) toast(t('hz.' + kind), t('hz.' + kind + '.sub'), 'warn');
+  if (isOnline() && netHost() && sent.length) netSend({ t: 'hz', list: sent.map((h, i) => Object.assign({}, h, { m3: undefined, toast: i === 0 ? kind : null })) });
 }
 function updHazards(dt) {
-  if (S.hazOn && S.mode !== 'countdown' && !(S.gameMode === 'trial' && S.mode !== 'menu')) {
+  if (S.hazOn && S.mode !== 'countdown' && !(S.gameMode === 'trial' && S.mode !== 'menu') && !(isOnline() && !netHost())) {
     S.hazT -= dt;
     if (S.hazT <= 0) {
       S.hazT = 6 + Math.random() * 5;
@@ -2038,12 +2107,14 @@ function step(dt) {
   band();
   for (const c of S.cars) {
     if (S.mode === 'countdown') { if (c.isPlayer || c.isP2) readPlayer(c); c.inThrottle = 0; c.inSteer = 0; c.inBrake = true; }
+    else if (c.remote) continue;
     else if (c.auto || S.testDrive && c.isPlayer) ai(c, dt); // testDrive: the autopilot drives the player in automated tests
     else readPlayer(c);
   }
-  for (const c of S.cars) physCar(c, dt);
+  for (const c of S.cars) if (!c.remote) physCar(c, dt);
+  netStep(dt);
   updHazards(dt);
-  for (const c of S.cars) { carHazards(c); carPickups(c); }
+  for (const c of S.cars) if (!c.remote) { carHazards(c); carPickups(c); }
   if (S.mode === 'race') {
     const p = player();
     if (p && !p.auto && !p.finished) {
@@ -2168,6 +2239,156 @@ function fillCup(withRace) {
   $('#cupBody').innerHTML = cupStandings(withRace).map((r, i) => `<tr class="${r.me ? 'me' : ''}"><td>${i + 1}</td><td><span class="sw" style="background:${r.color}"></span>${t('drv.' + r.id)}</td><td class="t">${r.pts}</td></tr>`).join('');
 }
 
+// ---------- online: shared records and race rooms ----------
+const SITE_URL = 'https://cars.149-33-31-119.sslip.io';
+const NET = { ok: false, ws: null, you: null, room: null, offset: 0, rtt: 1e9, sendT: 0, err: '' };
+const isOnline = () => S.gameMode === 'online' && S.mode !== 'menu';
+const netHost = () => NET.room && NET.room.host === NET.you;
+async function netProbe() {
+  if (!/^https?:$/.test(location.protocol)) return;
+  try {
+    const ctl = new AbortController(), tm = setTimeout(() => ctl.abort(), 2500);
+    const r = await fetch('/api/ping', { cache: 'no-store', signal: ctl.signal }); clearTimeout(tm);
+    NET.ok = r.ok && (await r.json()).ok === true;
+  } catch (e) { NET.ok = false; }
+  renderOnline();
+}
+function myName() { return (S.pname || '').trim() || 'Pilot'; }
+function submitLap(time, car) {
+  if (!NET.ok || !isFinite(time)) return;
+  fetch('/api/scores', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ map: S.map.id, time, car, name: myName() }) })
+    .then(r => r.json()).then(r => { if (r && r.rank) { const el = $('#resNet'); el.textContent = t('recSent', { n: r.rank }); el.hidden = false; } }).catch(() => {});
+}
+function renderRecords(id) {
+  S.recMap = id || S.recMap || S.map.id;
+  $('#recTabs').innerHTML = MAPS.map(m => `<button role="tab" data-rm="${m.id}" aria-selected="${m.id === S.recMap}">${t('map.' + m.id)}</button>`).join('');
+  const box = $('#recBody');
+  if (!NET.ok) { box.innerHTML = `<p class="on-note">${t('offline')} <a href="${SITE_URL}" target="_blank" rel="noopener">${SITE_URL}</a></p>`; return; }
+  box.innerHTML = `<p class="on-note">${t('recLoad')}</p>`;
+  fetch('/api/scores?map=' + S.recMap, { cache: 'no-store' }).then(r => r.json()).then(r => {
+    if (S.recMap !== r.map) return;
+    const me = myName().toLowerCase(), mine = r.top.findIndex(x => x.name.toLowerCase() === me);
+    box.innerHTML = !r.top.length ? `<p class="on-note">${t('recNone')}</p>` : (mine >= 0 ? `<p class="res-rec">${t('recYou', { n: mine + 1 })}</p>` : '') +
+      `<table class="rec-table"><thead><tr><th>#</th><th>${t('driver')}</th><th>${t('time')}</th><th>${t('vehicle')}</th></tr></thead><tbody>` +
+      r.top.map((x, i) => `<tr class="${i === mine ? 'me' : ''}"><td>${i + 1}</td><td>${esc(x.name)}</td><td>${fmt(x.time)}</td><td class="dim">${CARS.some(m => m.id === x.car) ? t('car.' + x.car) : ''}</td></tr>`).join('') + '</tbody></table>';
+  }).catch(() => { box.innerHTML = `<p class="on-err">${t('netFail')}</p>`; });
+}
+const esc = v => String(v).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+function netSend(o) { if (NET.ws && NET.ws.readyState === 1) NET.ws.send(JSON.stringify(o)); }
+function netConnect(then) {
+  if (NET.ws && NET.ws.readyState <= 1) { if (NET.ws.readyState === 1) then(); else NET.pending = then; return; }
+  NET.err = ''; NET.pending = then;
+  const ws = NET.ws = new WebSocket((location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + '/ws');
+  ws.onopen = () => { for (let i = 0; i < 4; i++) setTimeout(() => netSend({ t: 'ping', c: Date.now() }), i * 150); const f = NET.pending; NET.pending = null; if (f) f(); };
+  ws.onmessage = e => { let m; try { m = JSON.parse(e.data); } catch (_) { return; } netOn(m); };
+  ws.onclose = () => { NET.ws = null; const was = NET.room; NET.room = null; if (was && isOnline() && S.mode !== 'results') { toast(t('netFail'), '', 'warn'); setTimeout(toMenu, 1800); } renderOnline(); };
+  ws.onerror = () => { NET.err = t('netFail'); renderOnline(); };
+  renderOnline();
+}
+function netProfile() { const m = curModel(); return { name: myName(), car: m.id, color: /^#[0-9a-f]{6}$/i.test(paintOf(m)) ? paintOf(m) : '#ffc629' }; }
+function netOn(m) {
+  if (m.t === 'hello') { NET.you = m.id; return; }
+  if (m.t === 'pong') { const rtt = Date.now() - m.c; if (rtt < NET.rtt) { NET.rtt = rtt; NET.offset = m.s + rtt / 2 - Date.now(); } return; }
+  if (m.t === 'error') { NET.err = t(m.e) || m.e; renderOnline(); return; }
+  if (m.t === 'room') { NET.room = m; NET.err = ''; renderOnline(); return; }
+  if (m.t === 'closed') { NET.room = null; if (isOnline()) { toast(t('hostLeft'), '', 'warn'); setTimeout(toMenu, 2200); } renderOnline(); return; }
+  if (m.t === 'start') { startOnlineRace(m); return; }
+  if (!isOnline()) return;
+  if (m.t === 'left') { const c = S.cars.find(x => x.nid === m.id); if (c) { toast(t('netLeft', { p: c.netName }), '', ''); S.cars = S.cars.filter(x => x !== c); } return; }
+  if (m.t === 's') { const c = S.cars.find(x => x.nid === m.id); if (c) netApply(c, m.d); return; }
+  if (m.t === 'b') { for (const d of m.d) { const c = S.cars.find(x => x.nid === d[0]); if (c && c.remote) netApply(c, d.slice(1)); } return; }
+  if (m.t === 'hz') { for (const h of m.list) { S.haz.push(Object.assign({}, h)); if (h.toast && S.mode === 'race') toast(t('hz.' + h.toast), t('hz.' + h.toast + '.sub'), 'warn'); } return; }
+  if (m.t === 'oil') { const o = S.cars.find(x => x.nid === m.by); S.slicks.push({ x: m.x, y: m.y, r: m.r, life: 14, age: 0, owner: o || null, seed: m.seed, banana: !!m.banana }); return; }
+}
+const pack = c => [Math.round(c.x), Math.round(c.y), +c.angle.toFixed(3), Math.round(c.vx), Math.round(c.vy), Math.round(c.air || 0), c.total, c.lapsDone, c.finished ? 1 : 0, +(c.finishTime || 0).toFixed(3), +(c.inSteer || 0).toFixed(2), c.nitroOn ? 2 : c.boosting ? 1 : 0, c.shieldT > 0 ? 1 : 0, +c.damage.toFixed(2)];
+function netApply(c, d) {
+  c.net = { x: d[0], y: d[1], a: d[2], vx: d[3], vy: d[4], air: d[5], at: performance.now() };
+  c.total = d[6]; c.lapsDone = d[7];
+  if (d[8] && !c.finished) { c.finished = true; c.finishTime = d[9]; c.place = ++S.finishCount; }
+  c.inSteer = d[10]; c.boosting = d[11] > 0; c.nitroOn = d[11] > 1; c.shieldT = d[12] ? 1 : 0; c.damage = d[13];
+}
+function netStep(dt) { // remote cars glide toward their latest reported state (dead reckoning)
+  if (!isOnline()) return;
+  const now = performance.now();
+  for (const c of S.cars) {
+    if (!c.remote || !c.net) continue;
+    const n = c.net, el = Math.min(.25, (now - n.at) / 1000), tx = n.x + n.vx * el, ty = n.y + n.vy * el;
+    if (Math.hypot(tx - c.x, ty - c.y) > 220) { c.x = tx; c.y = ty; } else { const k = Math.min(1, dt * 12); c.x += (tx - c.x) * k; c.y += (ty - c.y) * k; }
+    c.angle += wrapAng(n.a - c.angle) * Math.min(1, dt * 14);
+    c.vx = n.vx; c.vy = n.vy; c.vF = Math.hypot(n.vx, n.vy); c.speed = c.vF; c.air = n.air; c.idx = locate(S.track, c.x, c.y, c.idx);
+  }
+  NET.sendT -= dt;
+  if (NET.sendT <= 0 && (S.mode === 'race' || S.mode === 'results' || S.mode === 'countdown')) {
+    NET.sendT = 1 / 15;
+    const p = player(); if (p) netSend({ t: 's', d: pack(p) });
+    if (netHost()) { const bots = S.cars.filter(c => c.nid && c.nid[0] === 'b' && !c.remote); if (bots.length) netSend({ t: 'b', d: bots.map(c => [c.nid, ...pack(c)]) }); }
+  }
+}
+function startOnlineRace(m) {
+  initAudio();
+  S.gameMode = 'online'; S.laps = m.laps; S.netStart = m;
+  const mi = MAPS.findIndex(x => x.id === m.map); S.mapIndex = mi < 0 ? 0 : mi;
+  for (const id of ['#online', '#results', '#menu']) $(id).hidden = true;
+  S.netStartPending = true; startRace(); S.netStartPending = false;
+  S.cd = Math.max(1, (m.startAt - NET.offset - Date.now()) / 1000);
+}
+function onlineGrid() {
+  const m = S.netStart, cars = [], host = netHost();
+  let slot = 0;
+  for (const h of m.humans) {
+    if (h.id === NET.you) { const c = newCar(0, slot++); c.nid = h.id; c.netName = h.name; cars.push(c); continue; }
+    const model = CARS.find(x => x.id === h.car) || CARS[0], c = newCar(1, slot++);
+    Object.assign(c, { remote: true, auto: false, nid: h.id, netName: h.name, model, type: model.type, color: h.color, cr: model.type === 'moto' ? 7 : model.type === 'dog' ? 8 : 11 });
+    cars.push(c);
+  }
+  for (let i = 0; i < m.bots; i++) {
+    const c = newCar(1 + i % 4, slot++); c.nid = 'b' + i;
+    if (!host) { c.remote = true; c.auto = false; }
+    cars.push(c);
+  }
+  return cars;
+}
+function renderOnline() {
+  const box = $('#onBody'); if (!box) return;
+  if (!NET.ok) { box.innerHTML = `<p class="on-note">${t('offline')} <a href="${SITE_URL}" target="_blank" rel="noopener">${SITE_URL}</a></p>`; return; }
+  const err = NET.err ? `<p class="on-err">${esc(NET.err)}</p>` : '';
+  if (!NET.room) {
+    box.innerHTML = `${err}<div class="set"><label class="label" for="onName">${t('pname')}</label><input id="onName" class="text-in" maxlength="16" value="${esc(myName())}"></div>
+      <button id="onCreate" class="btn primary">${t('createRoom')}</button>
+      <p class="on-note">${t('orJoin')}</p>
+      <div class="on-row"><input id="onCode" class="text-in code-in" maxlength="4" placeholder="${t('codePh')}" autocomplete="off" spellcheck="false"><button id="onJoin" class="btn">${t('joinRoom')}</button></div>`;
+    return;
+  }
+  const r = NET.room, host = netHost(), map = MAPS.find(m => m.id === r.cfg.map) || MAPS[0];
+  box.innerHTML = `${err}<div class="room-code"><div><h3 class="label">${t('roomCode')}</h3><b>${r.code}</b></div><button id="onCopy" class="btn">${t('copy')}</button></div>
+    <p class="on-note">${t('shareHint')}</p>
+    <h3 class="label">${t('players')} · ${r.players.length}/5</h3>
+    <ul class="plist">${r.players.map(pl => `<li><i style="background:${esc(pl.color)}"></i><span>${esc(pl.name)} <em>${CARS.some(m => m.id === pl.car) ? t('car.' + pl.car) : ''}</em></span><em>${pl.id === r.host ? t('host') : ''}${pl.id === NET.you ? ' · ' + t('you2') : ''}</em></li>`).join('')}</ul>
+    <p class="on-note">${t('roomCfg', { map: t('map.' + map.id), laps: lapsWord(r.cfg.laps) })}${r.cfg.bots ? ' · ' + t('bots') : ''}</p>
+    ${host ? `<div class="on-row"><div id="onBots" class="seg words"><button data-b="1" aria-pressed="${r.cfg.bots}">${t('bots')}: ${t('on')}</button><button data-b="0" aria-pressed="${!r.cfg.bots}">${t('off')}</button></div></div>
+    <button id="onStart" class="btn primary">${t('startOnline')}</button>` : `<p class="on-note">${t('waitHost')}</p>`}`;
+}
+function openOnline() {
+  $('#menu').hidden = true; $('#results').hidden = true; $('#online').hidden = false; renderOnline();
+  if (NET.room && netHost()) netSend(Object.assign({ t: 'cfg' }, { map: MAPS[S.mapIndex].id, laps: S.laps, bots: NET.room.cfg.bots }));
+}
+$('#online').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  const name = $('#onName'); if (name) { S.pname = name.value.trim().slice(0, 16); store.set('turbo-krug-name', S.pname); $('#pname').value = S.pname; }
+  if (b.id === 'onCreate') netConnect(() => netSend(Object.assign({ t: 'create' }, netProfile())));
+  else if (b.id === 'onJoin') { const code = ($('#onCode').value || '').toUpperCase().trim(); if (code.length === 4) netConnect(() => netSend(Object.assign({ t: 'join', code }, netProfile()))); }
+  else if (b.id === 'onCopy') { const code = NET.room && NET.room.code; try { navigator.clipboard.writeText(code).then(() => { b.textContent = t('copied'); }).catch(() => {}); } catch (_) {} }
+  else if (b.id === 'onStart') { initAudio(); netSend({ t: 'cfg', map: MAPS[S.mapIndex].id, laps: S.laps, bots: NET.room.cfg.bots }); setTimeout(() => netSend({ t: 'start' }), 120); }
+  else if (b.dataset.b != null) netSend({ t: 'cfg', map: MAPS[S.mapIndex].id, laps: S.laps, bots: b.dataset.b === '1' });
+});
+$('#online').addEventListener('keydown', e => { if (e.code === 'Enter' && e.target.id === 'onCode') { e.stopPropagation(); $('#onJoin').click(); } }, true);
+$('#onBack').addEventListener('click', () => { if (NET.room) netSend({ t: 'leave' }); NET.room = null; $('#online').hidden = true; toMenu(); });
+$('#lobbyBtn').addEventListener('click', () => { if (netHost()) netSend({ t: 'lobby' }); S.mode = 'menu'; resetRace('menu'); $('#hud').hidden = true; openOnline(); });
+$('#recBtn').addEventListener('click', () => { $('#menu').hidden = true; $('#records').hidden = false; renderRecords(S.map.id); $('#recBack').focus(); });
+$('#recBack').addEventListener('click', () => { $('#records').hidden = true; $('#menu').hidden = false; });
+$('#recTabs').addEventListener('click', e => { const b = e.target.closest('button'); if (b) renderRecords(b.dataset.rm); });
+$('#pname').addEventListener('change', e => { S.pname = e.target.value.trim().slice(0, 16); store.set('turbo-krug-name', S.pname); });
+
 // ---------- finish replay ----------
 function recFrame() {
   const f = { t: S.time, d: new Float32Array(S.cars.length * 6) };
@@ -2210,6 +2431,7 @@ function endReplay() {
 // ---------- race flow ----------
 function startRace() {
   initAudio();
+  if (S.gameMode === 'online' && !S.netStartPending) { if (S.mode === 'menu' || !NET.room) { openOnline(); return; } }
   if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
   for (const k in K) K[k] = false;
   if (S.gameMode === 'cup' && (!S.cup || S.cup.done)) { startCup(); return; }
@@ -2227,7 +2449,8 @@ function startRace() {
 function toMenu() {
   setupMap(S.mapIndex);
   resetRace('menu');
-  for (const id of ['#hud', '#touch', '#pause', '#results', '#garage', '#settings', '#hint', '#achievements']) $(id).hidden = true;
+  for (const id of ['#hud', '#touch', '#pause', '#results', '#garage', '#settings', '#hint', '#achievements', '#records', '#online']) $(id).hidden = true;
+  S.netStart = null;
   saveStats();
   $('#menu').hidden = false;
   if (S.cup && !S.cup.done) S.cup = null;
@@ -2235,6 +2458,7 @@ function toMenu() {
   renderMapList(); renderMenuStrip(); syncMode(); setConditions();
 }
 function togglePause(force) {
+  if (isOnline()) return; // the race goes on for everyone else
   if (S.mode === 'race' || S.mode === 'countdown') { if (force === false) return; S.prevMode = S.mode; S.mode = 'paused'; $('#pause').hidden = false; $('#resumeBtn').focus(); }
   else if (S.mode === 'paused' && force !== true && $('#settings').hidden) { S.mode = S.prevMode; $('#pause').hidden = true; document.activeElement.blur(); }
 }
@@ -2246,7 +2470,7 @@ function onPlayerFinish(c) {
     return;
   }
   S.finishT = S.time;
-  S.closeFinish = S.gameMode !== 'trial' && S.cars.some(o => o !== c && (o.finished ? S.time - o.finishTime < .7 : (c.total - o.total) * S.track.SP < 160));
+  S.closeFinish = S.gameMode !== 'trial' && S.gameMode !== 'online' && S.cars.some(o => o !== c && (o.finished ? S.time - o.finishTime < .7 : (c.total - o.total) * S.track.SP < 160));
   S.mode = 'results'; S.resultsT = 1.4;
   const rec = getRecord(S.map);
   if (c.best < rec) { store.set(recKey(S.map), String(c.best)); S.newRecord = true; }
@@ -2258,6 +2482,7 @@ function onPlayerFinish(c) {
   S.earned = S.gameMode === 'trial' ? Math.round(20 * LAP_K[S.laps]) + (S.newRecord ? 40 : 0)
     : Math.round(PLACE_PTS[c.place - 1] * LAP_K[S.laps] * DIFFS[S.diff].pts) + (S.newRecord ? 25 : 0);
   wallet.coins += S.earned; saveWallet(); checkAch();
+  $('#resNet').hidden = true; if (!S.duo) submitLap(c.best, c.model.id || 'start');
   if (S.gameMode === 'trial') toast(t('finish'), fmt(c.finishTime), S.newRecord ? 'good' : '');
   else toast(c.place === 1 ? t('victory') : t('finish'), t('placeSub', { o: ord(c.place), t: fmt(c.finishTime) }), c.place === 1 ? 'good' : '');
   beep(660, .15); setTimeout(() => beep(990, .3), 160);
@@ -2265,6 +2490,8 @@ function onPlayerFinish(c) {
 function showResults(keepFocus) {
   const p = player(), trial = S.gameMode === 'trial', cup = S.gameMode === 'cup' && S.cup;
   if (cup && S.cup.done) { showCupFinal(); return; }
+  $('#lobbyBtn').hidden = S.gameMode !== 'online' || !NET.room;
+  if (S.gameMode === 'online') { $('#againBtn').hidden = true; $('#nextBtn').hidden = true; $('#replayBtn').hidden = true; }
   if (S.duo) {
     const p2 = player2(), win = p.place < p2.place ? t('p1') : t('p2');
     $('#resTitle').textContent = t('duoWin', { p: win });
@@ -2280,8 +2507,8 @@ function showResults(keepFocus) {
   $('#podium').hidden = true; $('#resTable').hidden = false;
   $('#cupBox').hidden = !cup;
   if (cup) $('#cupTitle').textContent = t('cupStage', { a: S.cup.round + 1, b: S.cup.order.length });
-  $('#cupNextBtn').hidden = !cup; $('#newCupBtn').hidden = true; $('#replayBtn').hidden = trial || S.rbuf.length < 10;
-  $('#againBtn').hidden = !!cup; $('#nextBtn').hidden = !!cup;
+  $('#cupNextBtn').hidden = !cup; $('#newCupBtn').hidden = true; $('#replayBtn').hidden = trial || S.rbuf.length < 10 || S.gameMode === 'online';
+  $('#againBtn').hidden = !!cup || S.gameMode === 'online'; $('#nextBtn').hidden = !!cup || S.gameMode === 'online';
   const rr2 = $('#resRec'); rr2.hidden = !S.newRecord; rr2.textContent = t('record', { t: fmt(p.best) });
   $('#resPts').textContent = trial ? t('trialPts', { n: S.earned }) : t('earned', { n: S.earned });
   const nxt = CARS.find((m, i) => i > CARS.indexOf(curModel()) && !wallet.owned.includes(m.id));
@@ -3946,9 +4173,10 @@ $('#achBack').addEventListener('click', () => { $('#achievements').hidden = true
 
 // ---------- input ----------
 const GAME_KEYS = ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space', 'KeyE', 'Slash', 'Period', 'Enter'];
-const overlayOpen = () => !$('#garage').hidden || !$('#settings').hidden || !$('#achievements').hidden;
+const overlayOpen = () => !$('#garage').hidden || !$('#settings').hidden || !$('#achievements').hidden || !$('#records').hidden || !$('#online').hidden;
 addEventListener('keydown', e => {
   const code = e.code;
+  if (e.target && e.target.tagName === 'INPUT' && e.target.type === 'text') return; // typing a name or a room code
   if (GAME_KEYS.includes(code) && S.mode !== 'menu' && $('#results').hidden && $('#pause').hidden && $('#settings').hidden) e.preventDefault();
   K[code] = true;
   if (e.repeat) return;
@@ -3956,6 +4184,8 @@ addEventListener('keydown', e => {
   if (code === 'Escape' && !$('#settings').hidden) closeSettings();
   else if (code === 'Escape' && !$('#garage').hidden) closeGarage();
   else if (code === 'Escape' && !$('#achievements').hidden) $('#achBack').click();
+  else if (code === 'Escape' && !$('#records').hidden) $('#recBack').click();
+  else if (code === 'Escape' && !$('#online').hidden) $('#onBack').click();
   else if (code === 'Escape' || code === 'KeyP') togglePause();
   else if (code === 'Enter' && S.mode === 'menu') { if (!overlayOpen()) { e.preventDefault(); startRace(); } }
   else if (code === 'KeyM' && e.target.tagName !== 'INPUT') setVolume(S.volume > 0 ? 0 : (S.prevVolume || 60));
@@ -3967,6 +4197,7 @@ addEventListener('keydown', e => {
 });
 addEventListener('keyup', e => { K[e.code] = false; });
 addEventListener('blur', () => { for (const k in K) K[k] = false; if (!S.noAutoPause) togglePause(true); });
+addEventListener('beforeunload', () => { if (NET.ws) try { NET.ws.close(); } catch (_) {} });
 document.addEventListener('visibilitychange', () => { if (document.hidden && !S.noAutoPause) togglePause(true); });
 const touchMode = matchMedia('(pointer: coarse)').matches;
 if (touchMode) document.body.classList.add('touchmode');
@@ -4076,7 +4307,10 @@ function start(data) {
   init3D();
   setCam3(store.get('turbo-krug-cam3') || 'near'); setGfx(S.gfx);
   try { S.tut = JSON.parse(store.get('turbo-krug-tut') || '{}') || {}; } catch (e) { S.tut = {}; }
-  const gm = store.get('turbo-krug-mode'); if (['race', 'cup', 'trial', 'duo'].includes(gm) && !(gm === 'duo' && touchMode)) S.gameMode = gm;
+  const gm = store.get('turbo-krug-mode'); if (['race', 'cup', 'trial', 'duo', 'online'].includes(gm) && !(gm === 'duo' && touchMode)) S.gameMode = gm;
+  S.pname = store.get('turbo-krug-name') || ((LANG === 'en' ? 'Driver' : 'Пилот') + (100 + Math.floor(Math.random() * 900)));
+  store.set('turbo-krug-name', S.pname); $('#pname').value = S.pname;
+  netProbe();
   S.p2car = store.get('turbo-krug-p2car') || 'start';
   loadWallet();
   resize();

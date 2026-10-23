@@ -1,0 +1,18 @@
+[Unit]
+Description=Turbo Lap game server (lap records and online rooms)
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/node /opt/turbo-krug/server.js
+Environment=PORT=4100
+Environment=DATA=/var/lib/turbo-krug
+DynamicUser=yes
+StateDirectory=turbo-krug
+Restart=always
+RestartSec=2
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+
+[Install]
+WantedBy=multi-user.target
