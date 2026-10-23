@@ -249,12 +249,16 @@ tr.me td{color:var(--accent)}
 .item-slot{position:relative;width:58px;height:58px;border-radius:12px;display:grid;place-items:center;background:rgba(12,14,19,.78);border:1px solid rgba(255,255,255,.14)}
 .item-slot[data-item=""]{opacity:.4}
 .item-slot svg{width:32px;height:32px;display:block}
-.modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:8px}
-.modes button{display:grid;gap:2px;padding:9px 12px;text-align:left;background:var(--panel-2);border:1px solid var(--line);border-radius:10px}
+.modes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.modes button{display:grid;gap:2px;padding:8px 10px;text-align:left;background:var(--panel-2);border:1px solid var(--line);border-radius:10px}
 .modes button:hover{border-color:#4a5161}
 .modes button[aria-pressed="true"]{border-color:var(--accent);background:#25231b}
 .modes b{font-family:var(--display);font-weight:400;font-size:15px}
-.modes span{font-size:12px;color:var(--muted)}
+.modes span{display:none}
+.help-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px 28px}
+.help-grid .label{margin:0 0 8px}
+.help-p{margin:0;font-size:14px;color:var(--muted);line-height:1.55}
+.help-p b{color:var(--fg)}
 .track-note{margin:-4px 0 10px}
 .conds{display:grid;gap:8px;justify-items:start}
 .p2-row{display:grid;grid-template-columns:72px minmax(0,1fr) auto;gap:12px;align-items:center;margin-top:8px;padding:6px 10px 6px 6px;background:var(--panel-2);border:1px solid var(--line);border-radius:10px}
@@ -317,8 +321,8 @@ body.touchmode .hud-bl{bottom:calc(env(safe-area-inset-bottom,0px) + 44px)}
 .overlay{overscroll-behavior:contain}
 .menu-panel{--gap:22px;gap:var(--gap)}
 .menu-panel .col{display:contents}
-.cta-row,.garage-panel>#garageBack,.ach-panel>#achBack,.results .btns,#settings #setDone{position:sticky;bottom:0;z-index:2;background:var(--sticky);box-shadow:0 -14px 16px 2px var(--sticky);border-radius:10px}
-.garage-panel>#garageBack,.ach-panel>#achBack,#settings #setDone{background:var(--accent)}
+.cta-row,.garage-panel>#garageBack,.ach-panel>#achBack,.ach-panel>#helpBack,.ach-panel>#recBack,.results .btns,#settings #setDone{position:sticky;bottom:0;z-index:2;background:var(--sticky);box-shadow:0 -14px 16px 2px var(--sticky);border-radius:10px}
+.garage-panel>#garageBack,.ach-panel>#achBack,.ach-panel>#helpBack,.ach-panel>#recBack,#settings #setDone{background:var(--accent)}
 @media (min-width:980px),(min-width:700px) and (max-height:600px){
   .menu{background:linear-gradient(90deg,rgba(9,10,13,.94) 0%,rgba(9,10,13,.72) 60%,rgba(9,10,13,.2) 100%)}
   .menu-panel{width:min(1060px,100%);grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);column-gap:30px}
@@ -475,6 +479,7 @@ body.touchmode .hud-bl{bottom:calc(env(safe-area-inset-bottom,0px) + 44px)}
         <button data-mode="online" aria-pressed="false"><b data-t="mOnline">Онлайн</b><span data-t="mOnlineSub">С друзьями по коду комнаты</span></button>
         <button data-mode="duo" aria-pressed="false" id="duoModeBtn"><b data-t="mDuo">Вдвоём</b><span data-t="mDuoSub">Два игрока, один экран</span></button>
       </div>
+      <p id="modeNote" class="seg-note"></p>
       <div id="p2Row" class="p2-row" hidden>
         <canvas id="p2Cv" width="128" height="72"></canvas>
         <div><h3 class="label" data-t="p2Ride">Транспорт игрока 2</h3><b id="p2Name"></b></div>
@@ -515,20 +520,6 @@ body.touchmode .hud-bl{bottom:calc(env(safe-area-inset-bottom,0px) + 44px)}
           </div>
         </div>
       </section>
-      <section>
-        <h2 class="label" data-t="controls">Управление</h2>
-        <div class="keys">
-          <div class="wasd" aria-hidden="true"><kbd class="w">W</kbd><kbd class="a">A</kbd><kbd>S</kbd><kbd>D</kbd></div>
-          <ul>
-            <li data-th="k1"><b>W / S</b> газ и тормоз</li>
-            <li data-th="k2"><b>A / D</b> руль, <b>Пробел</b> ручник</li>
-            <li data-th="k3"><b>Shift</b> нитро, <b>E</b> предмет</li>
-            <li data-th="k4"><b>R</b> на трассу, <b>Esc</b> пауза, <b>M</b> звук</li>
-            <li id="duoKeys" data-th="kDuo" hidden><b>Игрок 2</b>: стрелки, <b>правый Shift</b> нитро, <b>Enter</b> предмет, <b>/</b> ручник</li>
-            <li id="padHint" data-th="kPad" hidden><b>Геймпад</b>: RT газ, LT тормоз, RB нитро, LB предмет, X ручник</li>
-          </ul>
-        </div>
-      </section>
     </div>
     <div class="garage-strip">
       <canvas id="curCarCv" width="192" height="112"></canvas>
@@ -539,6 +530,7 @@ body.touchmode .hud-bl{bottom:calc(env(safe-area-inset-bottom,0px) + 44px)}
     <div class="menu-links">
       <button id="achBtn" class="btn" data-t="achTitle">Достижения</button>
       <button id="recBtn" class="btn" data-t="recTitle">Рекорды</button>
+      <button id="helpBtn" class="btn" data-t="controls">Управление</button>
     </div>
     <div class="cta-row">
       <button id="startBtn" class="cta"><span data-t="start">На старт</span> <kbd>Enter</kbd></button>
@@ -694,6 +686,30 @@ body.touchmode .hud-bl{bottom:calc(env(safe-area-inset-bottom,0px) + 44px)}
     <button id="achBack" class="btn primary" data-t="done">Готово</button>
   </div>
 </div>
+<div id="help" class="overlay center" hidden>
+  <div class="panel ach-panel">
+    <div class="checker" aria-hidden="true"></div>
+    <h2 class="res-title" data-t="controls">Управление</h2>
+    <div class="help-grid">
+      <section>
+        <h3 class="label" data-t="hKeyboard">Клавиатура</h3>
+        <div class="keys">
+          <div class="wasd" aria-hidden="true"><kbd class="w">W</kbd><kbd class="a">A</kbd><kbd>S</kbd><kbd>D</kbd></div>
+          <ul>
+            <li data-th="k1"><b>W / S</b> газ и тормоз</li>
+            <li data-th="k2"><b>A / D</b> руль, <b>Пробел</b> ручник</li>
+            <li data-th="k3"><b>Shift</b> нитро, <b>E</b> предмет</li>
+            <li data-th="k4"><b>R</b> на трассу, <b>Esc</b> пауза, <b>M</b> звук</li>
+          </ul>
+        </div>
+      </section>
+      <section><h3 class="label" data-t="p2">Игрок 2</h3><p class="help-p" id="duoKeys" data-th="kDuo"></p></section>
+      <section><h3 class="label" data-t="hPad">Геймпад</h3><p class="help-p" id="padHint" data-th="kPadFull"></p></section>
+      <section><h3 class="label" data-t="hPhone">Телефон</h3><p class="help-p" data-th="kPhone"></p></section>
+    </div>
+    <button id="helpBack" class="btn primary" data-t="done">Готово</button>
+  </div>
+</div>
 <div id="records" class="overlay center" hidden>
   <div class="panel ach-panel">
     <div class="checker" aria-hidden="true"></div>
@@ -741,6 +757,9 @@ const STR = {
     'tut.drive.t': 'Левой половиной экрана рулите, справа газ и тормоз. Газ ровно на зелёный даёт рывок.',
     p1: 'Игрок 1', p2: 'Игрок 2', 'drv.you2': 'Игрок 2', mDuo: 'Вдвоём', mDuoSub: 'Два игрока, один экран', p2Ride: 'Транспорт игрока 2', change: 'Сменить',
     duoWin: '{p} впереди!', kDuo: '<b>Игрок 2</b>: стрелки, <b>правый Shift</b> нитро, <b>Enter</b> предмет, <b>/</b> ручник',
+    hKeyboard: 'Клавиатура', hPad: 'Геймпад', hPhone: 'Телефон',
+    kPadFull: '<b>RT</b> или <b>A</b> — газ, <b>LT</b> или <b>B</b> — тормоз, левый стик — руль, <b>RB</b> — нитро, <b>LB</b> — предмет, <b>X</b> — ручник, <b>Y</b> — на трассу, <b>Start</b> — пауза. В меню — крестовина и <b>A</b>. В игре вдвоём геймпад управляет игроком 2.',
+    kPhone: 'Левая половина экрана — руль: ведите пальцем влево и вправо. Справа — газ, тормоз, нитро и предмет. В настройках можно включить руль наклоном телефона.',
     vehicle: 'Транспорт', mOnline: 'Онлайн', mOnlineSub: 'С друзьями по коду комнаты', recTitle: 'Рекорды', recSub: 'Лучшие круги всех игроков на этой трассе', pname: 'Имя пилота',
     leave: 'Выйти', toLobby: 'В комнату', createRoom: 'Создать комнату', joinRoom: 'Войти', codePh: 'КОД', orJoin: 'или войдите по коду друга',
     roomCode: 'Код комнаты', copy: 'Скопировать', copied: 'Скопировано', players: 'Игроки', host: 'хозяин', you2: 'вы', bots: 'Боты',
@@ -856,6 +875,9 @@ const STR = {
     'tut.drive.t': 'Steer with the left half of the screen, gas and brake on the right. Gas right on green gives a launch boost.',
     p1: 'Player 1', p2: 'Player 2', 'drv.you2': 'Player 2', mDuo: 'Two players', mDuoSub: 'Split screen, one keyboard', p2Ride: 'Player 2 ride', change: 'Change',
     duoWin: '{p} wins!', kDuo: '<b>Player 2</b>: arrows, <b>right Shift</b> nitro, <b>Enter</b> item, <b>/</b> handbrake',
+    hKeyboard: 'Keyboard', hPad: 'Gamepad', hPhone: 'Phone',
+    kPadFull: '<b>RT</b> or <b>A</b> gas, <b>LT</b> or <b>B</b> brake, left stick steers, <b>RB</b> nitro, <b>LB</b> item, <b>X</b> handbrake, <b>Y</b> back on track, <b>Start</b> pause. Menus: D-pad and <b>A</b>. In two-player races the gamepad drives player 2.',
+    kPhone: 'The left half of the screen steers: drag your thumb left and right. Gas, brake, nitro and item are on the right. Tilt steering can be turned on in Settings.',
     vehicle: 'Vehicle', mOnline: 'Online', mOnlineSub: 'Race friends with a room code', recTitle: 'Records', recSub: 'Best laps of all players on this track', pname: 'Driver name',
     leave: 'Leave', toLobby: 'Back to room', createRoom: 'Create a room', joinRoom: 'Join', codePh: 'CODE', orJoin: "or join a friend's room",
     roomCode: 'Room code', copy: 'Copy', copied: 'Copied', players: 'Players', host: 'host', you2: 'you', bots: 'Bots',
@@ -1501,7 +1523,7 @@ function pollPad(dt) {
     up: b(12) > .5 || (gp.axes[1] || 0) < -.6, down: b(13) > .5 || (gp.axes[1] || 0) > .6, left: b(14) > .5 || (gp.axes[0] || 0) < -.6, right: b(15) > .5 || (gp.axes[0] || 0) > .6, a: b(0) > .5, bk: b(1) > .5 };
   const was = PAD.prev, pressed = k => st[k] && !was[k];
   PAD.state = st; PAD.prev = st;
-  if (!PAD.seen) { PAD.seen = true; $('#padHint').hidden = false; }
+  PAD.seen = true;
   if (pressed('start')) togglePause();
   const racing = S.mode === 'race' || S.mode === 'countdown';
   if (racing && $('#pause').hidden) {
@@ -2391,6 +2413,8 @@ $('#online').addEventListener('click', e => {
 $('#online').addEventListener('keydown', e => { if (e.code === 'Enter' && e.target.id === 'onCode') { e.stopPropagation(); $('#onJoin').click(); } }, true);
 $('#onBack').addEventListener('click', () => { if (NET.room) netSend({ t: 'leave' }); NET.room = null; $('#online').hidden = true; toMenu(); });
 $('#lobbyBtn').addEventListener('click', () => { if (netHost()) netSend({ t: 'lobby' }); S.mode = 'menu'; resetRace('menu'); $('#hud').hidden = true; openOnline(); });
+$('#helpBtn').addEventListener('click', () => { $('#menu').hidden = true; $('#help').hidden = false; $('#helpBack').focus(); });
+$('#helpBack').addEventListener('click', () => { $('#help').hidden = true; $('#menu').hidden = false; });
 $('#recBtn').addEventListener('click', () => { $('#menu').hidden = true; $('#records').hidden = false; renderRecords(S.map.id); $('#recBack').focus(); });
 $('#recBack').addEventListener('click', () => { $('#records').hidden = true; $('#menu').hidden = false; });
 $('#recTabs').addEventListener('click', e => { const b = e.target.closest('button'); if (b) renderRecords(b.dataset.rm); });
@@ -2456,7 +2480,7 @@ function startRace() {
 function toMenu() {
   setupMap(S.mapIndex);
   resetRace('menu');
-  for (const id of ['#hud', '#touch', '#pause', '#results', '#garage', '#settings', '#hint', '#achievements', '#records', '#online']) $(id).hidden = true;
+  for (const id of ['#hud', '#touch', '#pause', '#results', '#garage', '#settings', '#hint', '#achievements', '#records', '#online', '#help']) $(id).hidden = true;
   S.netStart = null;
   saveStats();
   $('#menu').hidden = false;
@@ -3969,7 +3993,8 @@ function closeSettings() {
 function syncMode() {
   $('#modeSeg').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode === S.gameMode)));
   $('#duoModeBtn').hidden = touchMode;
-  $('#p2Row').hidden = S.gameMode !== 'duo'; $('#duoKeys').hidden = S.gameMode !== 'duo';
+  $('#p2Row').hidden = S.gameMode !== 'duo';
+  $('#modeNote').textContent = t({ race: 'mRaceSub', cup: 'mCupSub', trial: 'mTrialSub', duo: 'mDuoSub', online: 'mOnlineSub' }[S.gameMode]);
   if (S.gameMode === 'duo') { const m = CARS.find(x => x.id === S.p2car && wallet.owned.includes(x.id)) || CARS[0]; $('#p2Name').textContent = carName(m); drawCarPreview($('#p2Cv'), m); }
   $('#rivalsSec').hidden = S.gameMode === 'trial';
   $('#trackNote').hidden = S.gameMode !== 'cup';
@@ -4180,7 +4205,7 @@ $('#achBack').addEventListener('click', () => { $('#achievements').hidden = true
 
 // ---------- input ----------
 const GAME_KEYS = ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space', 'KeyE', 'Slash', 'Period', 'Enter'];
-const overlayOpen = () => !$('#garage').hidden || !$('#settings').hidden || !$('#achievements').hidden || !$('#records').hidden || !$('#online').hidden;
+const overlayOpen = () => !$('#help').hidden || !$('#garage').hidden || !$('#settings').hidden || !$('#achievements').hidden || !$('#records').hidden || !$('#online').hidden;
 addEventListener('keydown', e => {
   const code = e.code;
   if (e.target && e.target.tagName === 'INPUT' && e.target.type === 'text') return; // typing a name or a room code
@@ -4192,6 +4217,7 @@ addEventListener('keydown', e => {
   else if (code === 'Escape' && !$('#garage').hidden) closeGarage();
   else if (code === 'Escape' && !$('#achievements').hidden) $('#achBack').click();
   else if (code === 'Escape' && !$('#records').hidden) $('#recBack').click();
+  else if (code === 'Escape' && !$('#help').hidden) $('#helpBack').click();
   else if (code === 'Escape' && !$('#online').hidden) $('#onBack').click();
   else if (code === 'Escape' || code === 'KeyP') togglePause();
   else if (code === 'Enter' && S.mode === 'menu') { if (!overlayOpen()) { e.preventDefault(); startRace(); } }
