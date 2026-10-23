@@ -2343,93 +2343,203 @@ function drawPit(map, tr) {
 function drawFloor(x, map, w, h) { // the floor pattern, 256 px = a few car lengths
   const r = rng(map.seed * 11), C = map.c;
   x.fillStyle = C.ground; x.fillRect(0, 0, w, h);
-  if (map.floor === 'tiles') { // big ceramic tiles with grout
-    x.fillStyle = '#8a8478'; x.fillRect(0, 0, w, h); // grout
-    for (let i = 0; i < 2; i++) for (let j = 0; j < 2; j++) { x.fillStyle = (i + j) % 2 ? '#ecebe6' : '#b9bcc4'; x.fillRect(i * 128 + 3, j * 128 + 3, 122, 122); }
-    for (let i = 0; i < 400; i++) { x.fillStyle = 'rgba(0,0,0,.03)'; x.fillRect(r() * w, r() * h, 2, 2); }
+  if (map.floor === 'tiles') { // big ceramic tiles with grout and a faint marble vein
+    x.fillStyle = '#8a8478'; x.fillRect(0, 0, w, h);
+    for (let i = 0; i < 2; i++) for (let j = 0; j < 2; j++) {
+      x.fillStyle = (i + j) % 2 ? '#ecebe6' : '#b9bcc4'; x.fillRect(i * 128 + 3, j * 128 + 3, 122, 122);
+      x.strokeStyle = (i + j) % 2 ? 'rgba(150,150,160,.25)' : 'rgba(255,255,255,.2)'; x.lineWidth = 1.5; x.beginPath(); let px = i * 128 + 10, py = j * 128 + 20 + r() * 80; x.moveTo(px, py); for (let k = 0; k < 5; k++) { px += 20; py += (r() - .5) * 30; x.lineTo(px, py); } x.stroke();
+    }
   } else if (map.floor === 'carpet') { // soft pile with a diamond pattern
-    for (let i = 0; i < 5000; i++) { x.fillStyle = r() < .5 ? C.speck : C.speck2; x.fillRect(r() * w, r() * h, 2, 2); }
+    for (let i = 0; i < 7000; i++) { x.fillStyle = r() < .5 ? C.speck : C.speck2; x.fillRect(r() * w, r() * h, 2, 2); }
     x.strokeStyle = 'rgba(255,220,120,.35)'; x.lineWidth = 3; x.beginPath(); x.moveTo(128, 8); x.lineTo(248, 128); x.lineTo(128, 248); x.lineTo(8, 128); x.closePath(); x.stroke();
   } else if (map.floor === 'asphalt') { // coarse asphalt: at toy scale every stone is a boulder
-    for (let i = 0; i < 260; i++) { const g = 70 + r() * 60 | 0; x.fillStyle = `rgb(${g},${g},${g + 4})`; x.beginPath(); x.ellipse(r() * w, r() * h, 3 + r() * 8, 2 + r() * 6, r() * 3, 0, 7); x.fill(); }
+    for (let i = 0; i < 320; i++) { const g = 70 + r() * 60 | 0; x.fillStyle = `rgb(${g},${g},${g + 4})`; x.beginPath(); x.ellipse(r() * w, r() * h, 3 + r() * 8, 2 + r() * 6, r() * 3, 0, 7); x.fill(); }
   } else if (map.floor === 'felt') { // pool-table cloth
-    for (let i = 0; i < 6000; i++) { x.fillStyle = r() < .5 ? C.speck : C.speck2; x.fillRect(r() * w, r() * h, 1.5, 1.5); }
+    for (let i = 0; i < 7000; i++) { x.fillStyle = r() < .5 ? C.speck : C.speck2; x.fillRect(r() * w, r() * h, 1.5, 1.5); }
   }
 }
-function miniRoadTex(map) { // the track surface: the same floor, cleaner, plus a pale chalk lane
+function miniRoadTex(map) { // the track surface: the same floor, cleaner
   return cTex(256, 256, (x, w, h) => {
     if (map.floor === 'asphalt') { // a pavement of concrete slabs
       x.fillStyle = '#c3c5c7'; x.fillRect(0, 0, w, h); x.fillStyle = 'rgba(0,0,0,.18)'; x.fillRect(0, 0, w, 3); x.fillRect(0, 0, 3, h); x.fillRect(0, 127, w, 2); x.fillRect(127, 0, 2, h);
-      const r = rng(5); for (let i = 0; i < 900; i++) { x.fillStyle = r() < .5 ? 'rgba(255,255,255,.12)' : 'rgba(0,0,0,.08)'; x.fillRect(r() * w, r() * h, 2, 2); }
-    } else { drawFloor(x, map, w, h); x.fillStyle = 'rgba(255,255,255,.12)'; x.fillRect(0, 0, w, h); }
+      const r = rng(5); for (let i = 0; i < 1200; i++) { x.fillStyle = r() < .5 ? 'rgba(255,255,255,.12)' : 'rgba(0,0,0,.08)'; x.fillRect(r() * w, r() * h, 2, 2); }
+    } else { drawFloor(x, map, w, h); x.fillStyle = 'rgba(255,255,255,.1)'; x.fillRect(0, 0, w, h); }
   });
+}
+function barrierTex(map) { // the low wall along the track, themed per map
+  return cTex(128, 32, (x, w, h) => {
+    if (map.id === 'kitchen') { // a wooden ruler with ticks
+      x.fillStyle = '#e8c070'; x.fillRect(0, 0, w, h); x.fillStyle = '#5a3a1e';
+      for (let i = 0; i < 32; i++) x.fillRect(i * 4, 0, 1, i % 4 ? 6 : 12);
+      x.font = '9px sans-serif'; x.fillText(String(Math.floor(Math.random() * 30)), 4, 26);
+    } else if (map.id === 'room') { // toy bricks
+      const c = ['#e5372b', '#2e7cf6', '#ffc629', '#1fb36b']; for (let i = 0; i < 4; i++) { x.fillStyle = c[i]; x.fillRect(i * 32, 0, 31, h); x.fillStyle = 'rgba(255,255,255,.25)'; x.fillRect(i * 32, 0, 31, 4); }
+    } else if (map.id === 'street') { // a kerbstone
+      x.fillStyle = '#b4b4b0'; x.fillRect(0, 0, w, h); x.fillStyle = 'rgba(0,0,0,.25)'; x.fillRect(0, 0, 2, h); x.fillRect(64, 0, 2, h);
+      for (let i = 0; i < 200; i++) { x.fillStyle = Math.random() < .5 ? 'rgba(255,255,255,.15)' : 'rgba(0,0,0,.1)'; x.fillRect(Math.random() * w, Math.random() * h, 1.5, 1.5); }
+    } else { x.fillStyle = '#1a6a3a'; x.fillRect(0, 0, w, h); x.fillStyle = '#5a3018'; x.fillRect(0, 0, w, 8); } // a cushion under a wooden rail
+  });
+}
+// ---- materials: glossy ceramic and plastic, brushed metal, soft fabric
+const SH = (c, s = 70, o) => { const k = 'sh' + c + s + (o || ''); return MATS[k] || (MATS[k] = new THREE.MeshPhongMaterial(Object.assign({ color: col3(c), shininess: s, specular: s > 80 ? 0x999999 : 0x444444 }, o ? { transparent: true, opacity: o } : {}))); };
+const SOFT = c => lam(c);
+function smoothGeo() {
+  if (GEO.sph24) return;
+  GEO.sph24 = new THREE.SphereGeometry(1, 28, 18); GEO.cyl24 = new THREE.CylinderGeometry(1, 1, 1, 28); GEO.cone24 = new THREE.ConeGeometry(1, 1, 24);
+  GEO.tor24 = new THREE.TorusGeometry(1, .22, 10, 28); GEO.stud = new THREE.CylinderGeometry(1, 1, 1, 12);
 }
 // ---- giant props, each a small group of primitives; sizes in track pixels (a car is 38 long)
 function prop(kind, r) {
-  const g = new THREE.Group(), M = c => facet(c), add = (geo, mat, sx, sy, sz, x, y, z) => part(geo, mat, sx, sy, sz, x, y, z, g);
+  smoothGeo();
+  const g = new THREE.Group(), add = (geo, mat, sx, sy, sz, x, y, z) => part(geo, mat, sx, sy, sz, x, y, z, g);
   const pick = a => a[(r() * a.length) | 0];
+  let foot = 0; // footprint radius for the contact shadow
   switch (kind) {
-    case 'fridge': add('box', M('#f4f6f8'), 520, 1500, 460, 0, 750, 0); add('box', M('#d8dde2'), 524, 8, 464, 0, 1000, 0); add('box', M('#9aa0aa'), 16, 260, 30, 262, 1180, 140); add('box', M('#9aa0aa'), 16, 160, 30, 262, 820, 140); break;
-    case 'counter': add('box', M('#b07d43'), 1100, 560, 520, 0, 280, 0); add('box', M('#e8e4dc'), 1140, 30, 560, 0, 575, 0); for (const z of [-275, 275]) for (const xx of [-270, 270]) add('box', M('#8a5a30'), 500, 4, 4, xx, 300, z * .99 + Math.sign(z) * 2); add('box', M('#9aa0aa'), 60, 10, 14, -60, 470, 270); add('box', M('#9aa0aa'), 60, 10, 14, 60, 470, 270); break;
-    case 'chair': for (const a of [-1, 1]) for (const b of [-1, 1]) add('cyl', M('#8a5a30'), 22, 640, 22, a * 170, 320, b * 170); add('box', M('#a06a3a'), 420, 40, 420, 0, 660, 0); for (const a of [-1, 1]) add('cyl', M('#8a5a30'), 18, 700, 18, a * 170, 1010, -190); add('box', M('#a06a3a'), 420, 160, 30, 0, 1300, -190); break;
-    case 'cup': { const c = pick(['#e5372b', '#2e7cf6', '#f4f1ea', '#1fb36b', '#ffc629']); add('cyl', M(c), 80, 190, 80, 0, 95, 0); add('cyl', M('#3a2010'), 72, 2, 72, 0, 186, 0); const h = new THREE.Mesh(GEO.ring3 || (GEO.ring3 = new THREE.TorusGeometry(1, .22, 6, 14)), M(c)); h.scale.setScalar(45); h.position.set(95, 100, 0); g.add(h); break; }
-    case 'plate': add('cyl', M('#f4f6f8'), 230, 10, 230, 0, 5, 0); add('cyl', M('#e2e6ea'), 160, 2, 160, 0, 11, 0); if (r() < .6) add('sph', M(pick(['#ffc629', '#e5372b', '#7cc04a'])), 60, 40, 60, 30, 40, -20); break;
-    case 'apple': add('sph', M('#d62b2b'), 95, 88, 95, 0, 85, 0); add('cyl', M('#5a3a1e'), 6, 40, 6, 0, 190, 0); add('sph', M('#3f8a35'), 30, 8, 18, 22, 180, 0); break;
-    case 'orange': add('sph', M('#ff8a1f'), 90, 86, 90, 0, 86, 0); add('sph', M('#3f8a35'), 10, 6, 10, 0, 172, 0); break;
-    case 'cereal': add('box', M(pick(['#ffc629', '#e5372b', '#2e7cf6'])), 360, 520, 120, 0, 260, 0); add('sph', M('#f4f1ea'), 90, 90, 6, 0, 330, 62); break;
-    case 'spoon': add('box', M('#c9ced8'), 520, 10, 40, 0, 6, 0); add('sph', M('#c9ced8'), 90, 22, 60, 300, 12, 0); break;
-    case 'bed': add('box', M('#8a5a30'), 1500, 260, 1000, 0, 130, 0); add('box', M('#f4f1ea'), 1460, 140, 960, 0, 330, 0); add('box', M(pick(['#2e7cf6', '#e5372b', '#1fb36b'])), 1000, 60, 1000, 240, 420, 0); add('box', M('#f4f6f8'), 320, 100, 600, -560, 450, 0); add('box', M('#6a4020'), 60, 900, 1020, -760, 450, 0); break;
-    case 'block': { const s = 110 + r() * 70; add('box', M(pick(['#e5372b', '#2e7cf6', '#ffc629', '#1fb36b', '#ff5fa8'])), s, s, s, 0, s / 2, 0); add('box', M('#f4f1ea'), s * .5, s * .5, 4, 0, s / 2, s / 2 + 1); break; }
-    case 'books': { let y = 0; const n = 2 + (r() * 3 | 0); for (let i = 0; i < n; i++) { const h = 50 + r() * 40; add('box', M(pick(['#c8342b', '#2e5ea0', '#3f8a35', '#7a3fd1', '#d9822b'])), 420 - i * 20, h, 300 - i * 10, (r() - .5) * 40, y + h / 2, (r() - .5) * 40).rotation.y = (r() - .5) * .4; y += h; } break; }
-    case 'ball': { const c1 = pick(['#e5372b', '#2e7cf6', '#ffc629']); add('sph', M(c1), 210, 210, 210, 0, 210, 0); add('cyl', M('#f4f1ea'), 214, 60, 214, 0, 210, 0); break; }
-    case 'bear': add('sph', M('#a0683a'), 170, 190, 150, 0, 190, 0); add('sph', M('#a0683a'), 120, 110, 110, 0, 450, 0); for (const s of [-1, 1]) { add('sph', M('#a0683a'), 45, 45, 25, 0, 560, s * 80); add('sph', M('#a0683a'), 60, 110, 60, 40, 120, s * 150); add('sph', M('#111'), 12, 12, 12, 100, 470, s * 40); } add('sph', M('#e2b48a'), 50, 40, 50, 105, 430, 0); break;
-    case 'pencil': { const L = 900; const p1 = add('cyl6', M('#ffc629'), 26, L, 26, 0, 26, 0); p1.rotation.z = Math.PI / 2; const tip = add('cone', M('#e2b48a'), 26, 90, 26, L / 2 + 45, 26, 0); tip.rotation.z = -Math.PI / 2; const pin = add('cone', M('#222'), 9, 30, 9, L / 2 + 80, 26, 0); pin.rotation.z = -Math.PI / 2; const er = add('cyl', M('#ff7a8a'), 26, 60, 26, -L / 2 - 30, 26, 0); er.rotation.z = Math.PI / 2; break; }
-    case 'lamp': add('cyl', M('#3a3a40'), 120, 20, 120, 0, 10, 0); add('cyl', M('#9aa0aa'), 14, 900, 14, 0, 460, 0); add('cone', M('#ffe6a0'), 260, 260, 260, 0, 980, 0); break;
-    case 'can': { const c = pick(['#e5372b', '#2e7cf6', '#1fb36b']); add('cyl', M(c), 70, 250, 70, 0, 125, 0); add('cyl', M('#c9ced8'), 66, 14, 66, 0, 256, 0); add('box', M('#f4f1ea'), 6, 120, 80, 72, 130, 0); break; }
-    case 'leaf': { const l = add('sph', M(pick(['#7cc04a', '#d9822b', '#c0461f', '#e2b23a'])), 220, 8, 120, 0, 6, 0); l.rotation.y = r() * 6; break; }
-    case 'pebble': { const s = 40 + r() * 90; add('dode', M(pick(['#8a8c94', '#a0a2a8', '#7a7c84'])), s, s * .7, s * .85, 0, s * .35, 0).rotation.set(r(), r() * 6, r()); break; }
-    case 'tcone': add('cone', M('#ff6a1a'), 240, 760, 240, 0, 380, 0); add('cyl', M('#f4f1ea'), 150, 80, 150, 0, 470, 0); add('box', M('#ff6a1a'), 520, 30, 520, 0, 15, 0); break;
-    case 'tire': { const t = new THREE.Mesh(GEO.ring3 || (GEO.ring3 = new THREE.TorusGeometry(1, .22, 6, 14)), M('#1e1e22')); t.scale.set(420, 420, 650); t.position.y = 512; g.add(t); break; }
-    case 'grass': for (let i = 0; i < 5; i++) add('cone', M(pick(['#4f8f3a', '#3c7a2e', '#6aa44a'])), 18, 160 + r() * 200, 8, (r() - .5) * 120, 90, (r() - .5) * 120).rotation.z = (r() - .5) * .5; break;
-    case 'bottle': add('cyl', new THREE.MeshPhongMaterial({ color: 0x3a9a5a, transparent: true, opacity: .65, shininess: 120 }), 70, 420, 70, 0, 210, 0); add('cyl', M('#2a7a4a'), 26, 120, 26, 0, 480, 0); break;
-    case 'pball': { const n = 1 + (r() * 15 | 0), c = ['#ffc629', '#2e5ea0', '#e5372b', '#7a3fd1', '#ff7a1a', '#1f7a45', '#8a2a20', '#111111'][n % 8]; add('sph', M(c), 120, 120, 120, 0, 120, 0); add('sph', M('#f4f1ea'), 46, 46, 46, 70, 180, 50); break; }
-    case 'chalk': add('box', M('#2e7cf6'), 110, 110, 110, 0, 55, 0); add('box', M('#1a5aa0'), 80, 4, 80, 0, 111, 0); break;
-    case 'cue': { const c = add('cyl', M('#c49553'), 22, 3200, 22, 0, 24, 0); c.rotation.z = Math.PI / 2; const t = add('cyl', M('#3a2010'), 30, 900, 30, -1500, 30, 0); t.rotation.z = Math.PI / 2; break; }
+    // kitchen
+    case 'fridge': foot = 380; add('box', SH('#f4f6f8', 60), 520, 1500, 460, 0, 750, 0); add('box', SH('#c9ced8', 40), 524, 8, 464, 0, 1000, 0); add('box', SH('#c9ced8', 120), 16, 260, 30, 262, 1180, 140); add('box', SH('#c9ced8', 120), 16, 160, 30, 262, 820, 140);
+      for (let i = 0; i < 5; i++) add('box', SH(pick(['#e5372b', '#ffc629', '#2e7cf6', '#1fb36b']), 40), 50, 50, 10, 262, 1100 + r() * 300, -150 + r() * 200).rotation.z = (r() - .5) * .4;
+      for (const a of [-1, 1]) add('box', SH('#2a2a2e'), 40, 20, 40, a * 220, 10, 190); break;
+    case 'counter': foot = 600; add('box', SH('#b07d43', 20), 1100, 560, 520, 0, 280, 0); add('box', SH('#e8e4dc', 90), 1140, 30, 560, 0, 575, 0);
+      for (const xx of [-275, 275]) { add('box', SH('#a06e38', 20), 520, 4, 4, xx, 420, 262); add('box', SH('#c9ced8', 120), 80, 12, 16, xx, 470, 266); }
+      add('box', SH('#c8342b', 80), 220, 180, 160, -300, 680, 0); add('cyl24', SH('#c9ced8', 120), 90, 220, 90, 260, 700, 40); add('cyl24', SH('#2a2a2e'), 30, 60, 30, 260, 840, 40); break; // a toaster and a kettle on top
+    case 'chair': foot = 300; for (const a of [-1, 1]) for (const b of [-1, 1]) add('cyl24', SH('#8a5a30', 30), 22, 640, 22, a * 170, 320, b * 170);
+      for (const b of [-1, 1]) add('box', SH('#7a4a28', 30), 340, 16, 16, 0, 160, b * 170); add('box', SH('#a06a3a', 30), 420, 40, 420, 0, 660, 0); add('box', SH('#e5372b', 10), 380, 30, 380, 0, 695, 0);
+      for (const a of [-1, 1]) add('cyl24', SH('#8a5a30', 30), 18, 700, 18, a * 170, 1010, -190); add('box', SH('#a06a3a', 30), 420, 160, 30, 0, 1300, -190); break;
+    case 'cup': { foot = 110; const c = pick(['#e5372b', '#2e7cf6', '#f4f1ea', '#1fb36b', '#ffc629']); add('cyl24', SH(c, 110), 80, 190, 80, 0, 95, 0); add('cyl24', SH('#3a2010', 140), 72, 2, 72, 0, 180, 0); const h = new THREE.Mesh(GEO.tor24, SH(c, 110)); h.scale.setScalar(48); h.position.set(92, 100, 0); g.add(h); add('box', SH('#f4f1ea', 40), 70, 50, 2, 0, 110, 81); break; }
+    case 'plate': foot = 230; add('cyl24', SH('#f4f6f8', 120), 230, 10, 230, 0, 5, 0); add('cyl24', SH('#e2e6ea', 120), 160, 2, 160, 0, 11, 0);
+      if (r() < .7) { add('sph24', SH('#ffc629', 40), 60, 30, 60, 30, 26, -20); add('sph24', SH('#7cc04a', 30), 40, 26, 40, -40, 24, 30); add('box', SH('#d9822b', 30), 90, 12, 50, -10, 22, 70).rotation.y = .6; } break;
+    case 'apple': foot = 95; add('sph24', SH('#d62b2b', 90), 95, 88, 95, 0, 85, 0); add('sph24', SH('#ffb0a0', 60, .35), 40, 30, 20, -40, 120, 60); add('cyl24', SH('#5a3a1e'), 6, 40, 6, 0, 190, 0); add('sph24', SH('#3f8a35', 30), 34, 8, 18, 24, 182, 0); break;
+    case 'orange': foot = 90; add('sph24', SH('#ff8a1f', 50), 90, 86, 90, 0, 86, 0); add('sph24', SH('#3f8a35', 20), 10, 6, 10, 0, 172, 0); break;
+    case 'cereal': foot = 200; { const c = pick(['#ffc629', '#e5372b', '#2e7cf6']); add('box', SH(c, 30), 360, 520, 120, 0, 260, 0); add('cyl24', SH('#f4f1ea', 40), 90, 4, 90, 0, 330, 62).rotation.x = Math.PI / 2; add('box', SH('#ffffff', 30), 300, 60, 2, 0, 460, 61); } break;
+    case 'spoon': foot = 160; add('box', SH('#c9ced8', 140), 520, 10, 40, 0, 6, 0); add('sph24', SH('#c9ced8', 140), 90, 22, 60, 300, 14, 0); break;
+    case 'fork': foot = 160; add('box', SH('#c9ced8', 140), 420, 10, 40, 0, 6, 0); for (let i = -1.5; i <= 1.5; i++) add('box', SH('#c9ced8', 140), 120, 8, 8, 270, 6, i * 14); break;
+    case 'knife': foot = 160; add('box', SH('#2a2a2e', 30), 220, 24, 44, -150, 12, 0); add('box', SH('#d8dde2', 150), 320, 6, 50, 120, 6, 0); break;
+    case 'sugar': foot = 30; add('box', SH('#fafafa', 20), 44, 44, 44, 0, 22, 0); break;
+    case 'crumb': foot = 14; add('dode', SOFT(pick(['#d9a050', '#c08038', '#e8c070'])), 14, 10, 12, 0, 6, 0).rotation.set(r(), r() * 6, r()); break;
+    case 'bread': foot = 120; add('box', SOFT('#f2dca0'), 220, 30, 200, 0, 15, 0); add('box', SOFT('#a0602a'), 232, 32, 12, 0, 16, 100); add('box', SOFT('#a0602a'), 232, 32, 12, 0, 16, -100); add('box', SOFT('#a0602a'), 12, 32, 210, 112, 16, 0); break;
+    case 'cheese': foot = 90; { const m = add('cyl24', SH('#ffd84a', 30), 110, 90, 110, 0, 45, 0); m.geometry = new THREE.CylinderGeometry(1, 1, 1, 3); add('sph24', SH('#e8b830', 20), 14, 8, 14, 30, 90, 10); } break;
+    case 'jar': foot = 90; add('cyl24', SH('#9fd4ff', 140, .45), 80, 220, 80, 0, 110, 0); add('cyl24', SH('#e5372b', 60), 84, 40, 84, 0, 240, 0); add('cyl24', SH('#c8342b', 30), 72, 140, 72, 0, 80, 0); break;
+    // playroom
+    case 'bed': foot = 900; add('box', SH('#8a5a30', 20), 1500, 260, 1000, 0, 130, 0); add('box', SOFT('#f4f1ea'), 1460, 140, 960, 0, 330, 0); add('box', SOFT(pick(['#2e7cf6', '#e5372b', '#1fb36b'])), 1000, 60, 1000, 240, 420, 0); add('box', SOFT('#f4f6f8'), 320, 100, 600, -560, 450, 0); add('box', SH('#6a4020', 20), 60, 900, 1020, -760, 450, 0); break;
+    case 'block': { const s = 110 + r() * 70; foot = s * .8; add('box', SH(pick(['#e5372b', '#2e7cf6', '#ffc629', '#1fb36b', '#ff5fa8']), 60), s, s, s, 0, s / 2, 0); add('box', SH('#f4f1ea', 40), s * .5, s * .5, 4, 0, s / 2, s / 2 + 1); break; }
+    case 'brick': { // a toy construction brick with studs
+      const c = pick(['#e5372b', '#2e7cf6', '#ffc629', '#1fb36b', '#f4f1ea']), L = r() < .5 ? 4 : 2; foot = 40 * L;
+      add('box', SH(c, 90), 40 * L, 46, 80, 0, 23, 0); for (let i = 0; i < L; i++) for (const z of [-20, 20]) add('stud', SH(c, 90), 13, 10, 13, -20 * L + 20 + i * 40, 51, z); break;
+    }
+    case 'books': { foot = 220; let y = 0; const n = 2 + (r() * 3 | 0); for (let i = 0; i < n; i++) { const h = 50 + r() * 40; const b = add('box', SH(pick(['#c8342b', '#2e5ea0', '#3f8a35', '#7a3fd1', '#d9822b']), 20), 420 - i * 20, h, 300 - i * 10, (r() - .5) * 40, y + h / 2, (r() - .5) * 40); b.rotation.y = (r() - .5) * .4; add('box', SOFT('#f4f1ea'), 400 - i * 20, h - 10, 6, b.position.x, y + h / 2, b.position.z + 150 - i * 5); y += h; } break; }
+    case 'ball': { foot = 200; const c1 = pick(['#e5372b', '#2e7cf6', '#ffc629']); add('sph24', SH(c1, 90), 210, 210, 210, 0, 210, 0); add('cyl24', SH('#f4f1ea', 90), 214, 60, 214, 0, 210, 0); break; }
+    case 'bear': foot = 200; add('sph24', SOFT('#a0683a'), 170, 190, 150, 0, 190, 0); add('sph24', SOFT('#e2b48a'), 110, 120, 30, 120, 190, 0); add('sph24', SOFT('#a0683a'), 120, 110, 110, 0, 450, 0);
+      for (const s of [-1, 1]) { add('sph24', SOFT('#a0683a'), 45, 45, 25, 0, 560, s * 80); add('sph24', SOFT('#a0683a'), 60, 110, 60, 40, 120, s * 150); add('sph24', SH('#111', 140), 12, 12, 12, 100, 470, s * 40); }
+      add('sph24', SOFT('#e2b48a'), 50, 40, 50, 105, 430, 0); add('sph24', SH('#2a1a10', 120), 14, 10, 16, 150, 440, 0); add('tor24', SH('#e5372b', 40), 70, 70, 120, 20, 360, 0).rotation.x = Math.PI / 2; break;
+    case 'pencil': { foot = 60; const L = 900; const p1 = add('cyl6', SH(pick(['#ffc629', '#e5372b', '#2e7cf6', '#1fb36b']), 50), 26, L, 26, 0, 26, 0); p1.rotation.z = Math.PI / 2; const tip = add('cone24', SOFT('#e2b48a'), 26, 90, 26, L / 2 + 45, 26, 0); tip.rotation.z = -Math.PI / 2; const pin = add('cone24', SH('#222', 60), 9, 30, 9, L / 2 + 80, 26, 0); pin.rotation.z = -Math.PI / 2; const er = add('cyl24', SOFT('#ff7a8a'), 26, 60, 26, -L / 2 - 30, 26, 0); er.rotation.z = Math.PI / 2; break; }
+    case 'crayon': { foot = 30; const c = pick(['#e5372b', '#2e7cf6', '#ffc629', '#1fb36b', '#7a3fd1', '#ff7a1a']); const b = add('cyl24', SH(c, 40), 16, 220, 16, 0, 16, 0); b.rotation.z = Math.PI / 2; const t = add('cone24', SH(c, 40), 16, 40, 16, 130, 16, 0); t.rotation.z = -Math.PI / 2; break; }
+    case 'duck': foot = 90; add('sph24', SH('#ffd84a', 90), 90, 70, 70, 0, 70, 0); add('sph24', SH('#ffd84a', 90), 50, 50, 50, 60, 150, 0); add('cone24', SH('#ff7a1a', 60), 18, 40, 14, 115, 145, 0).rotation.z = -Math.PI / 2; for (const s of [-1, 1]) add('sph24', SH('#111', 140), 8, 8, 8, 85, 165, s * 22); break;
+    case 'dice': foot = 70; add('box', SH('#f4f1ea', 90), 120, 120, 120, 0, 60, 0); for (const [y, z] of [[90, 0], [30, -30], [60, 30], [30, 30]]) add('sph24', SH('#111', 60), 10, 10, 4, 61, y, z); break;
+    case 'toycar': foot = 260; { const c = pick(['#e5372b', '#2e7cf6', '#ffc629']); add('box', SH(c, 110), 480, 120, 240, 0, 110, 0); add('box', SH('#10141c', 140), 240, 90, 220, -30, 210, 0); for (const a of [-1, 1]) for (const b of [-1, 1]) { const w = add('cyl24', SH('#1e1e22', 20), 60, 40, 60, a * 160, 60, b * 120); w.rotation.x = Math.PI / 2; } } break;
+    case 'lamp': foot = 120; add('cyl24', SH('#3a3a40', 60), 120, 20, 120, 0, 10, 0); add('cyl24', SH('#9aa0aa', 120), 14, 900, 14, 0, 460, 0); add('cone24', SH('#ffe6a0', 20), 260, 260, 260, 0, 980, 0); break;
+    // pavement
+    case 'can': { foot = 80; const c = pick(['#e5372b', '#2e7cf6', '#1fb36b']); add('cyl24', SH(c, 120), 70, 250, 70, 0, 125, 0); add('cyl24', SH('#c9ced8', 150), 66, 14, 66, 0, 256, 0); add('box', SH('#f4f1ea', 60), 6, 120, 80, 72, 130, 0); add('box', SH('#9aa0aa', 150), 20, 4, 12, 20, 264, 0); break; }
+    case 'leaf': { foot = 0; const c = pick(['#7cc04a', '#d9822b', '#c0461f', '#e2b23a']); const l = add('sph24', SOFT(c), 220, 6, 120, 0, 5, 0); l.rotation.y = r() * 6; add('box', SOFT('#7a4a24'), 240, 4, 4, 0, 9, 0).rotation.y = l.rotation.y; break; }
+    case 'pebble': { const s = 40 + r() * 90; foot = s; add('dode', facet(pick(['#8a8c94', '#a0a2a8', '#7a7c84'])), s, s * .7, s * .85, 0, s * .35, 0).rotation.set(r(), r() * 6, r()); break; }
+    case 'tcone': foot = 260; add('cone24', SH('#ff6a1a', 50), 240, 760, 240, 0, 380, 0); add('cyl24', SH('#f4f1ea', 90), 150, 80, 150, 0, 470, 0); add('box', SH('#ff6a1a', 40), 520, 30, 520, 0, 15, 0); break;
+    case 'tire': { foot = 420; const t = new THREE.Mesh(GEO.tor24, SH('#1e1e22', 20)); t.scale.set(420, 420, 650); t.position.y = 512; g.add(t); break; }
+    case 'grass': foot = 0; for (let i = 0; i < 6; i++) add('cone', SOFT(pick(['#4f8f3a', '#3c7a2e', '#6aa44a'])), 16, 160 + r() * 220, 7, (r() - .5) * 120, 100, (r() - .5) * 120).rotation.z = (r() - .5) * .5; break;
+    case 'dandelion': foot = 0; add('cyl24', SOFT('#4f8f3a'), 4, 420, 4, 0, 210, 0); add('sph24', SOFT('#ffd84a'), 50, 26, 50, 0, 430, 0); for (let i = 0; i < 3; i++) add('sph24', SOFT('#3c7a2e'), 60, 6, 20, 0, 6, 0).rotation.y = i * 2; break;
+    case 'bottle': foot = 80; add('cyl24', SH('#3a9a5a', 140, .6), 70, 420, 70, 0, 210, 0); add('cyl24', SH('#2a7a4a', 140, .7), 26, 120, 26, 0, 480, 0); break;
+    case 'cap': foot = 40; add('cyl24', SH(pick(['#e5372b', '#2e7cf6', '#ffc629', '#c9ced8']), 120), 46, 12, 46, 0, 6, 0); break;
+    case 'acorn': foot = 40; add('sph24', SH('#a0682a', 60), 34, 46, 34, 0, 40, 0); add('sph24', SOFT('#6a4020'), 38, 22, 38, 0, 72, 0); add('cyl24', SOFT('#6a4020'), 4, 20, 4, 0, 96, 0); break;
+    case 'coin': foot = 40; add('cyl24', SH('#d8b040', 150), 50, 6, 50, 0, 3, 0); break;
+    case 'snail': foot = 70; add('sph24', SOFT('#c8b090'), 90, 20, 30, 0, 14, 0); add('tor24', SH('#a0602a', 60), 50, 50, 70, -10, 60, 0); for (const s of [-1, 1]) add('cyl24', SOFT('#c8b090'), 3, 40, 3, 80, 36, s * 8).rotation.z = -.4; break;
+    // pool table
+    case 'pball': { foot = 110; const n = 1 + (r() * 15 | 0), c = ['#ffc629', '#2e5ea0', '#e5372b', '#7a3fd1', '#ff7a1a', '#1f7a45', '#8a2a20', '#111111'][n % 8]; add('sph24', SH(c, 140), 120, 120, 120, 0, 120, 0); if (n > 8) add('cyl24', SH('#f4f1ea', 140), 122, 70, 122, 0, 120, 0); add('sph24', SH('#f4f1ea', 140), 44, 44, 12, 0, 150, 112); break; }
+    case 'rack': { foot = 420; // a triangle of balls in their frame
+      let k = 0; for (let row = 0; row < 5; row++) for (let i = 0; i <= row; i++) { const c = ['#ffc629', '#2e5ea0', '#e5372b', '#7a3fd1', '#ff7a1a', '#1f7a45', '#8a2a20', '#111111'][k++ % 8]; add('sph24', SH(c, 140), 60, 60, 60, row * 104, 60, (i - row / 2) * 120); }
+      for (const [a, b] of [[[-70, 0], [480, 340]], [[-70, 0], [480, -340]], [[480, -340], [480, 340]]]) { const dx = b[0] - a[0], dz = b[1] - a[1]; const m = add('box', SH('#6a3a1e', 40), Math.hypot(dx, dz), 50, 20, (a[0] + b[0]) / 2, 25, (a[1] + b[1]) / 2); m.rotation.y = -Math.atan2(dz, dx); } break; }
+    case 'chalk': foot = 70; add('box', SH('#2e7cf6', 20), 110, 110, 110, 0, 55, 0); add('box', SOFT('#1a5aa0'), 80, 4, 80, 0, 111, 0); break;
+    case 'cue': { foot = 0; const c = add('cyl24', SH('#c49553', 60), 22, 3200, 22, 0, 24, 0); c.rotation.z = Math.PI / 2; const t = add('cyl24', SH('#3a2010', 60), 30, 900, 30, -1500, 30, 0); t.rotation.z = Math.PI / 2; const tip = add('cyl24', SH('#2e7cf6', 20), 22, 30, 22, 1615, 24, 0); tip.rotation.z = Math.PI / 2; break; }
+    case 'bridge': foot = 0; add('cyl24', SH('#c49553', 60), 14, 1600, 14, 0, 20, 0).rotation.z = Math.PI / 2; add('box', SH('#c9ced8', 140), 40, 120, 160, 820, 60, 0); break;
   }
   g.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
+  g.userData.foot = foot;
   return g;
 }
+// what stands around each track: far-away big things, and small clutter right along the kerbs
 const MINI_PROPS = {
-  kitchen: [['fridge', 1, 900], ['counter', 2, 760], ['chair', 3, 360], ['cup', 6, 140], ['plate', 4, 240], ['apple', 4, 110], ['orange', 4, 110], ['cereal', 3, 220], ['spoon', 3, 320]],
-  room: [['bed', 1, 1000], ['block', 9, 120], ['books', 5, 260], ['ball', 2, 230], ['bear', 2, 240], ['pencil', 4, 500], ['lamp', 1, 200]],
-  street: [['can', 4, 120], ['leaf', 12, 170], ['pebble', 14, 90], ['tcone', 2, 300], ['tire', 1, 500], ['grass', 14, 90], ['bottle', 2, 120]],
-  billiard: [['pball', 12, 130], ['chalk', 3, 90], ['cue', 1, 1700]],
+  kitchen: { big: [['fridge', 1, 900], ['counter', 2, 760], ['chair', 4, 360], ['cup', 8, 140], ['plate', 6, 240], ['apple', 5, 110], ['orange', 5, 110], ['cereal', 3, 220], ['jar', 3, 110], ['bread', 3, 150]],
+    near: ['sugar', 'sugar', 'crumb', 'crumb', 'crumb', 'spoon', 'fork', 'knife', 'cheese', 'cup', 'apple'] },
+  room: { big: [['bed', 1, 1000], ['block', 10, 120], ['books', 6, 260], ['ball', 3, 230], ['bear', 2, 240], ['pencil', 4, 500], ['lamp', 1, 200], ['toycar', 2, 300]],
+    near: ['brick', 'brick', 'brick', 'crayon', 'crayon', 'duck', 'dice', 'block'] },
+  street: { big: [['can', 5, 120], ['tcone', 2, 300], ['tire', 1, 500], ['bottle', 3, 120], ['pebble', 18, 90], ['leaf', 16, 170], ['dandelion', 8, 80]],
+    near: ['grass', 'grass', 'grass', 'pebble', 'cap', 'acorn', 'coin', 'leaf', 'snail', 'dandelion'] },
+  billiard: { big: [['pball', 14, 130], ['rack', 1, 520], ['chalk', 3, 90], ['cue', 1, 1700], ['bridge', 1, 900]],
+    near: ['pball', 'chalk'] },
 };
+function decalTex(kind) { // flat things lying on the floor
+  return G3['dec_' + kind] || (G3['dec_' + kind] = cTex(256, 256, (x, w, h) => {
+    const r = rng(kind.length * 13);
+    if (kind === 'hopscotch') { x.strokeStyle = 'rgba(255,255,255,.85)'; x.lineWidth = 6; x.fillStyle = 'rgba(255,120,180,.85)'; x.font = 'bold 40px sans-serif'; [[96, 10], [96, 70], [36, 130], [156, 130], [96, 190]].forEach(([px, py], i) => { x.strokeRect(px, py, 64, 56); x.fillText(String(i + 1), px + 20, py + 42); }); }
+    else if (kind === 'manhole') { x.fillStyle = '#3a3c40'; x.beginPath(); x.arc(128, 128, 120, 0, 7); x.fill(); x.strokeStyle = '#55585e'; x.lineWidth = 6; for (let i = 0; i < 6; i++) { x.beginPath(); x.arc(128, 128, 20 + i * 18, 0, 7); x.stroke(); } }
+    else if (kind === 'crack') { x.strokeStyle = 'rgba(0,0,0,.6)'; x.lineWidth = 4; let px = 10, py = 128; x.beginPath(); x.moveTo(px, py); while (px < 246) { px += 12 + r() * 20; py += (r() - .5) * 50; x.lineTo(px, py); } x.stroke(); }
+    else if (kind === 'coffee') { x.strokeStyle = 'rgba(110,70,30,.55)'; x.lineWidth = 10; x.beginPath(); x.arc(128, 128, 90, .3, 5.9); x.stroke(); x.fillStyle = 'rgba(110,70,30,.18)'; x.beginPath(); x.arc(128, 128, 84, 0, 7); x.fill(); }
+    else if (kind === 'flour') { for (let i = 0; i < 1600; i++) { const a = r() * 6.28, d = Math.pow(r(), 1.6) * 120; x.fillStyle = 'rgba(255,255,255,.55)'; x.fillRect(128 + Math.cos(a) * d, 128 + Math.sin(a) * d, 3, 3); } }
+    else if (kind === 'rug') { x.fillStyle = '#c8342b'; x.fillRect(0, 0, w, h); x.strokeStyle = '#ffc629'; x.lineWidth = 10; x.strokeRect(14, 14, w - 28, h - 28); x.fillStyle = '#2e5ea0'; x.beginPath(); x.moveTo(128, 50); x.lineTo(206, 128); x.lineTo(128, 206); x.lineTo(50, 128); x.closePath(); x.fill(); }
+    else if (kind === 'drawing') { x.fillStyle = '#fafafa'; x.fillRect(0, 0, w, h); for (const c of ['#e5372b', '#2e7cf6', '#1fb36b', '#ffc629']) { x.strokeStyle = c; x.lineWidth = 7; x.beginPath(); let px = r() * w, py = r() * h; x.moveTo(px, py); for (let k = 0; k < 8; k++) { px = clamp(px + (r() - .5) * 120, 10, w - 10); py = clamp(py + (r() - .5) * 120, 10, h - 10); x.lineTo(px, py); } x.stroke(); } x.fillStyle = '#ffc629'; x.beginPath(); x.arc(200, 50, 26, 0, 7); x.fill(); }
+    else if (kind === 'chalkmark') { x.fillStyle = 'rgba(80,150,255,.5)'; for (let i = 0; i < 400; i++) x.fillRect(100 + r() * 60, 100 + r() * 60, 3, 3); x.fillStyle = 'rgba(255,255,255,.8)'; x.beginPath(); x.arc(128, 128, 12, 0, 7); x.fill(); }
+  }, false));
+}
+const MINI_DECALS = { kitchen: [['coffee', 6, 160], ['flour', 4, 300]], room: [['rug', 2, 1100], ['drawing', 5, 260]], street: [['hopscotch', 3, 420], ['manhole', 2, 360], ['crack', 8, 300]], billiard: [['chalkmark', 6, 140]] };
 function buildMini3D(map, g) {
+  smoothGeo();
   const tr = map._track, hw = map.width / 2, r = rng(map.seed * 97), lim = hw + map.margin + 20;
   const x0 = tr.minX - 700, x1 = tr.maxX + 700, z0 = tr.minY - 700, z1 = tr.maxY + 700;
-  // props: rejection sampling around the track, never on it
-  const placed = [];
-  for (const [kind, n, rad] of MINI_PROPS[map.id] || []) for (let i = 0; i < n; i++) for (let tries = 0; tries < 40; tries++) {
+  const placed = [], shadows = [];
+  const put = (kind, x, z, rad) => { const m = prop(kind, r); m.position.set(x, 0, z); m.rotation.y = r() * 6.28; g.add(m); placed.push([x, z, rad]); if (m.userData.foot) shadows.push([x, z, m.userData.foot]); m.traverse(o => { o.updateMatrix(); o.matrixAutoUpdate = false; }); m.updateMatrixWorld(true); };
+  // flat decals first, under everything
+  for (const [kind, n, size] of MINI_DECALS[map.id] || []) for (let i = 0; i < n; i++) for (let tries = 0; tries < 30; tries++) {
+    const x = x0 + r() * (x1 - x0), z = z0 + r() * (z1 - z0), onTrack = nearDist(tr, x, z) < hw + size / 2;
+    if (onTrack && kind !== 'crack' && kind !== 'chalkmark' && kind !== 'coffee' && kind !== 'flour') continue; // stains may cross the track, papers and rugs stay off it
+    const m = part('plane', new THREE.MeshBasicMaterial({ map: decalTex(kind), transparent: kind !== 'rug' && kind !== 'drawing', depthWrite: false }), size, 1, size * (kind === 'rug' ? .65 : 1), x, onTrack ? 1.0 : .3, z, g);
+    m.rotation.y = r() * 6.28; m.renderOrder = 1; break;
+  }
+  // big props around the track
+  const P = MINI_PROPS[map.id] || { big: [], near: [] };
+  for (const [kind, n, rad] of P.big) for (let i = 0; i < n; i++) for (let tries = 0; tries < 50; tries++) {
     const x = x0 + r() * (x1 - x0), z = z0 + r() * (z1 - z0);
     if (nearDist(tr, x, z) < lim + rad) continue;
     if (placed.some(q => Math.hypot(q[0] - x, q[1] - z) < q[2] + rad)) continue;
-    const m = prop(kind, r); m.position.set(x, 0, z); m.rotation.y = r() * 6.28; g.add(m); placed.push([x, z, rad]); break;
+    put(kind, x, z, rad); break;
   }
-  if (map.id === 'billiard') { // the table: a wooden rail all round, pockets in the corners and the middles
-    const W = x1 - x0, D = z1 - z0, wood = facet('#6a3a1e'), cush = facet('#176034');
+  // small clutter right along the kerbs, so the camera always has something nearby
+  const step = Math.round(70 / tr.SP);
+  for (let i = 0; i < tr.N; i += step) for (const sg of [-1, 1]) {
+    if (r() < .45) continue;
+    const p = tr.pts[i], d = lim + 10 + r() * 160, x = p.x + p.nx * sg * d + p.tx * (r() - .5) * 40, z = p.y + p.ny * sg * d + p.ty * (r() - .5) * 40;
+    if (nearDist(tr, x, z) < lim) continue;
+    if (placed.some(q => Math.hypot(q[0] - x, q[1] - z) < q[2] + 40)) continue;
+    put(P.near[(r() * P.near.length) | 0], x, z, 40);
+  }
+  // soft contact shadows under everything that stands on the floor
+  const blobTex = G3.blobTex || (G3.blobTex = cTex(64, 64, (x, w, h) => { const gr = x.createRadialGradient(32, 32, 0, 32, 32, 32); gr.addColorStop(0, 'rgba(0,0,0,.55)'); gr.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = gr; x.fillRect(0, 0, w, h); }, false));
+  if (shadows.length) {
+    const im = new THREE.InstancedMesh(GEO.blob, new THREE.MeshBasicMaterial({ map: blobTex, transparent: true, depthWrite: false, opacity: .8 }), shadows.length), dm = new THREE.Object3D();
+    shadows.forEach(([x, z, f], i) => { dm.position.set(x, .6, z); dm.scale.set(f * 1.25, 1, f * 1.25); dm.updateMatrix(); im.setMatrixAt(i, dm.matrix); });
+    im.renderOrder = 1; g.add(im);
+  }
+  if (map.id === 'billiard') { // the table: a wooden rail all round, pockets in the corners and the middles, diamond markers
+    const W = x1 - x0, D = z1 - z0, wood = SH('#6a3a1e', 60), cush = SOFT('#176034');
     for (const [cx, cz, sx, sz] of [[(x0 + x1) / 2, z0, W + 200, 120], [(x0 + x1) / 2, z1, W + 200, 120], [x0, (z0 + z1) / 2, 120, D], [x1, (z0 + z1) / 2, 120, D]]) { part('box', wood, sx, 140, sz, cx, 70, cz, g); part('box', cush, sx > sz ? sx - 240 : 40, 60, sx > sz ? 40 : sz - 240, cx + (sx > sz ? 0 : (cx < (x0 + x1) / 2 ? 80 : -80)), 60, cz + (sx > sz ? (cz < (z0 + z1) / 2 ? 80 : -80) : 0), g); }
+    for (let k = 1; k < 8; k++) for (const zz of [z0, z1]) part('sph24', SH('#f4f1ea', 140), 12, 6, 12, x0 + W * k / 8, 141, zz, g);
     for (const [px, pz] of [[x0 + 90, z0 + 90], [x1 - 90, z0 + 90], [x0 + 90, z1 - 90], [x1 - 90, z1 - 90], [(x0 + x1) / 2, z0 + 70], [(x0 + x1) / 2, z1 - 70]]) part('circle', basic('#050505'), 110, 1, 110, px, 1.2, pz, g);
-    const lamp = new THREE.Group(); part('cyl', facet('#1f5a3a'), 700, 120, 260, 0, 0, 0, lamp); part('box', basic('#fff6d8'), 1300, 4, 440, 0, -62, 0, lamp); lamp.position.set((x0 + x1) / 2, 1700, (z0 + z1) / 2); g.add(lamp);
+    const lamp = new THREE.Group(); part('cyl24', SH('#1f5a3a', 60), 700, 120, 260, 0, 0, 0, lamp); part('box', basic('#fff6d8'), 1300, 4, 440, 0, -62, 0, lamp); lamp.position.set((x0 + x1) / 2, 1700, (z0 + z1) / 2); g.add(lamp);
   }
   if (map.indoor) { // the room itself: walls with skirting, a ceiling with a lamp, a window on the kitchen wall
     const X0 = x0 - 900, X1 = x1 + 900, Z0 = z0 - 900, Z1 = z1 + 900, H = 2800, wallM = new THREE.MeshLambertMaterial({ map: wallTex(map), side: THREE.DoubleSide });
     for (const [cx, cz, w, ry] of [[(X0 + X1) / 2, Z0, X1 - X0, 0], [(X0 + X1) / 2, Z1, X1 - X0, Math.PI], [X0, (Z0 + Z1) / 2, Z1 - Z0, Math.PI / 2], [X1, (Z0 + Z1) / 2, Z1 - Z0, -Math.PI / 2]]) {
       const m = new THREE.Mesh(new THREE.PlaneGeometry(w, H), wallM); m.position.set(cx, H / 2, cz); m.rotation.y = ry; g.add(m);
-      const sk = part('box', facet('#f4f1ea'), w, 120, 30, cx, 60, cz, g); sk.rotation.y = ry;
+      const sk = part('box', SH('#f4f1ea', 40), w, 120, 30, cx, 60, cz, g); sk.rotation.y = ry;
     }
     const ceil = new THREE.Mesh(new THREE.PlaneGeometry(X1 - X0, Z1 - Z0).rotateX(Math.PI / 2), lam('#f6f3ec')); ceil.position.set((X0 + X1) / 2, H, (Z0 + Z1) / 2); g.add(ceil);
-    if (map.id === 'kitchen') { const win = part('box', basic('#bfe4ff'), 1200, 900, 6, (X0 + X1) / 2, 1500, Z0 + 4, g); part('box', facet('#f4f1ea'), 1260, 40, 20, (X0 + X1) / 2, 1040, Z0 + 10, g); win.receiveShadow = false; }
+    if (map.id === 'kitchen') { const win = part('box', basic('#bfe4ff'), 1200, 900, 6, (X0 + X1) / 2, 1500, Z0 + 4, g); part('box', SH('#f4f1ea', 40), 1260, 40, 20, (X0 + X1) / 2, 1040, Z0 + 10, g); win.receiveShadow = false; }
   }
 }
 function wallTex(map) {
@@ -4023,7 +4133,7 @@ function buildMap3D(map) {
     gcol[i * 3] = k; gcol[i * 3 + 1] = k * (TH(map) === 'valley' || TH(map) === 'jungle' ? 1.02 : 1); gcol[i * 3 + 2] = k;
   }
   gg.setAttribute('color', new THREE.BufferAttribute(gcol, 3));
-  const ground = new THREE.Mesh(gg, map.lava ? new THREE.MeshBasicMaterial({ map: gt }) : new THREE.MeshLambertMaterial({ map: gt, vertexColors: true }));
+  const ground = new THREE.Mesh(gg, map.lava ? new THREE.MeshBasicMaterial({ map: gt }) : map.floor === 'tiles' ? new THREE.MeshPhongMaterial({ map: gt, vertexColors: true, shininess: 60, specular: 0x555555 }) : new THREE.MeshLambertMaterial({ map: gt, vertexColors: true }));
   ground.position.set(cx, 0, cy); ground.receiveShadow = true; g.add(ground);
   if (map.lava) map._lavaTex = gt;
   // shoulder, kerbs, asphalt
@@ -4063,7 +4173,7 @@ function buildMap3D(map) {
   if (!map.lava) {
     const wallH = map.night ? 22 : snowy ? 10 : map.mini ? 16 : 7, lim = hw + map.margin + 8;
     const wt = cTex(64, 32, (x, w, h) => { x.fillStyle = C.barrier; x.fillRect(0, 0, w, h); x.fillStyle = C.barrier2; x.fillRect(0, 0, 32, h); x.fillStyle = 'rgba(0,0,0,.25)'; x.fillRect(0, h - 5, w, 5); });
-    const wm = snowy ? facet('#eef4f9', { side: THREE.DoubleSide }) : new THREE.MeshLambertMaterial({ map: wt, side: THREE.DoubleSide });
+    const wm = map.mini ? new THREE.MeshPhongMaterial({ map: barrierTex(map), side: THREE.DoubleSide, shininess: map.id === 'room' ? 90 : 20 }) : snowy ? facet('#eef4f9', { side: THREE.DoubleSide }) : new THREE.MeshLambertMaterial({ map: wt, side: THREE.DoubleSide });
     g.add(wallStrip(tr, lim, wallH, wm, 44), wallStrip(tr, -lim, wallH, wm, 44));
     if (snowy) { // the bank is snow; orange-tipped marker poles show the trail
       for (const sg of [-1, 1]) g.add(ribbon(tr, sg > 0 ? lim - 10 : -lim, sg > 0 ? lim : -lim + 10, wallH, facet('#f6fafd'), 48));
