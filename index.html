@@ -22,6 +22,7 @@
   --go:#2bd46b;
   --display:'Russo One','Arial Black',Impact,sans-serif;
   --body:'Exo 2','Segoe UI',Roboto,Arial,sans-serif;
+  --sticky:#14161c;
   color-scheme:dark;
 }
 [hidden]{display:none!important}
@@ -176,6 +177,69 @@ tr.me td{color:var(--accent)}
 .touch button.held{background:rgba(255,198,41,.35)}
 body.touchmode .hud-bl,body.touchmode .mini{bottom:calc(env(safe-area-inset-bottom,0px) + 104px)}
 
+/* Fit any screen: one column on narrow screens, two columns when wide (or wide and short), then shrink with height.
+   The main action stays pinned to the bottom edge when a panel still has to scroll. */
+.overlay{overscroll-behavior:contain}
+.menu-panel{--gap:22px;gap:var(--gap)}
+.menu-panel .col{display:contents}
+.cta-row,.garage-panel>#garageBack,.results .btns,#settings #setDone{position:sticky;bottom:0;z-index:2;background:var(--sticky);box-shadow:0 -14px 16px 2px var(--sticky);border-radius:10px}
+@media (min-width:980px),(min-width:700px) and (max-height:600px){
+  .menu{background:linear-gradient(90deg,rgba(9,10,13,.94) 0%,rgba(9,10,13,.72) 60%,rgba(9,10,13,.2) 100%)}
+  .menu-panel{width:min(1060px,100%);grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);column-gap:30px}
+  .menu-panel .col{display:grid;gap:var(--gap);align-content:start;min-width:0}
+  .menu-panel .col-side{align-content:space-between}
+}
+@media (max-height:820px){
+  .overlay{padding-block:max(12px,env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-bottom,0px))}
+  .panel{gap:16px;padding:20px}
+  .menu-panel{--gap:16px}
+  h1{margin:10px 0 4px;font-size:clamp(30px,4.6vw,42px)}
+  .maps,.cars{gap:6px}
+  .map{padding:6px 10px 6px 6px;gap:12px;grid-template-columns:86px minmax(0,1fr) auto}
+  .map canvas{width:86px;height:50px}
+  .car{padding:8px 12px 8px 8px}
+  .car canvas{width:100px;height:58px}
+  td{padding:7px 6px}
+  .res-title{font-size:30px}
+}
+@media (max-height:660px){
+  .lede,.m-note,.c-tag{display:none}
+  .map{grid-template-columns:64px minmax(0,1fr) auto}
+  .map canvas{width:64px;height:38px}
+  .keys ul{display:none}
+  .cta,.cta-row .btn{height:48px}
+  .cta{font-size:18px}
+  .seg button{height:36px}
+  .garage-strip{grid-template-columns:72px minmax(0,1fr) auto auto;padding:6px 10px 6px 6px}
+  .garage-strip canvas{width:72px;height:42px}
+  .car{grid-template-columns:80px minmax(0,1fr) 170px}
+  .car canvas{width:80px;height:46px}
+  .st{font-size:11px}
+  .btn{height:42px}
+}
+@media (max-height:520px){
+  .panel{padding:14px;gap:12px}
+  .menu-panel{--gap:12px}
+  h1{font-size:26px;margin:6px 0 0}
+  .checker{height:8px;background-size:8px 8px}
+  .label{margin-bottom:6px}
+  .map{grid-template-columns:48px minmax(0,1fr) auto;padding:4px 8px 4px 4px}
+  .map canvas{width:48px;height:30px}
+  .rec{display:none}
+  .res-title{font-size:24px;margin-top:6px}
+  td{padding:5px 6px}
+  .board{display:none}
+  .mini{width:130px;height:84px}
+  .hud-bl b{font-size:36px}
+  .pos b{font-size:30px}
+  .box{padding:5px 10px}
+  .box b{font-size:15px}
+  .lights{top:calc(env(safe-area-inset-top,0px) + 58px);padding:8px 12px;gap:8px}
+  .lights i{width:26px;height:26px}
+  .touch button{width:60px;height:60px}
+  body.touchmode .hud-bl,body.touchmode .mini{bottom:calc(env(safe-area-inset-bottom,0px) + 88px)}
+}
+
 @media (max-width:720px){
   .board{display:none}
   .mini{width:140px;height:96px}
@@ -198,6 +262,7 @@ body.touchmode .hud-bl,body.touchmode .mini{bottom:calc(env(safe-area-inset-bott
   .map{grid-template-columns:80px minmax(0,1fr)}
   .map canvas{width:80px;height:50px}
   .m-side{grid-column:2;justify-items:start;text-align:left;display:flex;gap:8px;flex-wrap:wrap}
+  .m-note{display:none}
   .cta-row{grid-template-columns:1fr}
 }
 </style>
@@ -230,7 +295,8 @@ body.touchmode .hud-bl,body.touchmode .mini{bottom:calc(env(safe-area-inset-bott
 </div>
 
 <div id="menu" class="overlay menu">
-  <div class="panel">
+  <div class="panel menu-panel">
+    <div class="col">
     <header>
       <div class="checker" aria-hidden="true"></div>
       <h1 data-th="title">Турбо <span>Круг</span></h1>
@@ -240,6 +306,8 @@ body.touchmode .hud-bl,body.touchmode .mini{bottom:calc(env(safe-area-inset-bott
       <h2 class="label" data-t="track">Трасса</h2>
       <div id="maps" class="maps"></div>
     </section>
+    </div>
+    <div class="col col-side">
     <div class="row">
       <section>
         <h2 class="label" data-t="laps">Круги</h2>
@@ -281,6 +349,7 @@ body.touchmode .hud-bl,body.touchmode .mini{bottom:calc(env(safe-area-inset-bott
       <button id="startBtn" class="cta"><span data-t="start">На старт</span> <kbd>Enter</kbd></button>
       <button id="settingsBtn" class="btn" data-t="settings">Настройки</button>
     </div>
+    </div>
   </div>
 </div>
 
@@ -316,9 +385,11 @@ body.touchmode .hud-bl,body.touchmode .mini{bottom:calc(env(safe-area-inset-bott
       <div class="set">
         <h3 class="label" data-t="camera">Камера</h3>
         <div id="camSeg" class="seg words">
-          <button data-cam="chase" aria-pressed="true" data-t="camChase">Сзади</button>
+          <button data-cam="tilt" aria-pressed="true" data-t="camTilt">Наклон</button>
+          <button data-cam="chase" aria-pressed="false" data-t="camChase">За машиной</button>
           <button data-cam="top" aria-pressed="false" data-t="camTop">Сверху</button>
         </div>
+        <p class="seg-note" data-t="camNote">В режимах «Наклон» и «Сверху» экран не вращается на поворотах, так меньше укачивает.</p>
       </div>
       <div class="set">
         <h3 class="label" data-t="hazards">Сюрпризы на трассе</h3>
@@ -398,7 +469,8 @@ const STR = {
     gDesc: 'Очки дают за место на финише. Против сложных соперников и на длинных гонках их больше.',
     selected: 'Выбрана', select: 'Выбрать', buy: 'Купить за {n}', short: 'Не хватает {n}',
     sSpeed: 'Скорость', sAccel: 'Разгон', sGrip: 'Сцепление', stock: 'база', kmhLow: 'км/ч', done: 'Готово',
-    volume: 'Громкость', language: 'Язык', camera: 'Камера', camChase: 'Сзади с наклоном', camTop: 'Сверху',
+    volume: 'Громкость', language: 'Язык', camera: 'Камера', camTilt: 'Наклон', camChase: 'За машиной', camTop: 'Сверху',
+    camNote: 'В режимах «Наклон» и «Сверху» экран не вращается на поворотах, так меньше укачивает.',
     brake: 'Тормоз', gas: 'Газ', aLeft: 'Влево', aRight: 'Вправо', aPause: 'Пауза', aMini: 'Мини-карта', aCanvas: 'Гоночная трасса',
     'drv.you': 'Вы', 'drv.bolt': 'Молния', 'drv.cobra': 'Кобра', 'drv.comet': 'Комета', 'drv.baron': 'Барон',
     'car.start': 'Старт', 'car.start.tag': 'Надёжная база, с неё начинают все',
@@ -443,7 +515,8 @@ const STR = {
     gDesc: 'You earn points for your finishing place. Hard rivals and longer races pay more.',
     selected: 'Selected', select: 'Select', buy: 'Buy for {n}', short: '{n} short',
     sSpeed: 'Speed', sAccel: 'Accel', sGrip: 'Grip', stock: 'stock', kmhLow: 'km/h', done: 'Done',
-    volume: 'Volume', language: 'Language', camera: 'Camera', camChase: 'Tilted chase', camTop: 'Top-down',
+    volume: 'Volume', language: 'Language', camera: 'Camera', camTilt: 'Tilted', camChase: 'Chase', camTop: 'Top-down',
+    camNote: 'Tilted and Top-down keep the screen from rotating in corners, which is easier on the eyes.',
     brake: 'Brake', gas: 'Gas', aLeft: 'Left', aRight: 'Right', aPause: 'Pause', aMini: 'Minimap', aCanvas: 'Race track',
     'drv.you': 'You', 'drv.bolt': 'Bolt', 'drv.cobra': 'Cobra', 'drv.comet': 'Comet', 'drv.baron': 'Baron',
     'car.start': 'Starter', 'car.start.tag': 'A reliable base, everyone starts here',
@@ -716,7 +789,7 @@ const S = {
   mode: 'menu', mapIndex: 0, laps: 3, map: null, track: null, cars: [], time: 0, clock: 0, cd: 0, goT: 0,
   finishCount: 0, parts: [], cam: { x: 0, y: 0, z: 1, a: 0 }, shake: 0, followIdx: 0, followT: 0,
   resultsT: -1, prevMode: null, lit: -1, newRecord: false, flakes: [], diff: 1, simDiff: null, earned: 0,
-  volume: 60, prevVolume: 60, camMode: 'chase', haz: [], hazT: 5, hazOn: true,
+  volume: 60, prevVolume: 60, camMode: 'tilt', haz: [], hazT: 5, hazOn: true,
 };
 // wallet and settings live in this browser only
 const wallet = { coins: 0, owned: ['start'], car: 'start' };
@@ -1301,12 +1374,12 @@ function updHud(dt) {
 let W = 0, H = 0, DPR = 1, VIEW = { cw: 0, ch: 0, ax: 0, ay: 0 };
 function resize() {
   W = innerWidth; H = innerHeight;
-  const chase = S.camMode === 'chase';
+  const chase = S.camMode !== 'top';
   if (chase) {
     const P = Math.max(W, H) * 1.05, oy = H * .3, c = Math.cos(TILT), s = Math.sin(TILT);
     const dTop = H * P / (c * P - oy * s);
     const ch = Math.ceil(dTop * 1.04), cw = Math.ceil(W * (P + dTop * s) / P * 1.06);
-    const yCar = H * .76, dCar = (H - yCar) * P / ((yCar - oy) * s + c * P);
+    const yCar = H * (S.camMode === 'chase' ? .76 : .6), dCar = (H - yCar) * P / ((yCar - oy) * s + c * P);
     VIEW = { cw, ch, ax: cw / 2, ay: ch - dCar };
     stage.style.perspective = P + 'px'; stage.style.perspectiveOrigin = `50% ${oy}px`;
     cvs.style.left = (W - cw) / 2 + 'px'; cvs.style.top = (H - ch) + 'px';
@@ -1471,23 +1544,24 @@ function drawNight() {
   ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
 }
 function render(dt) {
-  const map = S.map, tr = S.track, tm = S.clock, chase = S.camMode === 'chase';
+  const map = S.map, tr = S.track, tm = S.clock, chase = S.camMode !== 'top', turn = S.camMode === 'chase';
   if (S.mode === 'menu') {
     S.followT -= dt;
     if (S.followT <= 0) { S.followT = 7; S.followIdx = S.cars.indexOf(standings()[0]); }
   }
   const f = followCar();
-  if (chase) {
-    const k = Math.min(1, dt * 10);
+  if (turn) {
+    // follow the road ahead rather than the car's nose, and turn slowly: steering and drifts don't swing the screen
+    const k = Math.min(1, dt * 10), ta = tr.pts[(f.idx + 18) % tr.N].ang;
     S.cam.x += (f.x - S.cam.x) * k; S.cam.y += (f.y - S.cam.y) * k;
-    S.cam.a += wrapAng(f.angle - S.cam.a) * Math.min(1, dt * 4);
+    S.cam.a += wrapAng(ta + clamp(wrapAng(f.angle - ta), -.35, .35) * .3 - S.cam.a) * Math.min(1, dt * 1.5);
   } else {
-    const k = Math.min(1, dt * 5);
-    S.cam.x += (f.x + f.vx * .35 - S.cam.x) * k; S.cam.y += (f.y + f.vy * .35 - S.cam.y) * k;
+    const k = Math.min(1, dt * 4);
+    S.cam.x += (f.x + f.vx * .3 - S.cam.x) * k; S.cam.y += (f.y + f.vy * .3 - S.cam.y) * k;
   }
   const baseZ = clamp(Math.min(W, H) / 860, .42, 1.1) * (chase ? 1.08 : 1);
-  S.cam.z += (baseZ * (1 - .14 * Math.min(1, f.speed / BASE)) - S.cam.z) * Math.min(1, dt * 2);
-  const z = S.cam.z, rot = chase ? -S.cam.a - Math.PI / 2 : 0;
+  S.cam.z += (baseZ * (1 - .07 * Math.min(1, f.speed / BASE)) - S.cam.z) * Math.min(1, dt);
+  const z = S.cam.z, rot = turn ? -S.cam.a - Math.PI / 2 : 0;
   let sx = 0, sy = 0;
   if (S.shake > 0) { sx = (Math.random() - .5) * S.shake; sy = (Math.random() - .5) * S.shake; S.shake = Math.max(0, S.shake - dt * 30); }
 
@@ -1669,10 +1743,11 @@ function setVolume(v) {
   $('#vol').value = S.volume; $('#volOut').textContent = S.volume + '%';
   store.set('turbo-krug-vol', String(S.volume));
 }
-function setCam(mode) {
-  S.camMode = mode === 'top' ? 'top' : 'chase';
+const CAMS = ['tilt', 'chase', 'top'];
+function setCam(mode, save = true) {
+  S.camMode = CAMS.includes(mode) ? mode : 'tilt';
   $('#camSeg').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.cam === S.camMode)));
-  store.set('turbo-krug-cam', S.camMode);
+  if (save) store.set('turbo-krug-cam2', S.camMode);
   resize();
 }
 function setLang(l) {
@@ -1864,8 +1939,7 @@ function start(data) {
   const sd = [0, 1, 2].includes(data.diff) ? data.diff : parseInt(store.get('turbo-krug-diff'), 10);
   if ([0, 1, 2].includes(sd)) S.diff = sd;
   const v = parseInt(store.get('turbo-krug-vol'), 10); setVolume(v >= 0 && v <= 100 ? v : 60);
-  S.camMode = store.get('turbo-krug-cam') === 'top' ? 'top' : 'chase';
-  $('#camSeg').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.cam === S.camMode)));
+  setCam(store.get('turbo-krug-cam2'), false);
   setHaz(store.get('turbo-krug-haz') !== 'off');
   loadWallet();
   resize();
