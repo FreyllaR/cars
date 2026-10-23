@@ -8,8 +8,8 @@ const path = require('path');
 
 const PORT = +process.env.PORT || 4100;
 const DATA = process.env.DATA || path.join(__dirname, 'data');
-const MAPS = ['valley', 'canyon', 'pass', 'city', 'volcano', 'beach', 'jungle', 'space', 'meadow', 'autumn', 'farm', 'dunes', 'mesa', 'oasis', 'glacier', 'alpine', 'polar', 'neon', 'harbor', 'raincity', 'ashlands', 'inferno', 'tropic', 'lagoon', 'swamp', 'temple', 'moon', 'mars', 'station', 'haunted', 'kitchen', 'room', 'street', 'billiard']; // keep in sync with MAPS in the game
-const QUICK_MAPS = MAPS.slice(0, 30); // quick matches use the main tracks, not the mini ones
+const MAPS = ['valley', 'pass', 'city', 'volcano', 'space', 'kitchen', 'room', 'street', 'billiard']; // keep in sync with MAPS in the game
+const QUICK_MAPS = MAPS.slice(0, 5); // quick matches use the main tracks, not the mini ones
 const VEHICLES = /^[a-z0-9]{2,16}$/;
 const MAX_PLAYERS = 5;
 const RELAYED = new Set(['s', 'b', 'hz', 'oil', 'fin', 'fx', 'trap']);
