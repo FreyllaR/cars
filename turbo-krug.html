@@ -129,7 +129,7 @@ h1 span{color:var(--accent)}
 .swatches button{width:30px;height:30px;border-radius:50%;border:2px solid transparent;box-shadow:inset 0 0 0 2px rgba(0,0,0,.3)}
 .swatches button[aria-pressed="true"]{border-color:var(--fg)}
 .vd-note{margin:0;font-size:12px;color:var(--muted)}
-.ach-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px}
+.ach-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:8px}
 .ach-item{display:grid;grid-template-columns:36px minmax(0,1fr);gap:10px;align-items:start;padding:10px 12px;background:var(--panel-2);border:1px solid var(--line);border-radius:10px}
 .ach-item.done{border-color:#4d5a2a;background:#1f2416}
 .ach-item i{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:#2c313c;font-style:normal;font-family:var(--display);color:var(--muted)}
@@ -245,13 +245,35 @@ tr.me td{color:var(--accent)}
 .item-slot{position:relative;width:58px;height:58px;border-radius:12px;display:grid;place-items:center;background:rgba(12,14,19,.78);border:1px solid rgba(255,255,255,.14)}
 .item-slot[data-item=""]{opacity:.4}
 .item-slot svg{width:32px;height:32px;display:block}
-.modes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
-.modes button{display:grid;gap:2px;padding:8px 10px;text-align:left;background:var(--panel-2);border:1px solid var(--line);border-radius:10px}
+.modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:10px}
+.modes button{display:grid;grid-template-columns:44px minmax(0,1fr);grid-template-rows:auto auto;column-gap:12px;row-gap:2px;align-items:center;min-height:76px;padding:12px 14px;text-align:left;background:var(--panel-2);border:1px solid var(--line);border-radius:12px;transition:border-color .15s,background .15s,transform .1s}
 .modes button:hover{border-color:#4a5161}
+.modes button:active{transform:scale(.98)}
 .modes button[aria-pressed="true"]{border-color:var(--accent);background:#25231b}
-.modes b{font-family:var(--display);font-weight:400;font-size:15px}
-.modes span{display:none}
-.help-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px 28px}
+.modes i{grid-row:span 2;width:44px;height:44px;display:grid;place-items:center;border-radius:12px;background:#20242e;font-style:normal;font-size:22px}
+.modes b{font-family:var(--display);font-weight:400;font-size:18px;min-width:0;overflow-wrap:anywhere}
+.modes span{font-size:13px;color:var(--muted);min-width:0}
+/* menu pages: home -> mode -> track */
+.mpage{display:grid;gap:var(--gap);min-width:0;align-content:start}
+.mp-head{display:flex;gap:14px;align-items:center}
+.mp-head h2{margin:0;font-family:var(--display);font-weight:400;font-size:clamp(22px,3.4vw,30px);line-height:1.05;text-transform:uppercase}
+.mp-head .label{margin:0 0 4px}
+.back{flex:none;width:46px;height:46px;border-radius:12px;border:1px solid var(--line);background:var(--panel-2);font-size:22px;line-height:1}
+.back:hover{border-color:#4a5161}
+.home-btns{display:grid;gap:10px}
+.home-btns .cta{height:64px;font-size:24px}
+.quick{display:grid;justify-items:center;gap:0;height:auto;min-height:54px;padding:8px 14px}
+.quick b{font-weight:800}
+.quick span{font-size:12px;color:var(--muted);font-weight:600;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mp-cols{display:grid;gap:var(--gap);min-width:0}
+.mp-cols .col{display:grid;gap:12px;align-content:start;min-width:0}
+.mp-cols .col-side{gap:16px}
+.mp-cols .col-side .label{margin-bottom:8px}
+.mp-track .cta-row{grid-template-columns:1fr}
+.seg{max-width:100%}
+.seg.words{display:flex;flex-wrap:wrap}
+.seg.words button{flex:1 0 auto}
+.help-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:18px 28px}
 .help-grid .label{margin:0 0 8px}
 .help-p{margin:0;font-size:14px;color:var(--muted);line-height:1.55}
 .help-p b{color:var(--fg)}
@@ -331,14 +353,14 @@ body.touchmode.steer-btn .hud-bl{bottom:calc(env(safe-area-inset-bottom,0px) + 1
    The main action stays pinned to the bottom edge when a panel still has to scroll. */
 .overlay{overscroll-behavior:contain}
 .menu-panel{--gap:22px;gap:var(--gap)}
-.menu-panel .col{display:contents}
+.menu-panel{width:min(560px,100%)}
+.menu-panel[data-page="track"]{width:min(1060px,100%)}
+.menu-panel[data-page="mode"]{width:min(760px,100%)}
 .cta-row,.garage-panel>#garageBack,.ach-panel>#achBack,.ach-panel>#helpBack,.ach-panel>#recBack,.results .btns,#settings #setDone{position:sticky;bottom:0;z-index:2;background:var(--sticky);box-shadow:0 -14px 16px 2px var(--sticky);border-radius:10px}
 .garage-panel>#garageBack,.ach-panel>#achBack,.ach-panel>#helpBack,.ach-panel>#recBack,#settings #setDone{background:var(--accent)}
 @media (min-width:980px),(min-width:700px) and (max-height:600px){
   .menu{background:linear-gradient(90deg,rgba(9,10,13,.94) 0%,rgba(9,10,13,.72) 60%,rgba(9,10,13,.2) 100%)}
-  .menu-panel{width:min(1060px,100%);grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);column-gap:30px}
-  .menu-panel .col{display:grid;gap:var(--gap);align-content:start;min-width:0}
-  .menu-panel .col-side{align-content:space-between}
+  .mp-cols{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);column-gap:30px}
 }
 @media (max-height:820px){
   .overlay{padding-block:max(12px,env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-bottom,0px))}
@@ -352,7 +374,9 @@ body.touchmode.steer-btn .hud-bl{bottom:calc(env(safe-area-inset-bottom,0px) + 1
   .res-title{font-size:30px}
 }
 @media (max-height:660px){
-  .lede,.m-note,.c-tag,.modes span{display:none}
+  .lede,.m-note,.c-tag{display:none}
+  .modes button{min-height:58px;padding:8px 12px}
+  .home-btns .cta{height:54px;font-size:20px}
   .map{grid-template-columns:52px minmax(0,1fr)}
   .map canvas{width:52px;height:32px}
   .m-side .rec,.map-note{display:none}
@@ -409,14 +433,21 @@ body.touchmode.steer-btn .hud-bl{bottom:calc(env(safe-area-inset-bottom,0px) + 1
   .menu{background:rgba(9,10,13,.78)}
 }
 @media (max-width:620px){
+  /* phones: tracks as a 2-column grid of small cards, so race options stay close */
+  .maps{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .map{grid-template-columns:1fr;padding:5px;gap:4px;align-content:start}
+  .map canvas{width:100%;height:auto;aspect-ratio:208/124;grid-row:auto}
+  .m-name{font-size:14px;line-height:1.15}
+  .m-side .chip{display:none}
+  .m-side .rec{font-size:10px}
   .g-body{grid-template-columns:1fr}
   .garage-strip{grid-template-columns:72px minmax(0,1fr) auto}
   .garage-strip canvas{width:72px;height:42px}
   .garage-strip .btn{grid-column:1/-1}
 }
 @media (max-width:460px){
-  .panel{padding:18px}
-  .maps{grid-template-columns:1fr}
+  .panel{padding:16px}
+  .menu-links .btn{flex-basis:calc(50% - 4px)}
   .cta-row{grid-template-columns:1fr}
 }
 </style>
@@ -471,87 +502,95 @@ body.touchmode.steer-btn .hud-bl{bottom:calc(env(safe-area-inset-bottom,0px) + 1
 
 <div id="menu" class="overlay menu">
   <div class="panel menu-panel">
-    <div class="col">
-    <header>
-      <div class="checker" aria-hidden="true"></div>
-      <h1 data-th="title">Турбо <span>Круг</span></h1>
-      <p class="lede" data-t="lede">Пять трасс и четыре соперника. Выбирай трассу, держи газ в пол и финишируй первым.</p>
-    </header>
-    <section>
-      <h2 class="label" data-t="track">Трасса</h2>
-      <p id="trackNote" class="seg-note track-note" data-t="cupNote" hidden>В чемпионате трассы идут по очереди</p>
-      <div id="maps" class="maps"></div>
-      <p id="mapNote" class="map-note"></p>
+    <section class="mpage mp-home" data-page="home">
+      <header>
+        <div class="checker" aria-hidden="true"></div>
+        <h1 data-th="title">Турбо <span>Круг</span></h1>
+        <p class="lede" data-t="lede">Восемь трасс, четыре соперника и сюрпризы на дороге.</p>
+      </header>
+      <div class="garage-strip">
+        <canvas id="curCarCv" width="192" height="112"></canvas>
+        <div><h2 class="label" data-t="yourCar">Ваш транспорт</h2><b id="curCarName">Старт</b></div>
+        <div class="coins"><h2 class="label" data-t="points">Очки</h2><b id="coinsMenu">0</b></div>
+        <button id="garageBtn" class="btn" data-t="garage">Гараж</button>
+      </div>
+      <div class="home-btns">
+        <button id="playBtn" class="cta"><span data-t="play">Играть</span> <kbd>Enter</kbd></button>
+        <button id="quickBtn" class="btn quick"><b data-t="quick">Быстрый старт</b><span id="quickSub"></span></button>
+      </div>
+      <div class="menu-links">
+        <button id="recBtn" class="btn" data-t="recTitle">Рекорды</button>
+        <button id="achBtn" class="btn" data-t="achTitle">Достижения</button>
+        <button id="helpBtn" class="btn" data-t="controls">Управление</button>
+        <button id="settingsBtn" class="btn" data-t="settings">Настройки</button>
+      </div>
     </section>
-    </div>
-    <div class="col col-side">
-    <section>
-      <h2 class="label" data-t="mode">Режим</h2>
+
+    <section class="mpage mp-mode" data-page="mode" hidden>
+      <div class="mp-head"><button class="back" data-back="home" data-t-aria="back" aria-label="Назад">←</button><div><p class="label" data-t="step1">Шаг 1 из 2</p><h2 data-t="chooseMode">Выберите режим</h2></div></div>
       <div id="modeSeg" class="modes">
-        <button data-mode="race" aria-pressed="true"><b data-t="mRace">Гонка</b><span data-t="mRaceSub">Одна трасса с ботами</span></button>
-        <button data-mode="cup" aria-pressed="false"><b data-t="mCup">Чемпионат</b><span data-t="mCupSub">Все трассы подряд</span></button>
-        <button data-mode="trial" aria-pressed="false"><b data-t="mTrial">На время</b><span data-t="mTrialSub">Вы и ваш призрак</span></button>
-        <button data-mode="online" aria-pressed="false"><b data-t="mOnline">Онлайн</b><span data-t="mOnlineSub">С друзьями по коду комнаты</span></button>
-        <button data-mode="duo" aria-pressed="false" id="duoModeBtn"><b data-t="mDuo">Вдвоём</b><span data-t="mDuoSub">Два игрока, один экран</span></button>
-      </div>
-      <p id="modeNote" class="seg-note"></p>
-      <div id="p2Row" class="p2-row" hidden>
-        <canvas id="p2Cv" width="128" height="72"></canvas>
-        <div><h3 class="label" data-t="p2Ride">Транспорт игрока 2</h3><b id="p2Name"></b></div>
-        <button id="p2Next" class="btn" data-t="change">Сменить</button>
+        <button data-mode="race" aria-pressed="true"><i aria-hidden="true">🏁</i><b data-t="mRace">Гонка</b><span data-t="mRaceSub">Одна трасса с ботами</span></button>
+        <button data-mode="cup" aria-pressed="false"><i aria-hidden="true">🏆</i><b data-t="mCup">Чемпионат</b><span data-t="mCupSub">Все трассы подряд</span></button>
+        <button data-mode="trial" aria-pressed="false"><i aria-hidden="true">⏱</i><b data-t="mTrial">На время</b><span data-t="mTrialSub">Вы и ваш призрак</span></button>
+        <button data-mode="online" aria-pressed="false"><i aria-hidden="true">🌐</i><b data-t="mOnline">Онлайн</b><span data-t="mOnlineSub">С друзьями по коду комнаты</span></button>
+        <button data-mode="duo" aria-pressed="false" id="duoModeBtn"><i aria-hidden="true">👥</i><b data-t="mDuo">Вдвоём</b><span data-t="mDuoSub">Два игрока, один экран</span></button>
       </div>
     </section>
-    <div class="row">
-      <section>
-        <h2 class="label" data-t="laps">Круги</h2>
-        <div id="laps" class="seg">
-          <button data-l="1" aria-pressed="false">1</button>
-          <button data-l="3" aria-pressed="true">3</button>
-          <button data-l="5" aria-pressed="false">5</button>
+
+    <section class="mpage mp-track" data-page="track" hidden>
+      <div class="mp-head"><button class="back" data-back="mode" data-t-aria="back" aria-label="Назад">←</button><div><p class="label" data-t="step2">Шаг 2 из 2</p><h2 id="trackHead">Гонка</h2></div></div>
+      <div class="mp-cols">
+        <div class="col">
+          <h3 class="label" data-t="track">Трасса</h3>
+          <p id="trackNote" class="seg-note track-note" data-t="cupNote" hidden>В чемпионате трассы идут по очереди</p>
+          <div id="maps" class="maps"></div>
+          <p id="mapNote" class="map-note"></p>
         </div>
-      </section>
-      <section id="rivalsSec">
-        <h2 class="label" data-t="rivals">Соперники</h2>
-        <div id="diff" class="seg words">
-          <button data-d="0" aria-pressed="false" data-t="diff0">Лёгкие</button>
-          <button data-d="1" aria-pressed="true" data-t="diff1">Средние</button>
-          <button data-d="2" aria-pressed="false" data-t="diff2">Сложные</button>
-        </div>
-        <p id="diffNote" class="seg-note">Очки ×1</p>
-      </section>
-      <section id="condSec">
-        <h2 class="label" data-t="conditions">Условия</h2>
-        <div class="conds">
-          <div id="weatherSeg" class="seg words">
-            <button data-w="clear" aria-pressed="true" data-t="wClear">Ясно</button>
-            <button data-w="rain" aria-pressed="false" data-t="wRain">Дождь</button>
-            <button data-w="fog" aria-pressed="false" data-t="wFog">Туман</button>
-            <button data-w="random" aria-pressed="false" data-t="wRandom">Случайно</button>
+        <div class="col col-side">
+          <div id="p2Row" class="p2-row" hidden>
+            <canvas id="p2Cv" width="128" height="72"></canvas>
+            <div><h3 class="label" data-t="p2Ride">Транспорт игрока 2</h3><b id="p2Name"></b></div>
+            <button id="p2Next" class="btn" data-t="change">Сменить</button>
           </div>
-          <div id="nightSeg" class="seg words">
-            <button data-n="day" aria-pressed="true" data-t="nDay">День</button>
-            <button data-n="night" aria-pressed="false" data-t="nNight">Ночь</button>
-            <button data-n="random" aria-pressed="false" data-t="wRandom">Случайно</button>
-          </div>
+          <section>
+            <h3 class="label" data-t="laps">Круги</h3>
+            <div id="laps" class="seg">
+              <button data-l="1" aria-pressed="false">1</button>
+              <button data-l="3" aria-pressed="true">3</button>
+              <button data-l="5" aria-pressed="false">5</button>
+            </div>
+          </section>
+          <section id="rivalsSec">
+            <h3 class="label" data-t="rivals">Соперники</h3>
+            <div id="diff" class="seg words">
+              <button data-d="0" aria-pressed="false" data-t="diff0">Лёгкие</button>
+              <button data-d="1" aria-pressed="true" data-t="diff1">Средние</button>
+              <button data-d="2" aria-pressed="false" data-t="diff2">Сложные</button>
+            </div>
+            <p id="diffNote" class="seg-note">Очки ×1</p>
+          </section>
+          <section id="condSec">
+            <h3 class="label" data-t="conditions">Условия</h3>
+            <div class="conds">
+              <div id="weatherSeg" class="seg words">
+                <button data-w="clear" aria-pressed="true" data-t="wClear">Ясно</button>
+                <button data-w="rain" aria-pressed="false" data-t="wRain">Дождь</button>
+                <button data-w="fog" aria-pressed="false" data-t="wFog">Туман</button>
+                <button data-w="random" aria-pressed="false" data-t="wRandom">Случайно</button>
+              </div>
+              <div id="nightSeg" class="seg words">
+                <button data-n="day" aria-pressed="true" data-t="nDay">День</button>
+                <button data-n="night" aria-pressed="false" data-t="nNight">Ночь</button>
+                <button data-n="random" aria-pressed="false" data-t="wRandom">Случайно</button>
+              </div>
+            </div>
+          </section>
         </div>
-      </section>
-    </div>
-    <div class="garage-strip">
-      <canvas id="curCarCv" width="192" height="112"></canvas>
-      <div><h2 class="label" data-t="yourCar">Ваш транспорт</h2><b id="curCarName">Старт</b></div>
-      <div class="coins"><h2 class="label" data-t="points">Очки</h2><b id="coinsMenu">0</b></div>
-      <button id="garageBtn" class="btn" data-t="garage">Гараж</button>
-    </div>
-    <div class="menu-links">
-      <button id="achBtn" class="btn" data-t="achTitle">Достижения</button>
-      <button id="recBtn" class="btn" data-t="recTitle">Рекорды</button>
-      <button id="helpBtn" class="btn" data-t="controls">Управление</button>
-    </div>
-    <div class="cta-row">
-      <button id="startBtn" class="cta"><span data-t="start">На старт</span> <kbd>Enter</kbd></button>
-      <button id="settingsBtn" class="btn" data-t="settings">Настройки</button>
-    </div>
-    </div>
+      </div>
+      <div class="cta-row">
+        <button id="startBtn" class="cta"><span data-t="start">На старт</span> <kbd>Enter</kbd></button>
+      </div>
+    </section>
   </div>
 </div>
 
@@ -770,7 +809,9 @@ const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 // ---------- text ----------
 const STR = {
   ru: {
-    title: 'Турбо <span>Круг</span>', lede: 'Восемь трасс, четыре соперника и сюрпризы на дороге. Выбирай трассу, держи газ в пол и финишируй первым.',
+    title: 'Турбо <span>Круг</span>', lede: 'Восемь трасс, четыре соперника и сюрпризы на дороге. Держи газ в пол и финишируй первым.',
+    play: 'Играть', quick: 'Быстрый старт', chooseMode: 'Выберите режим', step1: 'Шаг 1 из 2', step2: 'Шаг 2 из 2', back: 'Назад',
+    quickSub: '{m} · {map} · кругов: {l}',
     track: 'Трасса', laps: 'Круги', rivals: 'Соперники', controls: 'Управление',
     k1: '<b>W / S</b> газ и тормоз', k2: '<b>A / D</b> руль, <b>Пробел</b> ручник', k3: '<b>Shift</b> нитро, <b>E</b> предмет', k4: '<b>R</b> на трассу, <b>Esc</b> пауза, <b>M</b> звук',
     nitro: 'Нитро', hull: 'Корпус', repair: 'Ремонт', item: 'Предмет',
@@ -785,7 +826,7 @@ const STR = {
     duoWin: '{p} впереди!', kDuo: '<b>Игрок 2</b>: стрелки, <b>правый Shift</b> нитро, <b>Enter</b> предмет, <b>/</b> ручник',
     hKeyboard: 'Клавиатура', hPad: 'Геймпад', hPhone: 'Телефон',
     kPadFull: '<b>RT</b> или <b>A</b> — газ, <b>LT</b> или <b>B</b> — тормоз, левый стик — руль, <b>RB</b> — нитро, <b>LB</b> — предмет, <b>X</b> — ручник, <b>Y</b> — на трассу, <b>Start</b> — пауза. В меню — крестовина и <b>A</b>. В игре вдвоём геймпад управляет игроком 2.',
-    kPhone: 'Левая половина экрана — руль: ведите пальцем влево и вправо. Справа — газ, тормоз, нитро и предмет. В настройках можно включить руль наклоном телефона.',
+    kPhone: 'Газ жмётся сам. Слева кнопки ◀ ▶ — держите и скользите пальцем между ними. Справа — тормоз (стоя — задний ход), нитро и предмет. В настройках: джойстик или наклон телефона, автогаз можно выключить.',
     vehicle: 'Транспорт', mOnline: 'Онлайн', mOnlineSub: 'С друзьями по коду комнаты', recTitle: 'Рекорды', recSub: 'Лучшие круги всех игроков на этой трассе', pname: 'Имя пилота',
     leave: 'Выйти', toLobby: 'В комнату', createRoom: 'Создать комнату', joinRoom: 'Войти', codePh: 'КОД', orJoin: 'или войдите по коду друга',
     roomCode: 'Код комнаты', copy: 'Скопировать', copied: 'Скопировано', players: 'Игроки', host: 'хозяин', you2: 'вы', bots: 'Боты',
@@ -891,7 +932,9 @@ const STR = {
     'hit.snowball': 'Полный капот снега', 'hit.bomb': 'Прилетело камнем',
   },
   en: {
-    title: 'Turbo <span>Lap</span>', lede: 'Eight tracks, four rivals and surprises on the road. Pick a track, keep it floored and finish first.',
+    title: 'Turbo <span>Lap</span>', lede: 'Eight tracks, four rivals and surprises on the road. Keep it floored and finish first.',
+    play: 'Play', quick: 'Quick start', chooseMode: 'Choose a mode', step1: 'Step 1 of 2', step2: 'Step 2 of 2', back: 'Back',
+    quickSub: '{m} · {map} · {l} laps',
     track: 'Track', laps: 'Laps', rivals: 'Rivals', controls: 'Controls',
     k1: '<b>W / S</b> throttle and brake', k2: '<b>A / D</b> steer, <b>Space</b> handbrake', k3: '<b>Shift</b> nitro, <b>E</b> use item', k4: '<b>R</b> back on track, <b>Esc</b> pause, <b>M</b> mute',
     nitro: 'Nitro', hull: 'Hull', repair: 'Repair', item: 'Item',
@@ -906,7 +949,7 @@ const STR = {
     duoWin: '{p} wins!', kDuo: '<b>Player 2</b>: arrows, <b>right Shift</b> nitro, <b>Enter</b> item, <b>/</b> handbrake',
     hKeyboard: 'Keyboard', hPad: 'Gamepad', hPhone: 'Phone',
     kPadFull: '<b>RT</b> or <b>A</b> gas, <b>LT</b> or <b>B</b> brake, left stick steers, <b>RB</b> nitro, <b>LB</b> item, <b>X</b> handbrake, <b>Y</b> back on track, <b>Start</b> pause. Menus: D-pad and <b>A</b>. In two-player races the gamepad drives player 2.',
-    kPhone: 'The left half of the screen steers: drag your thumb left and right. Gas, brake, nitro and item are on the right. Tilt steering can be turned on in Settings.',
+    kPhone: 'Gas is automatic. Hold ◀ ▶ on the left and slide your thumb between them. Brake (reverse when stopped), nitro and item are on the right. Settings offer a joystick or tilt steering, and auto gas can be turned off.',
     vehicle: 'Vehicle', mOnline: 'Online', mOnlineSub: 'Race friends with a room code', recTitle: 'Records', recSub: 'Best laps of all players on this track', pname: 'Driver name',
     leave: 'Leave', toLobby: 'Back to room', createRoom: 'Create a room', joinRoom: 'Join', codePh: 'CODE', orJoin: "or join a friend's room",
     roomCode: 'Room code', copy: 'Copy', copied: 'Copied', players: 'Players', host: 'host', you2: 'you', bots: 'Bots',
@@ -1133,7 +1176,8 @@ const store = {
   set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} },
 };
 const recKey = m => 'turbo-krug-best-' + m.id;
-function getRecord(m) { const v = parseFloat(store.get(recKey(m))); return isFinite(v) ? v : Infinity; }
+const minLap = m => m && m._track ? m._track.len / 1300 : 5; // faster than this is impossible even on constant nitro
+function getRecord(m) { const v = parseFloat(store.get(recKey(m))); return isFinite(v) && v >= minLap(m) ? v : Infinity; }
 const carName = m => t('car.' + m.id);
 const drvName = c => c.netName && !c.isPlayer ? c.netName : S.duo && c.id === 'you' ? t('p1') : c.type === 'dog' && STR.ru['dog.' + c.id] ? t('dog.' + c.id) : t('drv.' + c.id);
 const player2 = () => S.cars.find(c => c.isP2);
@@ -1497,7 +1541,7 @@ function lapCheck(c) {
   if (lap <= c.lapsDone) return;
   c.lapsDone = lap;
   const tm = S.time - c.lapStart; c.lapStart = S.time; c.lapTimes.push(tm);
-  const wasBest = tm < c.best; if (wasBest) c.best = tm;
+  const wasBest = tm < c.best && tm >= minLap(S.map); if (wasBest) c.best = tm;
   if (S.mode === 'menu') return;
   if (c.isPlayer && !c.auto && !S.duo) { saveGhost(c, tm); c.rec = []; c.recT = 0; if (c.lapClean && c.lapsDone >= 1) bumpStat('cleanLaps'); c.lapClean = true; }
   if (c.lapsDone >= S.laps && !c.finished) {
@@ -2509,7 +2553,11 @@ $('#online').addEventListener('click', e => {
   else if (b.dataset.b != null) netSend({ t: 'cfg', map: MAPS[S.mapIndex].id, laps: S.laps, bots: b.dataset.b === '1' });
 });
 $('#online').addEventListener('keydown', e => { if (e.code === 'Enter' && e.target.id === 'onCode') { e.stopPropagation(); $('#onJoin').click(); } }, true);
-$('#onBack').addEventListener('click', () => { if (NET.room) netSend({ t: 'leave' }); NET.room = null; $('#online').hidden = true; toMenu(); });
+$('#onBack').addEventListener('click', () => {
+  if (NET.room) netSend({ t: 'leave' }); NET.room = null; $('#online').hidden = true;
+  S.gameMode = S.offlineMode || 'race'; store.set('turbo-krug-mode', S.gameMode); S.menuPage = 'mode'; // back to the mode list, not stuck on "online"
+  toMenu();
+});
 $('#lobbyBtn').addEventListener('click', () => { if (netHost()) netSend({ t: 'lobby' }); S.mode = 'menu'; resetRace('menu'); $('#hud').hidden = true; openOnline(); });
 $('#helpBtn').addEventListener('click', () => { $('#menu').hidden = true; $('#help').hidden = false; $('#helpBack').focus(); });
 $('#helpBack').addEventListener('click', () => { $('#help').hidden = true; $('#menu').hidden = false; });
@@ -2587,6 +2635,7 @@ function toMenu() {
   if (S.cup && !S.cup.done) S.cup = null;
   document.body.classList.remove('duo'); $('#hud2').hidden = true;
   renderMapList(); renderMenuStrip(); syncMode(); setConditions();
+  setMenuPage(S.menuPage === 'track' || S.menuPage === 'mode' ? S.menuPage : 'home'); // after a race "track select" lands back on the track page
 }
 function togglePause(force) {
   if (isOnline()) return; // the race goes on for everyone else
@@ -2631,7 +2680,7 @@ function showResults(keepFocus) {
     $('#resSub').textContent = `${t('map.' + S.map.id)} · ${lapsWord(S.laps)} · ${t('p1')}: ${ord(p.place)} · ${t('p2')}: ${ord(p2.place)}`;
     for (const id of ['#resRec', '#podium', '#cupBox', '#cupNextBtn', '#newCupBtn', '#replayBtn']) $(id).hidden = true;
     $('#resPts').textContent = ''; $('#resHint').textContent = ''; $('#resTable').hidden = false; $('#againBtn').hidden = false; $('#nextBtn').hidden = false;
-    $('#results').hidden = false; if (!keepFocus) $('#againBtn').focus({ preventScroll: true });
+    $('#results').hidden = false; $('#touch').hidden = true; if (!keepFocus) $('#againBtn').focus({ preventScroll: true });
     fillResults(); return;
   }
   $('#resTitle').textContent = trial ? t('trialDone') : p.place === 1 ? t('victory') : t('place', { o: ord(p.place) });
@@ -2647,7 +2696,7 @@ function showResults(keepFocus) {
   const nxt = CARS.find((m, i) => i > CARS.indexOf(curModel()) && !wallet.owned.includes(m.id));
   $('#resHint').textContent = t('total', { n: wallet.coins }) + (!nxt ? t('topCar')
     : wallet.coins >= nxt.price ? t('canBuy', { car: carName(nxt) }) : t('needFor', { car: carName(nxt), n: nxt.price - wallet.coins }));
-  $('#results').hidden = false; if (!keepFocus) (cup ? $('#cupNextBtn') : $('#againBtn')).focus({ preventScroll: true });
+  $('#results').hidden = false; $('#touch').hidden = true; if (!keepFocus) (cup ? $('#cupNextBtn') : $('#againBtn')).focus({ preventScroll: true });
   fillResults();
 }
 function fillResults() {
@@ -4061,88 +4110,249 @@ function initAudio() {
   try {
     if (audio) return;
     const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
-    const ac = new AC(), o1 = ac.createOscillator(), o2 = ac.createOscillator(), f = ac.createBiquadFilter(), g = ac.createGain(), m = ac.createGain();
-    o1.type = 'triangle'; o2.type = 'sine'; f.type = 'lowpass'; f.frequency.value = 300; f.Q.value = .5; g.gain.value = 0; m.gain.value = 0;
-    // engine "purr": a slow oscillator wobbles the engine volume at the firing rate instead of a raw buzzing wave
-    const lfo = ac.createOscillator(), lfoG = ac.createGain(); lfo.type = 'sine'; lfo.frequency.value = 20; lfoG.gain.value = 0; lfo.connect(lfoG); lfoG.connect(g.gain);
+    const ac = new AC(), m = ac.createGain(), eng = ac.createGain(); m.gain.value = 0; eng.gain.value = .9;
     // master chain: soft top-end roll-off and a compressor, so nothing hits the ears however loud it gets
     const soft = ac.createBiquadFilter(), comp = ac.createDynamicsCompressor();
-    soft.type = 'lowpass'; soft.frequency.value = 4200; soft.Q.value = .4;
+    soft.type = 'lowpass'; soft.frequency.value = 9000; soft.Q.value = .4;
     comp.threshold.value = -20; comp.knee.value = 18; comp.ratio.value = 5; comp.attack.value = .004; comp.release.value = .2;
-    o1.connect(f); o2.connect(f); f.connect(g); g.connect(m); m.connect(soft); soft.connect(comp); comp.connect(ac.destination); o1.start(); o2.start(); lfo.start();
+    eng.connect(m); m.connect(soft); soft.connect(comp); comp.connect(ac.destination);
     const mus = ac.createGain(); mus.gain.value = 0; mus.connect(m);
-    audio = { ac, o1, o2, f, g, m, mus, lfo, lfoG, sus: 0 };
+    audio = { ac, m, eng, mus, sus: 0 };
   } catch (e) { audio = null; }
 }
-// Procedural race music: drums, bass, arpeggio and a seeded melody per track. Scheduled a little ahead of the audio clock.
-const MUSIC = {
-  valley: { bpm: 126, root: 48, scale: [0, 2, 4, 5, 7, 9, 11], prog: [0, 4, 5, 3] },
-  canyon: { bpm: 116, root: 50, scale: [0, 2, 3, 5, 7, 9, 10], prog: [0, 3, 4, 0] },
-  pass: { bpm: 108, root: 52, scale: [0, 2, 3, 5, 7, 8, 10], prog: [0, 5, 3, 4] },
-  city: { bpm: 132, root: 45, scale: [0, 2, 3, 5, 7, 8, 10], prog: [0, 5, 2, 6] },
-  volcano: { bpm: 142, root: 50, scale: [0, 1, 3, 5, 7, 8, 10], prog: [0, 6, 5, 4] },
-  beach: { bpm: 120, root: 48, scale: [0, 2, 4, 5, 7, 9, 11], prog: [0, 3, 4, 4] },
-  jungle: { bpm: 112, root: 47, scale: [0, 2, 3, 5, 7, 9, 10], prog: [0, 0, 3, 4] },
-  space: { bpm: 136, root: 45, scale: [0, 2, 3, 5, 7, 8, 11], prog: [0, 5, 6, 4] },
+// ---------- music: procedural synthwave ----------
+// Four-on-the-floor drums with a big 80s snare, a rolling octave bass, wide detuned pads that "pump" with the kick,
+// a delayed arpeggio and a seeded lead melody per track. Notes are scheduled slightly ahead of the audio clock.
+const SYNTH = {
+  valley: { bpm: 108, key: 45, prog: [[0, 'm'], [8, 'M'], [3, 'M'], [10, 'M']] }, // Am F C G
+  canyon: { bpm: 100, key: 50, prog: [[0, 'm'], [10, 'M'], [8, 'M'], [10, 'M']] }, // Dm C Bb C
+  pass: { bpm: 94, key: 52, prog: [[0, 'm'], [5, 'm'], [8, 'M'], [7, 'M']] }, // Em Am C B
+  city: { bpm: 112, key: 42, prog: [[0, 'm'], [10, 'M'], [8, 'M'], [7, 'M']] }, // F#m E D C#
+  volcano: { bpm: 120, key: 48, prog: [[0, 'm'], [8, 'M'], [10, 'M'], [7, 'm']] }, // Cm Ab Bb Gm
+  beach: { bpm: 104, key: 48, prog: [[0, 'M'], [9, 'm'], [5, 'M'], [7, 'M']] }, // C Am F G
+  jungle: { bpm: 100, key: 43, prog: [[0, 'm'], [3, 'M'], [10, 'M'], [5, 'm']] }, // Gm Bb F Cm
+  space: { bpm: 116, key: 47, prog: [[0, 'm'], [8, 'M'], [3, 'M'], [10, 'M']] }, // Bm G D A
 };
+const CHORD = { m: [0, 3, 7, 10], M: [0, 4, 7, 11] };
+const RHYTHMS = [[[0, 6], [6, 2], [8, 8]], [[0, 4], [4, 4], [8, 4], [12, 4]], [[0, 3], [3, 3], [6, 2], [8, 8]], [[0, 8], [8, 6], [14, 2]], [[2, 2], [4, 4], [8, 2], [10, 6]]];
 const midiHz = n => 440 * Math.pow(2, (n - 69) / 12);
 let noiseBuf = null;
 function noise() {
   if (!noiseBuf) { noiseBuf = audio.ac.createBuffer(1, audio.ac.sampleRate, audio.ac.sampleRate); const d = noiseBuf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1; }
   const n = audio.ac.createBufferSource(); n.buffer = noiseBuf; return n;
 }
-function voice(type, hz, t0, len, vol, cutoff) {
-  const ac = audio.ac, o = ac.createOscillator(), g = ac.createGain();
-  o.type = type; o.frequency.value = hz; g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(vol, t0 + .008); g.gain.exponentialRampToValueAtTime(.0001, t0 + len);
-  if (cutoff) { const f = ac.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = cutoff; o.connect(f); f.connect(g); } else o.connect(g);
-  g.connect(audio.mus); o.start(t0); o.stop(t0 + len + .02);
+function musicFx() { // reverb, tempo delay and the pumping bus, built once
+  if (audio.fx) return audio.fx;
+  const ac = audio.ac, sr = ac.sampleRate, len = Math.floor(sr * 2.4), ir = ac.createBuffer(2, len, sr);
+  for (let ch = 0; ch < 2; ch++) { const d = ir.getChannelData(ch); for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 3.2); }
+  const rev = ac.createConvolver(), revOut = ac.createGain(); rev.buffer = ir; revOut.gain.value = .5; rev.connect(revOut); revOut.connect(audio.mus);
+  const dly = ac.createDelay(2), fb = ac.createGain(), dlp = ac.createBiquadFilter(), dOut = ac.createGain();
+  fb.gain.value = .36; dlp.type = 'lowpass'; dlp.frequency.value = 2600; dOut.gain.value = .5;
+  dly.connect(dlp); dlp.connect(fb); fb.connect(dly); dlp.connect(dOut); dOut.connect(audio.mus); dOut.connect(rev);
+  const pump = ac.createGain(); pump.connect(audio.mus);
+  return (audio.fx = { rev, dly, pump });
 }
-function hit(kind, t0) {
-  const ac = audio.ac;
-  if (kind === 'kick') { const o = ac.createOscillator(), g = ac.createGain(); o.frequency.setValueAtTime(150, t0); o.frequency.exponentialRampToValueAtTime(42, t0 + .12); g.gain.setValueAtTime(.55, t0); g.gain.exponentialRampToValueAtTime(.0001, t0 + .16); o.connect(g); g.connect(audio.mus); o.start(t0); o.stop(t0 + .18); return; }
+function send(out, node, amt) { if (!amt) return; const s = audio.ac.createGain(); s.gain.value = amt; out.connect(s); s.connect(node); }
+// One synth note: oscillators (detuned for width) -> low-pass with an optional sweep -> envelope -> pan -> buses.
+function synth(o) {
+  const ac = audio.ac, fx = musicFx(), t = o.t, end = t + o.len, att = o.att || .005, rel = o.rel || .08;
+  const f = ac.createBiquadFilter(), g = ac.createGain();
+  f.type = 'lowpass'; f.Q.value = o.q || .7;
+  if (o.env) { f.frequency.setValueAtTime(o.cut + o.env, t); f.frequency.exponentialRampToValueAtTime(o.cut, t + (o.envT || .15)); } else f.frequency.value = o.cut || 8000;
+  g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(o.vol, t + att);
+  g.gain.setTargetAtTime(o.vol * (o.sus == null ? 1 : o.sus), t + att, o.dec || .1);
+  g.gain.setTargetAtTime(0, end, rel / 4);
+  let lg = null;
+  if (o.vib) { const l = ac.createOscillator(); lg = ac.createGain(); l.frequency.value = 5.5; lg.gain.setValueAtTime(0, t); lg.gain.linearRampToValueAtTime(o.vib, t + .3); l.connect(lg); l.start(t); l.stop(end + rel); }
+  for (const d of o.det || [0]) {
+    const osc = ac.createOscillator(); osc.type = o.type; osc.frequency.value = o.hz; osc.detune.value = d;
+    if (lg) lg.connect(osc.detune);
+    osc.connect(f); osc.start(t); osc.stop(end + rel);
+  }
+  f.connect(g);
+  let out = g;
+  if (o.pan && ac.createStereoPanner) { const p = ac.createStereoPanner(); p.pan.value = o.pan; g.connect(p); out = p; }
+  out.connect(o.pump ? fx.pump : audio.mus);
+  send(out, fx.rev, o.rev); send(out, fx.dly, o.dly);
+}
+function drum(kind, t, v = 1) {
+  const ac = audio.ac, fx = musicFx();
+  if (kind === 'kick') {
+    const o = ac.createOscillator(), g = ac.createGain();
+    o.frequency.setValueAtTime(130, t); o.frequency.exponentialRampToValueAtTime(44, t + .09);
+    g.gain.setValueAtTime(.85 * v, t); g.gain.exponentialRampToValueAtTime(.0001, t + .36);
+    o.connect(g); g.connect(audio.mus); o.start(t); o.stop(t + .38);
+    fx.pump.gain.setValueAtTime(.3, t); fx.pump.gain.linearRampToValueAtTime(1, t + .3); // the sidechain "pump"
+    return;
+  }
+  if (kind === 'tom') {
+    const o = ac.createOscillator(), g = ac.createGain(), hz = 210 * v;
+    o.frequency.setValueAtTime(hz, t); o.frequency.exponentialRampToValueAtTime(hz * .55, t + .2);
+    g.gain.setValueAtTime(.3, t); g.gain.exponentialRampToValueAtTime(.0001, t + .25);
+    o.connect(g); g.connect(audio.mus); send(g, fx.rev, .3); o.start(t); o.stop(t + .27);
+    return;
+  }
   const n = noise(), f = ac.createBiquadFilter(), g = ac.createGain();
-  f.type = kind === 'hat' ? 'highpass' : 'bandpass'; f.frequency.value = kind === 'hat' ? 7000 : 1800;
-  const v = kind === 'hat' ? .05 : .16, l = kind === 'hat' ? .03 : .12;
-  g.gain.setValueAtTime(v, t0); g.gain.exponentialRampToValueAtTime(.0001, t0 + l);
-  n.connect(f); f.connect(g); g.connect(audio.mus); n.start(t0, Math.random() * .5); n.stop(t0 + l + .02);
+  const snare = kind === 'snare', open = kind === 'ohat';
+  f.type = snare ? 'bandpass' : 'highpass'; f.frequency.value = snare ? 1900 : 7500; f.Q.value = snare ? .6 : .7;
+  const vol = (snare ? .34 : open ? .035 : .028) * v, len = snare ? .2 : open ? .14 : .035;
+  g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.0001, t + len);
+  n.connect(f); f.connect(g); g.connect(audio.mus); n.start(t, Math.random() * .5); n.stop(t + len + .02);
+  if (snare) {
+    send(g, fx.rev, .7); // big gated-style 80s snare
+    const o = ac.createOscillator(), og = ac.createGain(); o.type = 'triangle';
+    o.frequency.setValueAtTime(190, t); o.frequency.exponentialRampToValueAtTime(150, t + .08);
+    og.gain.setValueAtTime(.2, t); og.gain.exponentialRampToValueAtTime(.0001, t + .1);
+    o.connect(og); og.connect(audio.mus); o.start(t); o.stop(t + .12);
+  }
+}
+function makeMelody(M, seed) { // two 4-bar phrases of long, singable notes over the chords
+  const r = rng(seed), out = [];
+  let last = M.key + 24 + 7;
+  for (let p = 0; p < 2; p++) {
+    const ph = [];
+    for (let ci = 0; ci < 4; ci++) {
+      const [ro, q] = M.prog[ci], bar = new Array(16).fill(null), rh = RHYTHMS[(r() * RHYTHMS.length) | 0];
+      const pool = []; for (const oc of [12, 24, 36]) for (const tn of CHORD[q].concat([2])) { const n = M.key + ro + tn + oc; if (n >= M.key + 19 && n <= M.key + 34) pool.push(n); }
+      pool.sort((a, b) => a - b);
+      rh.forEach(([st, l], k) => {
+        let i = pool.reduce((bi, n, j) => Math.abs(n - last) < Math.abs(pool[bi] - last) ? j : bi, 0);
+        i = clamp(i + Math.round((r() - .5) * 3), 0, pool.length - 1);
+        if (p === 1 && ci === 3 && k === rh.length - 1) i = pool.reduce((bi, n, j) => (n - M.key) % 12 === 0 && Math.abs(n - last) < Math.abs(pool[bi] - last) ? j : bi, 0); // resolve home
+        last = pool[i]; bar[st] = { n: last, l };
+      });
+      ph.push(bar);
+    }
+    out.push(ph);
+  }
+  return out;
 }
 function musicStep(t0) {
-  const M = MUSIC[S.map.id] || MUSIC.valley, st = S.mus.step, beat = st % 16, bar = Math.floor(st / 16) % 4, sixteenth = 60 / M.bpm / 4;
-  const deg = M.prog[bar], chord = [0, 2, 4].map(k => M.root + M.scale[(deg + k) % 7] + 12 * Math.floor((deg + k) / 7));
-  if (beat % 4 === 0) hit('kick', t0);
-  if (beat === 4 || beat === 12) hit('snare', t0);
-  if (beat % 2 === 1) hit('hat', t0);
-  if (beat % 2 === 0) voice('square', midiHz(chord[0] - 12 + (beat % 8 === 6 ? 12 : 0)), t0, sixteenth * 1.8, .1, 700);
-  voice('triangle', midiHz(chord[beat % 3] + 12), t0, sixteenth * .9, .045);
-  const mel = S.mus.mel[st % 64];
-  if (mel != null && Math.floor(st / 64) % 2 === 1) voice('sawtooth', midiHz(M.root + 24 + mel), t0, sixteenth * 2.4, .035, 2600);
+  const M = SYNTH[S.map.id] || SYNTH.valley, st = S.mus.step, b = st % 16, bar = Math.floor(st / 16), ci = bar % 4, sx = 60 / M.bpm / 4;
+  const [ro, q] = M.prog[ci], tones = CHORD[q], root = M.key + ro > 52 ? M.key + ro - 12 : M.key + ro;
+  const sec = Math.floor(bar / 4) % 4, intro = bar < 2, fill = sec === 3 && ci === 3 && b >= 12;
+  if (!intro) {
+    if (b % 4 === 0) drum('kick', t0);
+    if ((b === 4 || b === 12) && !fill) drum('snare', t0);
+    if (fill) drum('tom', t0, [1.3, 1.1, .9, .75][b - 12]);
+    drum(b % 4 === 2 ? 'ohat' : 'hat', t0, b % 2 ? .7 : 1);
+  }
+  const BP = [0, 0, 12, 0, 0, 0, 12, 0, 0, 0, 12, 0, 0, 12, 0, 12];
+  if (!intro || bar === 1) synth({ type: 'sawtooth', hz: midiHz(root - 12 + BP[b]), t: t0, len: sx * .8, vol: .11, det: [-6, 6], cut: 240, env: 900, envT: .09, q: 3, sus: .6, dec: .08, rel: .05, pump: true });
+  if (b === 0) tones.forEach((tn, k) => synth({ type: 'sawtooth', hz: midiHz(root + 12 + tn), t: t0, len: sx * 16, vol: .018, det: [-12, 0, 12], cut: 900 + sec * 260, q: .5, att: .35, rel: .6, pan: k % 2 ? .4 : -.4, rev: .5, pump: true }));
+  const ai = [0, 1, 2, 3, 1, 2, 3, 2][b % 8];
+  synth({ type: 'square', hz: midiHz(root + 24 + tones[ai] + (b >= 8 ? 12 : 0)), t: t0, len: sx * .55, vol: .022, cut: 1800, env: 2200, envT: .06, sus: .3, dec: .07, rel: .06, pan: b % 2 ? .35 : -.35, dly: .5, rev: .15, pump: true });
+  if (sec % 2 === 1) { const ev = S.mus.mel[sec === 1 ? 0 : 1][ci][b]; if (ev) synth({ type: 'sawtooth', hz: midiHz(ev.n), t: t0, len: ev.l * sx * .95, vol: .045, det: [-7, 7], cut: 2400, q: 1.4, att: .02, sus: .75, dec: .25, rel: .3, vib: 8, dly: .35, rev: .35 }); }
 }
 function updMusic() {
   if (!audio || !audio.mus) return;
   const ac = audio.ac, want = audioWanted() && S.musicVol > 0 && (S.mode === 'race' || S.mode === 'countdown' || S.mode === 'results');
-  audio.mus.gain.setTargetAtTime(want ? S.musicVol / 100 * .55 : 0, ac.currentTime, .1);
+  audio.mus.gain.setTargetAtTime(want ? S.musicVol / 100 * .5 : 0, ac.currentTime, .1);
   if (!want) { S.mus = null; return; }
+  const M = SYNTH[S.map.id] || SYNTH.valley, sx = 60 / M.bpm / 4;
   if (!S.mus || S.mus.map !== S.map.id) {
-    const M = MUSIC[S.map.id] || MUSIC.valley, r = rng(S.map.seed * 31), pent = [0, 2, 4, 7, 9].map(k => M.scale[[0, 1, 2, 4, 5][[0, 2, 4, 7, 9].indexOf(k)]]);
-    S.mus = { step: 0, next: ac.currentTime + .08, map: S.map.id, mel: Array.from({ length: 64 }, (_, i) => i % 2 === 0 && r() < .55 ? pent[(r() * pent.length) | 0] : null) };
+    musicFx().dly.delayTime.value = sx * 3; // dotted eighth echo
+    S.mus = { step: 0, next: ac.currentTime + .08, map: S.map.id, mel: makeMelody(M, S.map.seed * 31) };
   }
-  const M = MUSIC[S.map.id] || MUSIC.valley, sx = 60 / M.bpm / 4;
   if (S.mus.next < ac.currentTime - .5) S.mus.next = ac.currentTime + .05;
   while (S.mus.next < ac.currentTime + .18) { musicStep(S.mus.next); S.mus.next += sx; S.mus.step++; }
 }
-// Soft engines: rounded waves, low cut-off and gear changes, so the pitch never climbs into a whine.
-const ENGINE = {
-  car: { t1: 'triangle', t2: 'sine', base: 40, f: 230, fr: 380, purr: .5 },
-  moto: { t1: 'triangle', t2: 'triangle', base: 58, f: 360, fr: 560, purr: .55 },
-  sled: { t1: 'triangle', t2: 'sine', base: 50, f: 300, fr: 420, purr: .35 },
+
+// ---------- engines ----------
+// Each engine is a loop of combustion pulses (its firing order, exhaust resonances and a noise burst per firing), rendered once.
+// Two loops, rendered at low and high rpm, are cross-faded and re-pitched with playbackRate as the revs change,
+// so the exhaust "colour" stays right across the rev range.
+const ENG = {
+  i4: { fires: [0, .25, .5, .75], cyc: 2, idle: 900, red: 6800, gears: 5, res: [[115, .006, 1], [430, .0025, .32], [1250, .0009, .1]], nz: .2, jit: .1 },
+  i4s: { fires: [0, .25, .5, .75], cyc: 2, idle: 950, red: 7600, gears: 5, res: [[135, .005, 1], [520, .002, .42], [1600, .0008, .16]], nz: .28, jit: .1, pops: true },
+  i6: { fires: [0, 1 / 6, 2 / 6, 3 / 6, 4 / 6, 5 / 6], cyc: 2, idle: 800, red: 7200, gears: 5, res: [[150, .005, 1], [610, .002, .3], [1500, .0008, .1]], nz: .16, jit: .06 },
+  v10: { fires: [0, .1, .2, .3, .4, .5, .6, .7, .8, .9], cyc: 2, idle: 1100, red: 9800, gears: 6, res: [[210, .0035, 1], [780, .0016, .45], [2100, .0006, .18]], nz: .22, jit: .07, pops: true },
+  v8: { fires: [0, .135, .25, .365, .5, .615, .75, .885], amps: [1, .68, .9, .62, 1, .72, .86, .66], cyc: 2, idle: 750, red: 6400, gears: 5, res: [[78, .01, 1], [235, .004, .42], [690, .0015, .12]], nz: .3, jit: .14, pops: true },
+  vtwin: { fires: [0, .4375], amps: [1, .9], cyc: 2, idle: 950, red: 6200, gears: 5, res: [[68, .013, 1], [205, .005, .45], [620, .002, .15]], nz: .34, jit: .12 },
+  i4bike: { fires: [0, .25, .5, .75], cyc: 2, idle: 1300, red: 13500, gears: 6, res: [[190, .003, 1], [720, .0014, .5], [2000, .0006, .22]], nz: .28, jit: .08, pops: true },
+  stroke2: { fires: [0, .5], cyc: 1, idle: 1900, red: 8600, cvt: true, res: [[310, .003, 1], [950, .0012, .6], [2400, .0005, .28]], nz: .55, jit: .15 },
 };
-function bark() {
-  tone('sawtooth', 640, 380, .09, .12); setTimeout(() => tone('sawtooth', 580, 330, .12, .12), 140);
+for (const k in ENG) ENG[k].k = k;
+const ENGINE_OF = { start: 'i4', sprint: 'i4s', groza: 'i6', raketa: 'v10', legenda: 'v8', bike: 'vtwin', superbike: 'i4bike', sled: 'stroke2' };
+function engSpec(c) {
+  const m = c.model || {};
+  if (m.type === 'dog') return null;
+  return ENG[ENGINE_OF[m.id] || (m.type === 'moto' ? 'vtwin' : m.type === 'sled' ? 'stroke2' : 'i4s')];
 }
-function rainNoise(on) {
-  if (!audio) return;
-  if (on && !audio.rain) { const n = noise(), f = audio.ac.createBiquadFilter(), g = audio.ac.createGain(); n.loop = true; f.type = 'lowpass'; f.frequency.value = 900; g.gain.value = .035; n.connect(f); f.connect(g); g.connect(audio.m); n.start(); audio.rain = { n, g }; }
-  if (!on && audio.rain) { audio.rain.n.stop(); audio.rain = null; }
+const ENGBUF = {};
+function engLoop(sp, rpm) {
+  const key = sp.k + '@' + rpm; if (ENGBUF[key]) return ENGBUF[key];
+  const ac = audio.ac, sr = ac.sampleRate, cycT = sp.cyc * 60 / rpm, N = Math.round(sr * cycT), cycles = Math.max(4, Math.round(.7 / cycT)), len = N * cycles;
+  const buf = ac.createBuffer(1, len, sr), d = buf.getChannelData(0), r = rng(rpm * 7 + sp.fires.length);
+  for (let c = 0; c < cycles; c++) sp.fires.forEach((ph, i) => {
+    const a = (sp.amps ? sp.amps[i] : 1) * (1 + (r() - .5) * 2 * sp.jit), t0 = Math.max(0, Math.round((c + ph) * N + (r() - .5) * sp.jit * .03 * N));
+    for (const [f, dec, amp] of sp.res) { // a ringing exhaust resonance kicked by the firing
+      const L = Math.ceil(dec * 6 * sr), w = 2 * Math.PI * f / sr, k = Math.exp(-1 / (dec * sr)), p0 = r() * .4;
+      let e = a * amp; for (let j = 0; j < L; j++) { d[(t0 + j) % len] += e * Math.sin(w * j + p0); e *= k; }
+    }
+    const L = Math.ceil(.005 * sr), k = Math.exp(-1 / (.0013 * sr)); let e = a * sp.nz, lp = 0; // combustion noise
+    for (let j = 0; j < L; j++) { lp += ((r() * 2 - 1) - lp) * .35; d[(t0 + j) % len] += lp * e; e *= k; }
+  });
+  let mean = 0, pk = 1e-6; for (let i = 0; i < len; i++) mean += d[i]; mean /= len;
+  for (let i = 0; i < len; i++) { d[i] -= mean; pk = Math.max(pk, Math.abs(d[i])); }
+  for (let i = 0; i < len; i++) d[i] = Math.tanh(d[i] / pk * 1.5) * .8; // a little saturation, like a real pipe
+  return (ENGBUF[key] = buf);
+}
+function engVoice(sp) {
+  const ac = audio.ac, lp = ac.createBiquadFilter(), out = ac.createGain(), pan = ac.createStereoPanner ? ac.createStereoPanner() : null;
+  lp.type = 'lowpass'; lp.frequency.value = 2000; lp.Q.value = .6; out.gain.value = 0;
+  const lay = [Math.round(sp.idle * 1.4), Math.round(sp.red * .72)].map(rpm => {
+    const s = ac.createBufferSource(), g = ac.createGain(); s.buffer = engLoop(sp, rpm); s.loop = true; g.gain.value = 0;
+    s.connect(g); g.connect(lp); s.start(ac.currentTime, Math.random() * .3); return { s, g, rpm };
+  });
+  lp.connect(out); if (pan) { out.connect(pan); pan.connect(audio.eng); } else out.connect(audio.eng);
+  return { sp, lay, lp, out, pan, rpm: sp.idle, gear: 0, shift: 0, th: 0, car: null };
+}
+function engStop(v) { if (!v) return; try { v.out.gain.setTargetAtTime(0, audio.ac.currentTime, .03); v.lay.forEach(l => l.s.stop(audio.ac.currentTime + .2)); } catch (e) {} }
+function engPop(t, big) { // exhaust crackle when lifting off at high revs
+  const ac = audio.ac, n = noise(), f = ac.createBiquadFilter(), g = ac.createGain();
+  f.type = 'bandpass'; f.frequency.value = 500 + Math.random() * 900; f.Q.value = 1.2;
+  g.gain.setValueAtTime((big ? .5 : .3) * (.6 + Math.random() * .4), t); g.gain.exponentialRampToValueAtTime(.0001, t + .03 + Math.random() * .03);
+  n.connect(f); f.connect(g); g.connect(audio.eng); n.start(t, Math.random() * .5); n.stop(t + .08);
+}
+// Drive one engine voice from a vehicle: gears (or a CVT for the snowmobile), shift dips, crackles, air time.
+function engDrive(v, c, th, vol, now, dt, pan, rate) {
+  const sp = v.sp, r = clamp(c.speed / (c.top || BASE), 0, 1.15);
+  let tgt;
+  if (S.mode === 'countdown') tgt = th > 0 ? sp.idle + (sp.red - sp.idle) * (.42 + .12 * Math.sin(now * 8)) : sp.idle;
+  else if (sp.cvt) tgt = th > 0 ? sp.red * (.66 + .3 * Math.min(1, r)) : sp.idle + (sp.red * .55 - sp.idle) * Math.min(1, r);
+  else {
+    const G = sp.gears, gp = Math.min(G - .001, r * G / 1.03), gi = Math.floor(gp), fr = gp - gi;
+    if (gi !== v.gear) { if (gi > v.gear && th > 0) { v.shift = .11; if (sp.pops && c.isPlayer) engPop(now + .02, true); } v.gear = gi; }
+    tgt = gi === 0 ? sp.idle + (sp.red * .9 - sp.idle) * fr : sp.red * (.6 + .38 * fr);
+    if (th <= 0) tgt = Math.max(sp.idle, tgt * .92);
+  }
+  if (th > 0 && (c.air > 0 || c.surface === 'off')) tgt = Math.min(sp.red, tgt * (c.air > 0 ? 1.25 : 1.05)); // wheels free in the air, spinning off-road
+  v.rpm += (tgt - v.rpm) * Math.min(1, dt * (tgt > v.rpm ? 10 : 6));
+  if (sp.pops && c.isPlayer && v.th > 0 && th <= 0 && v.rpm > sp.red * .55 && S.mode === 'race') { const n = 3 + (Math.random() * 4 | 0); for (let i = 0; i < n; i++) engPop(now + .05 + i * (.06 + Math.random() * .09)); }
+  v.th = th;
+  let g = vol * (th > 0 ? 1 : .5);
+  if (v.shift > 0) { v.shift -= dt; g *= .35; }
+  const [a, b] = v.lay, x = clamp((v.rpm - a.rpm) / (b.rpm - a.rpm), 0, 1);
+  a.s.playbackRate.setTargetAtTime(v.rpm / a.rpm * rate, now, .025); b.s.playbackRate.setTargetAtTime(v.rpm / b.rpm * rate, now, .025);
+  a.g.gain.setTargetAtTime(Math.cos(x * Math.PI / 2), now, .05); b.g.gain.setTargetAtTime(Math.sin(x * Math.PI / 2), now, .05);
+  v.lp.frequency.setTargetAtTime(th > 0 ? 1600 + 3400 * v.rpm / sp.red : 800 + 900 * v.rpm / sp.red, now, .06);
+  v.out.gain.setTargetAtTime(g, now, .05);
+  if (v.pan) v.pan.pan.setTargetAtTime(pan, now, .05);
+}
+function engFor(slot, c) { // keep a voice per slot matched to the vehicle it plays
+  const sp = c && engSpec(c);
+  if (audio[slot] && (!sp || audio[slot].sp !== sp)) { engStop(audio[slot]); audio[slot] = null; }
+  if (sp && !audio[slot]) audio[slot] = engVoice(sp);
+  return audio[slot];
+}
+function pant(c, now) { // the dog pants instead of revving
+  S.pantT = (S.pantT || 0) - (now - (S.pantAt || now)); S.pantAt = now;
+  if (S.pantT > 0) return;
+  S.pantT = .42 - Math.min(.24, c.speed / 1500);
+  const n = noise(), f = audio.ac.createBiquadFilter(), g = audio.ac.createGain(); f.type = 'bandpass'; f.frequency.value = 900;
+  g.gain.setValueAtTime(.08, now); g.gain.exponentialRampToValueAtTime(.0001, now + .11);
+  n.connect(f); f.connect(g); g.connect(audio.eng); n.start(now, Math.random() * .5); n.stop(now + .13);
 }
 const audioWanted = () => S.volume > 0 && (S.mode === 'countdown' || S.mode === 'race' || (S.mode === 'results' && S.resultsT > 0));
 function updAudio() {
@@ -4163,26 +4373,33 @@ function updAudio() {
     }
     return;
   }
+  const dt = clamp(now - (audio.lastT || now), 0, .1); audio.lastT = now;
   updMusic();
   rainNoise(S.weatherNow === 'rain' && S.map.deco !== 'snow' && (S.mode === 'race' || S.mode === 'countdown'));
-  const p = player(), engineOn = p && !p.finished && (S.mode === 'race' || S.mode === 'countdown');
-  const E = p && ENGINE[p.type], r = p ? Math.min(1.2, p.speed / BASE) : 0;
-  const rev = S.mode === 'countdown' && (K.KeyW || K.ArrowUp) ? .5 : 0;
-  if (!E) { // the dog pants instead of revving
-    audio.g.gain.setTargetAtTime(0, now, .05); audio.lfoG.gain.setTargetAtTime(0, now, .05);
-    if (p && engineOn) { S.pantT = (S.pantT || 0) - (now - (S.pantAt || now)); S.pantAt = now; if (S.pantT <= 0) { S.pantT = .42 - Math.min(.24, p.speed / 1500); const n = noise(), f = audio.ac.createBiquadFilter(), g = audio.ac.createGain(); f.type = 'bandpass'; f.frequency.value = 900; g.gain.setValueAtTime(.12, now); g.gain.exponentialRampToValueAtTime(.0001, now + .11); n.connect(f); f.connect(g); g.connect(audio.m); n.start(now, Math.random() * .5); n.stop(now + .13); } }
-    return;
+  const racing = S.mode === 'race' || S.mode === 'countdown', p = player(), p2 = S.duo ? player2() : null;
+  const gasOf = c => S.mode === 'countdown' ? (c.isP2 ? K.ArrowUp : K.KeyW || K.ArrowUp || (touchMode && S.autoGas)) ? 1 : 0 : c.inThrottle;
+  for (const [slot, c, pan] of [['pv', p, S.duo ? -.45 : 0], ['pv2', p2, .45]]) {
+    const on = c && racing && !c.finished, v = engFor(slot, on ? c : null);
+    if (on && !v) pant(c, now);
+    if (v) engDrive(v, c, gasOf(c), .5, now, dt, pan, c.boosting ? 1.02 : 1);
   }
-  const mm = p.model, bs = (mm.id === 'legenda' ? .85 : mm.id === 'raketa' ? 1.1 : 1) * E.base;
-  if (audio.o1.type !== E.t1) audio.o1.type = E.t1; if (audio.o2.type !== E.t2) audio.o2.type = E.t2;
-  const gears = 5, gp = Math.min(gears - .001, (r + rev) * gears / 1.05), gi = Math.floor(gp), fr = gp - gi; // rpm rises within a gear, drops on the shift
-  const base = bs * (1 + gi * .13) * (1 + fr * .75) * (p.boosting ? 1.05 : 1);
-  audio.o1.frequency.setTargetAtTime(base, now, .07); audio.o2.frequency.setTargetAtTime(base * .5, now, .07);
-  audio.o2.detune.setTargetAtTime(6, now, .1);
-  audio.f.frequency.setTargetAtTime(E.f + fr * E.fr + gi * 30, now, .09);
-  const lvl = engineOn ? .03 + (p.inThrottle > 0 || rev ? .012 : 0) : 0;
-  audio.g.gain.setTargetAtTime(lvl, now, .12);
-  audio.lfo.frequency.setTargetAtTime(base * .5, now, .07); audio.lfoG.gain.setTargetAtTime(lvl * E.purr * .6, now, .12);
+  // the nearest rival is heard too, panned to its side, with a touch of doppler
+  let near = null, nd = 300;
+  if (p && racing && !S.duo) for (const c of S.cars) { if (c === p || c.respawnT > 0) continue; const d = Math.hypot(c.x - p.x, c.y - p.y); if (d < nd) { nd = d; near = c; } }
+  const rv = engFor('rv', near);
+  if (rv) {
+    const dx = near.x - p.x, dy = near.y - p.y, d = Math.max(1, nd), lat = (dx * -Math.sin(p.angle) + dy * Math.cos(p.angle)) / d;
+    const closing = -((near.vx - p.vx) * dx + (near.vy - p.vy) * dy) / d;
+    engDrive(rv, near, near.inThrottle, .3 * Math.pow(1 - nd / 300, 2), now, dt, clamp(lat, -.8, .8), clamp(1 + closing / 2600, .9, 1.1));
+  }
+}
+function bark() {
+  tone('sawtooth', 640, 380, .09, .12); setTimeout(() => tone('sawtooth', 580, 330, .12, .12), 140);
+}
+function rainNoise(on) {
+  if (!audio) return;
+  if (on && !audio.rain) { const n = noise(), f = audio.ac.createBiquadFilter(), g = audio.ac.createGain(); n.loop = true; f.type = 'lowpass'; f.frequency.value = 900; g.gain.value = .035; n.connect(f); f.connect(g); g.connect(audio.m); n.start(); audio.rain = { n, g }; }
+  if (!on && audio.rain) { audio.rain.n.stop(); audio.rain = null; }
 }
 // Browsers stop animation frames in hidden tabs and panes, so updAudio stops running there.
 // A timer and page events silence the audio directly; updAudio turns it back on once frames resume.
@@ -4250,6 +4467,7 @@ function setLang(l) {
   store.set('turbo-krug-lang', LANG);
   document.documentElement.lang = LANG;
   document.querySelectorAll('[data-t]').forEach(el => { el.textContent = t(el.dataset.t); });
+  document.querySelectorAll('[data-t-aria]').forEach(el => el.setAttribute('aria-label', t(el.dataset.tAria)));
   document.querySelectorAll('[data-th]').forEach(el => { el.innerHTML = t(el.dataset.th); });
   document.querySelectorAll('[data-ta]').forEach(el => { el.setAttribute('aria-label', t(el.dataset.ta)); });
   $('#langSeg').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === LANG)));
@@ -4266,11 +4484,25 @@ function closeSettings() {
 }
 
 // ---------- menu ----------
+// The menu is three pages: home (vehicle, play, quick start), mode, then track and race options.
+function setMenuPage(pg) {
+  S.menuPage = pg; $('.menu-panel').dataset.page = pg;
+  document.querySelectorAll('#menu .mpage').forEach(el => { el.hidden = el.dataset.page !== pg; });
+  $('#menu').scrollTop = 0;
+  if (pg === 'home') updQuick();
+  const f = { home: '#playBtn', mode: '#modeSeg button[aria-pressed="true"]', track: '#startBtn' }[pg];
+  if (!touchMode) { const el = $(f); if (el) el.focus({ preventScroll: true }); }
+}
+function modeName(m) { return t({ race: 'mRace', cup: 'mCup', trial: 'mTrial', duo: 'mDuo', online: 'mOnline' }[m] || 'mRace'); }
+function updQuick() {
+  $('#quickSub').textContent = t('quickSub', { m: modeName(S.gameMode), map: t('map.' + MAPS[S.mapIndex].id), l: S.laps });
+}
 function syncMode() {
+  if ($('#trackHead')) $('#trackHead').textContent = modeName(S.gameMode);
+  updQuick();
   $('#modeSeg').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode === S.gameMode)));
   $('#duoModeBtn').hidden = touchMode;
   $('#p2Row').hidden = S.gameMode !== 'duo';
-  $('#modeNote').textContent = t({ race: 'mRaceSub', cup: 'mCupSub', trial: 'mTrialSub', duo: 'mDuoSub', online: 'mOnlineSub' }[S.gameMode]);
   if (S.gameMode === 'duo') { const m = CARS.find(x => x.id === S.p2car && wallet.owned.includes(x.id)) || CARS[0]; $('#p2Name').textContent = carName(m); drawCarPreview($('#p2Cv'), m); }
   $('#rivalsSec').hidden = S.gameMode === 'trial';
   $('#trackNote').hidden = S.gameMode !== 'cup';
@@ -4495,8 +4727,9 @@ addEventListener('keydown', e => {
   else if (code === 'Escape' && !$('#records').hidden) $('#recBack').click();
   else if (code === 'Escape' && !$('#help').hidden) $('#helpBack').click();
   else if (code === 'Escape' && !$('#online').hidden) $('#onBack').click();
+  else if (code === 'Escape' && S.mode === 'menu' && !$('#menu').hidden && S.menuPage && S.menuPage !== 'home') setMenuPage(S.menuPage === 'track' ? 'mode' : 'home');
   else if (code === 'Escape' || code === 'KeyP') togglePause();
-  else if (code === 'Enter' && S.mode === 'menu') { if (!overlayOpen()) { e.preventDefault(); startRace(); } }
+  else if (code === 'Enter' && S.mode === 'menu') { if (!overlayOpen() && !(document.activeElement && document.activeElement.tagName === 'BUTTON' && $('#menu').contains(document.activeElement))) { e.preventDefault(); if (S.menuPage === 'track') startRace(); else if (S.menuPage === 'mode') setMenuPage('track'); else setMenuPage('mode'); } }
   else if (code === 'KeyM' && e.target.tagName !== 'INPUT') setVolume(S.volume > 0 ? 0 : (S.prevVolume || 60));
   else if (code === 'KeyW' || code === 'ArrowUp' && !S.duo) onThrottlePress();
   else if (code === 'ArrowUp' && S.duo) onThrottlePress(true);
@@ -4547,9 +4780,15 @@ $('#ghostSeg').addEventListener('click', e => { const b = e.target.closest('butt
 $('#tutReset').addEventListener('click', () => { S.tut = {}; store.set('turbo-krug-tut', '{}'); $('#tutReset').textContent = t('tutResetDone'); });
 $('#modeSeg').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.mode === 'online' && S.gameMode !== 'online') S.offlineMode = S.gameMode;
   S.gameMode = b.dataset.mode; store.set('turbo-krug-mode', S.gameMode); S.cup = null; syncMode();
   if (S.gameMode === 'cup' && S.mapIndex !== 0) { setupMap(0); resetRace('menu'); renderMapList(); }
+  if (S.gameMode === 'online') { initAudio(); openOnline(); return; } // rooms have their own screen
+  setMenuPage('track');
 });
+$('#playBtn').addEventListener('click', () => setMenuPage('mode'));
+$('#quickBtn').addEventListener('click', () => { if (S.gameMode === 'online') { S.gameMode = 'race'; syncMode(); } startRace(); });
+document.querySelectorAll('#menu .back').forEach(b => b.addEventListener('click', () => setMenuPage(b.dataset.back)));
 $('#cupNextBtn').addEventListener('click', cupNext);
 $('#p2Next').addEventListener('click', () => {
   const own = CARS.filter(m => wallet.owned.includes(m.id)), i = own.findIndex(m => m.id === S.p2car);
@@ -4592,7 +4831,9 @@ function frame(now) {
 window.__tk = {
   S, MAPS,
   audioState: () => audio ? audio.ac.state : 'none',
+  menuPage: pg => setMenuPage(pg),
   audioGain: () => audio ? audio.m.gain.value : null,
+  audioProbe: () => { if (!audio) return null; const t0 = performance.now(), out = {}; for (const k in ENG) { const b = engLoop(ENG[k], Math.round(ENG[k].red * .72)), d = b.getChannelData(0); let rms = 0; for (let i = 0; i < d.length; i++) rms += d[i] * d[i]; out[k] = +Math.sqrt(rms / d.length).toFixed(3); } out.ms = Math.round(performance.now() - t0); out.voices = ['pv', 'pv2', 'rv'].filter(k => audio[k]).map(k => k + ':' + audio[k].sp.k + ':' + Math.round(audio[k].rpm)); return out; },
   spawn: k => spawnHazard(k),
   run: sec => { for (let tt = 0; tt < sec; tt += DT) step(DT); },
   draw: dt => { (G3.ok ? render3D : render)(dt); updHud(dt); },
@@ -4628,7 +4869,7 @@ function start(data) {
   init3D();
   setCam3(store.get('turbo-krug-cam3') || 'near'); setGfx(S.gfx);
   try { S.tut = JSON.parse(store.get('turbo-krug-tut') || '{}') || {}; } catch (e) { S.tut = {}; }
-  const gm = store.get('turbo-krug-mode'); if (['race', 'cup', 'trial', 'duo', 'online'].includes(gm) && !(gm === 'duo' && touchMode)) S.gameMode = gm;
+  const gm = store.get('turbo-krug-mode'); if (['race', 'cup', 'trial', 'duo'].includes(gm) && !(gm === 'duo' && touchMode)) S.gameMode = gm; // online always starts from its own screen
   S.pname = store.get('turbo-krug-name') || ((LANG === 'en' ? 'Driver' : 'Пилот') + (100 + Math.floor(Math.random() * 900)));
   store.set('turbo-krug-name', S.pname); $('#pname').value = S.pname;
   netProbe();
